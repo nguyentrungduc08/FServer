@@ -6,7 +6,7 @@
 
 /* 
  * File:   fileserver.h
- * Author: hydra
+ * Author: nguyen trung duc
  *
  * Created on December 28, 2017, 2:55 PM
  */

@@ -9,9 +9,9 @@
 
 //constructor create server
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) {
-    if (chdir(dir.c_str()))
+    if (chdir(dir.c_str())) //change working directory
         std::cerr << "Directory could not be changed to '" << dir << "'!" << std::endl;
-    this->initSockets(port);
+    this->initSockets(port); // create socket to listening and set socket attribute
     this->start();
 }
 
@@ -129,7 +129,7 @@ void servercore::readSockets() {
 int servercore::start() {
     struct timeval timeout; // Timeout for select
     int readsocks; // Number of sockets ready for reading
-    timeout.tv_sec = 1; // Timeout = 1 sec
+    timeout.tv_sec = 2; // Timeout = 2 sec
     timeout.tv_usec = 0;
     // Wait for connections, main server loop
     while (!this->shutdown) {

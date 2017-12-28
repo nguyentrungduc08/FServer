@@ -31,6 +31,13 @@
 
 class servercore {
 public:
+    
+    //constructor to create server
+    /*
+     - port: port to listent service 
+     - dir: set directory working
+     - commandOffset: ...
+     */
     servercore(uint port,std::string dir, unsigned short commandOffset = 1);
     ~servercore();
 
