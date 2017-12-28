@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux
-CND_ARTIFACT_NAME_Debug=p2p
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/p2p
+CND_ARTIFACT_NAME_Debug=fileserver
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/fileserver
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux/package
-CND_PACKAGE_NAME_Debug=p2p.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/p2p.tar
+CND_PACKAGE_NAME_Debug=fileserver.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/fileserver.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux
-CND_ARTIFACT_NAME_Release=p2p
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/p2p
+CND_ARTIFACT_NAME_Release=fileserver
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/fileserver
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux/package
-CND_PACKAGE_NAME_Release=p2p.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/p2p.tar
+CND_PACKAGE_NAME_Release=fileserver.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/fileserver.tar
 #
 # include compiler specific variables
 #
