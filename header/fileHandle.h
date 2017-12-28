@@ -66,7 +66,7 @@ public:
     bool deleteDirectory(std::string dirName, bool cancel = false, std::string pathToDir = "");
     bool deleteFile(std::string fileName, bool strict = true);
     void browse(std::string dir, std::vector<std::string> &directories, std::vector<std::string> &files, bool strict = true);
-    bool dirCanBeOpenend(std::string dir);
+    bool dirCanBeOpenend(std::string dir); //check this folder can be opened.
     std::string getParentDir();
     unsigned long getDirSize(std::string dirName);
     std::vector<std::string> getStats(std::string fileName, struct stat Status);

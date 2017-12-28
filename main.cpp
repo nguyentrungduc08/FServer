@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    servercore* myServer = new servercore(port, dir, commandOffset);
+    servercore* myServer = new servercore(port, dir, commandOffset); // create server 
 
     /// @TODO: some sort of server shutdown command??
     delete myServer; // Close connection, for the good tone
