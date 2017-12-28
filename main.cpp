@@ -6,7 +6,7 @@
 
 /* 
  * File:   main.cpp
- * Author: hydra
+ * Author: nguyen trung duc
  *
  * Created on December 27, 2017, 2:35 PM
  */
