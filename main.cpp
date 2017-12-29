@@ -23,14 +23,14 @@ using namespace std;
 int main(int argc, char** argv) {
     unsigned short commandOffset = 1; // For telnet, we need 3 because of the enter control sequence at the end of command (+2 characters)
     unsigned int port = 4242; // Port to listen on (>1024 for no root permissions required)
-    std::string dir = "./"; // Default dir
+    std::string dir = "./"; // Default dir 
     if (argc < 2) {
-        std::cout << "Usage: ftpserver <dir> <port> [telnetmode=no], using default dir '" << dir << "' , port " << port << std::endl;
+        std::cout << "Usage: fileserver <dir> <port> [telnetmode=no], using default dir '" << dir << "' , port " << port << std::endl;
     } else {
         switch (argc) {
-            case 4:
+            case 4: // full parameter to seting server 
                 commandOffset = 3; // If any 3rd parameter is given, the server is started for use with telnet as client
-            case 3:
+            case 3: // convert to int port listening 
                 port = atoi(argv[2]); // Cast str to int, set port
             case 2:
                 fileoperator* db = new fileoperator(dir);

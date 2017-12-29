@@ -7,7 +7,9 @@
 #include "../header/servercore.h"
 #include "../header/connection.h"
 
-//constructor create server
+/*
+ * constructor create server
+ */
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) {
     if (chdir(dir.c_str())) //change working directory
         std::cerr << "Directory could not be changed to '" << dir << "'!" << std::endl;
@@ -15,7 +17,9 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
     this->start();
 }
 
-// Free up used memory by cleaning up all the object variables;
+/* 
+ * Free up used memory by cleaning up all the object variables;
+*/ 
 servercore::~servercore() {
     std::cout << "Server shutdown" << std::endl;
     close(this->s);
@@ -23,7 +27,7 @@ servercore::~servercore() {
 }
 
 // Builds the list of sockets to keep track on and removes the closed ones
-/// @TODO: Crash if data is incoming over a closed socket connection???
+// @TODO: Crash if data is incoming over a closed socket connection???
 void servercore::buildSelectList() {
     // First put together fd_set for select(), which consists of the sock variable in case a new connection is coming in, plus all the already accepted sockets
     // FD_ZERO() clears out the fd_set called socks, so that it doesn't contain any file descriptors
@@ -133,6 +137,7 @@ int servercore::start() {
     timeout.tv_usec = 0;
     // Wait for connections, main server loop
     while (!this->shutdown) {
+        //std::cout << "waiting connection form client....." << std::endl;
 
         this->buildSelectList(); // Clear out data handled in the previous iteration, clear closed sockets
 
@@ -149,7 +154,10 @@ int servercore::start() {
     return (EXIT_SUCCESS);
 }
 
-// Sets the given socket to non-blocking mode
+/* 
+ * Sets the given socket to non-blocking mode
+ * @sock parameter reference to set socket non-blocking
+ */
 void servercore::setNonBlocking(int &sock) {
     this->sflags = fcntl(sock, F_GETFL); // Get socket flags
     int opts = fcntl(sock,F_GETFL, 0);
@@ -164,15 +172,21 @@ void servercore::setNonBlocking(int &sock) {
     }
 }
 
-// Initialization of sockets / socket list with options and error checking
+/* 
+ * Initialization of sockets / socket list with options and error checking
+ * @port create socket to listening 
+ */ 
 void servercore::initSockets(int port) {
-    int reuseAllowed = 1;
-    this->maxConnectionsInQuery = 50;
+    
+    int reuseAllowed = 1; //set flag to set socket reusable 
+    this->maxConnectionsInQuery = 500; //set maximum connect to server simultaneously
     this->addr.sin_family = AF_INET; // PF_INET;
-    this->addr.sin_port = htons(port);
+    this->addr.sin_port = htons(port); 
     this->addr.sin_addr.s_addr = INADDR_ANY; // Server can be connected to from any host
     // PF_INET: domain, Internet; SOCK_STREAM: datastream, TCP / SOCK_DGRAM = UDP => WARNING, this can change the byte order!; for 3rd parameter==0: TCP preferred
-    this->s = socket(PF_INET, SOCK_STREAM, 0);
+    
+    this->s = socket(PF_INET, SOCK_STREAM, 0); 
+    //craete socket fail
     if (this->s == -1) {
         std::cerr << "socket() failed" << std::endl;
         return;
@@ -182,6 +196,7 @@ void servercore::initSockets(int port) {
         close (this->s);
         return;
     }
+    
     this->setNonBlocking(this->s);
     if (bind(this->s, (struct sockaddr*) &addr, sizeof(addr)) == -1) {
         std::cerr << ("bind() failed (do you have the apropriate rights? is the port unused?)") << std::endl;

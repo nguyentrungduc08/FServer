@@ -11,6 +11,12 @@
  * Created on December 28, 2017, 11:33 AM
  */
 
+
+/*
+ * this class to handle connections form client to server
+ * 
+ */
+
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
@@ -28,7 +34,17 @@
 
 class serverconnection {
 public:
+    
+    /*
+     * constructor to handle connection from client.
+     * @filedescriptor fd of socket to get data from client
+     * @connid id of connection
+     * @defaulDir direction working 
+     * @hostId id of host
+     * @commandOffset 
+     */
     serverconnection(int filedescriptor, unsigned int connId, std::string defaultDir, std::string hostId, unsigned short commandOffset = 1);
+    
     std::string commandParser(std::string command);
     std::vector<std::string> extractParameters(std::string command);
     virtual ~serverconnection();
