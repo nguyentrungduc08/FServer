@@ -19,7 +19,7 @@ serverconnection::~serverconnection() {
 // Constructor
 serverconnection::serverconnection(int filedescriptor, unsigned int connId, std::string defaultDir, std::string hostId, unsigned short commandOffset) : fd(filedescriptor), connectionId(connId), dir(defaultDir), hostAddress(hostId), commandOffset(commandOffset), closureRequested(false), uploadCommand(false), downloadCommand(false),  receivedPart(0), parameter("") {
 //    this->files = std::vector<std::string>();
-    this->fo = new fileoperator(this->dir); // File and directory browser
+    this->fo = new filehandle(this->dir); // File and directory browser
     std::cout << "Connection to client '" << this->hostAddress << "' established" << std::endl;
 }
 
@@ -111,7 +111,7 @@ std::string serverconnection::commandParser(std::string command) {
                     readBytes += lengthInBytes;
 //                    this->sendToClient(st.str()); // First, send length in bytes to client
                     this->sendToClient(fileBlock,lengthInBytes); // This sends the binary char-array to the client
-//                    fileoperator* fn = new fileoperator(this->dir);
+//                    filehandle* fn = new filehandle(this->dir);
 //                    fn->writeFileAtOnce("./test.mp3",fileBlock);
 //                } while (lengthInBytes <= readBytes);
             }
@@ -121,8 +121,8 @@ std::string serverconnection::commandParser(std::string command) {
             this->uploadCommand = true; // upload hit!
             std::cout << "Preparing download of file '" << this->parameter << "'" << std::endl;
             // all bytes (=parameters[2]) after the upload <file> command belong to the file
-            res = this->fo->beginWriteFile(this->parameter);
-//            res = (this->fo->beginWriteFile(this->parameter) ? "Upload failed" : "Upload successful");
+            //res = this->fo->beginWriteFile(this->parameter);
+            res = (this->fo->beginWriteFile(this->parameter) ? "Upload failed" : "Upload successful");
         } else
         if (this->commandEquals(commandAndParameter.at(0), "cd")) { // Changes the current working directory on the server
             std::cout << "Change of working dir to '" << this->parameter << "' requested" << std::endl;
@@ -243,23 +243,23 @@ void serverconnection::respondToQuery() {
     // In non-blocking mode, bytes <= 0 does not mean a connection closure!
     if (bytes > 0) {
         std::string clientCommand = std::string(buffer, bytes);
-//        std::cout << command << std::endl;
+        std::cout << "++client command: " << clientCommand << std::endl;
         if (this->uploadCommand) { // (Previous) upload command
-//            std::cout << "Schreibe block" << std::endl;
+            std::cout << "Schreibe block" << std::endl;
             /// Previous (upload) command continuation, store incoming data to the file
             std::cout << "Part " << ++(this->receivedPart) << ": ";
             this->fo->writeFileBlock(clientCommand);
         } else {
             // If not upload command issued, parse the incoming data for command and parameters
             std::string res = this->commandParser(clientCommand);
-//            if (!this->downloadCommand) {
+            if (!this->downloadCommand) {
                 this->sendToClient(res); // Send response to client if no binary file
-//              this->downloadCommand = false;
-//            }
+              this->downloadCommand = false;
+            }
         }
     } else { // no bytes incoming over this connection
         if (this->uploadCommand) { // If upload command was issued previously and no data is left to receive, close the file and connection
-//            this->fo->closeWriteFile();
+            this->fo->closeWriteFile();
             this->uploadCommand = false;
             this->downloadCommand = false;
             this->closureRequested = true;

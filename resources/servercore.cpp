@@ -30,11 +30,12 @@ servercore::~servercore() {
 // @TODO: Crash if data is incoming over a closed socket connection???
 void servercore::buildSelectList() {
     // First put together fd_set for select(), which consists of the sock variable in case a new connection is coming in, plus all the already accepted sockets
-    // FD_ZERO() clears out the fd_set called socks, so that it doesn't contain any file descriptors
-    FD_ZERO(&(this->socks));
+    
+    // FD_ZERO() clears out the fd_set called working_set, so that it doesn't contain any file descriptors
+    FD_ZERO(&(this->working_set));
 
     // FD_SET() adds the file descriptor "sock" to the fd_set so that select() will return if a connection comes in on that socket (in which case accept() is called, etc.)
-    FD_SET(this->s, &(this->socks));
+    FD_SET(this->s, &(this->working_set));
 
     // Iterates over all the possible connections and adds those sockets to the fd_set and erases closed ones
     std::vector<serverconnection*>::iterator iter = this->connections.begin();
@@ -43,12 +44,12 @@ void servercore::buildSelectList() {
             std::cout << "Connection with Id " << (*iter)->getConnectionId() << " closed! " << std::endl;
             delete (*iter); // Clean up
             this->connections.erase(iter); // Delete it from our vector
-            if (this->connections.empty() || (iter == this->connections.end()))
+            if ( this->connections.empty() || (iter == this->connections.end()) )
                 return; // Don't increment the iterator when there is nothing to iterate over - avoids crash
         } else {
             int currentFD = (*iter)->getFD();
             if (currentFD != 0) {
-                FD_SET(currentFD, &(this->socks)); // Adds the socket file descriptor to the monitoring for select
+                FD_SET(currentFD, &(this->working_set)); // Adds the socket file descriptor to the monitoring for select
                 if (currentFD > this->highSock)
                     this->highSock = currentFD; // We need the highest socket for select
             }
@@ -114,16 +115,16 @@ int servercore::handleNewConnection() {
 
 // Something is happening (=data ready to read) at a socket, either accept a new connection or handle the incoming data over an already opened socket
 void servercore::readSockets() {
-    // OK, now socks will be set with whatever socket(s) are ready for reading. First check our "listening" socket, and then check the sockets in connectlist
+    // OK, now working_set will be set with whatever socket(s) are ready for reading. First check our "listening" socket, and then check the sockets in connectlist
     // If a client is trying to connect() to our listening socket, select() will consider that as the socket being 'readable' and thus, if the listening socket is part of the fd_set, accept a new connection
-    if (FD_ISSET(this->s,&(this->socks))) {
+    if (FD_ISSET(this->s,&(this->working_set))) {
 //        this->handleNewConnection();
         if (this->handleNewConnection()) return; // Always check for errors
     }
     // Now check connectlist for available data
-    // Run through our sockets and check to see if anything happened with them, if so 'service' them
-    for (unsigned int listnum = 0; listnum < this->connections.size(); listnum++) {
-        if (FD_ISSET(this->connections.at(listnum)->getFD(),&(this->socks))) {
+    // Run through our sockets and check to see if anything happened with them
+    for (unsigned int listnum = 0; listnum < this->connections.size(); ++listnum) {
+        if (FD_ISSET( this->connections.at(listnum)->getFD(), &(this->working_set) ) ) {
             this->connections.at(listnum)->respondToQuery(); // Now that data is available, deal with it!
         }
     }
@@ -132,7 +133,7 @@ void servercore::readSockets() {
 // Server entry point and main loop accepting and handling connections
 int servercore::start() {
     struct timeval timeout; // Timeout for select
-    int readsocks; // Number of sockets ready for reading
+    int readworking_set; // Number of sockets ready for reading
     timeout.tv_sec = 2; // Timeout = 2 sec
     timeout.tv_usec = 0;
     // Wait for connections, main server loop
@@ -142,9 +143,9 @@ int servercore::start() {
         this->buildSelectList(); // Clear out data handled in the previous iteration, clear closed sockets
 
         // Multiplexes between the existing connections regarding to data waiting to be processed on that connection (that's actually what select does)
-        readsocks = select(this->highSock+1, &(this->socks), (fd_set*)0, (fd_set*)0, &timeout);
+        readworking_set = select(this->highSock+1, &(this->working_set), (fd_set*)0, (fd_set*)0, &timeout);
 
-        if (readsocks < 0) {
+        if (readworking_set < 0) {
             std::cerr << "Error calling select" << std::endl;
             return (EXIT_FAILURE);
         }

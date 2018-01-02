@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
             case 3: // convert to int port listening 
                 port = atoi(argv[2]); // Cast str to int, set port
             case 2:
-                fileoperator* db = new fileoperator(dir);
+                filehandle* db = new filehandle(dir);
                 // Test if dir exists
                 if (db->dirCanBeOpenend(argv[1])) {
                     dir = argv[1]; // set default server directory

@@ -32,6 +32,11 @@
 // Separator for commands
 #define SEPARATOR " "
 
+/*
+ * this class handle one connection from client to server.
+ * 
+ */
+
 class serverconnection {
 public:
     
@@ -66,7 +71,7 @@ private:
     bool uploadCommand;
     bool downloadCommand;
     std::string parameter;
-    fileoperator* fo; // For browsing, writing and reading
+    filehandle* fo; // For browsing, writing and reading
     void sendToClient(char* response, unsigned long length);
     void sendToClient(std::string response);
     bool commandEquals(std::string a, std::string b);

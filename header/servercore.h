@@ -47,14 +47,20 @@ private:
     void setNonBlocking(int &sock);
     void buildSelectList();
     void readSockets();
+    
+    /*
+     * Accepts new connections and stores the connection object with fd in a vector 
+     */
     int handleNewConnection();
+    
+    
     void freeAllConnections();
     unsigned int maxConnectionsInQuery; // number of connections in query
     int s; // The main listening socket file descriptor
     int sflags; // Socket fd flags
     std::vector<serverconnection*> connections;// Manage the connected sockets / connections in a list with an iterator
     int highSock; // Highest #'d file descriptor, needed for select()
-    fd_set socks; // set of socket file descriptors we want to wake up for, using select()
+    fd_set working_set; // set of socket file descriptors we want to wake up for, using select()
     std::string dir;
     unsigned int connId;
     bool shutdown;

@@ -49,12 +49,16 @@
  *  References over several directories like ../../filename are allowed as parameters,
  *  only used at server side
  */
-class fileoperator {
+class filehandle {
+    
 public:
-    fileoperator(std::string dir);
-    virtual ~fileoperator();
+    
+    filehandle(std::string dir);
+    virtual ~filehandle();
+    
     int readFile(std::string fileName);
     char* readFileBlock(unsigned long &sizeInBytes);
+    
     int writeFileAtOnce(std::string fileName, char* content);
     int beginWriteFile(std::string fileName);
     int writeFileBlock(std::string content);
