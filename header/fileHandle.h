@@ -34,7 +34,7 @@
 
 
 // Buffer size
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 409600
 
 // This contains the designation for the server root directory
 #define SERVERROOTPATHSTRING "<root>/"
@@ -60,6 +60,7 @@ public:
     char* readFileBlock(unsigned long &sizeInBytes);
     
     int writeFileAtOnce(std::string fileName, char* content);
+    
     int beginWriteFile(std::string fileName);
     int writeFileBlock(std::string content);
     int closeWriteFile();
@@ -80,13 +81,14 @@ public:
     std::vector<std::string> getListOfDeletedDirectories();
     bool dirIsBelowServerRoot(std::string dirName);
 private:
+    
     std::vector<std::string> deletedDirectories;
     std::vector<std::string> deletedFiles;
     void getValidDir(std::string &dirName);
     void getValidFile(std::string &fileName);
     void stripServerRootString(std::string &dirOrFileName);
-    std::ofstream currentOpenFile;
-    std::ifstream currentOpenReadFile;
+    std::ofstream currentOpenFile; //stream to read data from socket
+    std::ifstream currentOpenReadFile; //stream to send data to socket
     std::list<std::string> completePath; // The path from server root dir upwards to the current working dir, each list element containing one dir
     static void IntToString(int i, std::string &res);
 };

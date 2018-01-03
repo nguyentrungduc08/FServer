@@ -42,10 +42,17 @@ public:
     ~servercore();
 
 private:
+    
+    //start server 
     int start();
+    
+    //create socket to server listenning 
     void initSockets(int port);
+    //set attribute non-blocking for socket
     void setNonBlocking(int &sock);
+    //build list socket to handle new connection or data from clients
     void buildSelectList();
+    //read data from socket
     void readSockets();
     
     /*
@@ -57,15 +64,15 @@ private:
     void freeAllConnections();
     unsigned int maxConnectionsInQuery; // number of connections in query
     int s; // The main listening socket file descriptor
-    int sflags; // Socket fd flags
+    int sflags; // Socket flags
     std::vector<serverconnection*> connections;// Manage the connected sockets / connections in a list with an iterator
     int highSock; // Highest #'d file descriptor, needed for select()
     fd_set working_set; // set of socket file descriptors we want to wake up for, using select()
-    std::string dir;
-    unsigned int connId;
-    bool shutdown;
-    sockaddr_in addr;
-    struct sockaddr_storage addrStorage;
+    std::string dir; //path of directory working 
+    unsigned int connId; //
+    bool shutdown; //to set serer on/off
+    sockaddr_in addr; // set server information
+    struct sockaddr_storage addrStorage; //get info of connection
     socklen_t addrLength;
     sockaddr_in cli;
     socklen_t cli_size;

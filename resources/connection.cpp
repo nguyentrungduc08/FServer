@@ -96,6 +96,7 @@ std::string serverconnection::commandParser(std::string command) {
             }
         } else
         if (this->commandEquals(commandAndParameter.at(0), "download")) {
+            
             this->downloadCommand = true;
             std::cout << "Preparing download of file '" << this->parameter << "'" << std::endl;
             unsigned long lengthInBytes = 0;
@@ -224,13 +225,13 @@ std::vector<std::string> serverconnection::extractParameters(std::string command
     // First get the command by taking the string and walking from beginning to the first blank
     if ((pos = command.find(SEPARATOR, previouspos)) != std::string::npos) { // No empty string
         res.push_back(command.substr(int(previouspos),int(pos-previouspos))); // The command
-//        std::cout << "Command: " << res.back();
+        std::cout << "Command: " << res.back();
     }
     if (command.length() > (pos+1)) {
         //For telnet testing commandOffset = 3 because of the enter control sequence at the end of the telnet command (otherwise = 1)
         res.push_back(command.substr(int(pos+1),int(command.length()-(pos+(this->commandOffset))))); // The parameter (if existent)
 //        res.push_back(command.substr(int(pos+1),int(command.length()-(pos+3)))); // The parameter (if existent)
-//        std::cout << " - Parameter: '" << res.back() << "'" << std::endl;
+        std::cout << " - Parameter: '" << res.back() << "'" << std::endl;
     }
     return res;
 }
@@ -243,9 +244,9 @@ void serverconnection::respondToQuery() {
     // In non-blocking mode, bytes <= 0 does not mean a connection closure!
     if (bytes > 0) {
         std::string clientCommand = std::string(buffer, bytes);
-        std::cout << "++client command: " << clientCommand << std::endl;
+        std::cout << "++client command: " << std::endl;
         if (this->uploadCommand) { // (Previous) upload command
-            std::cout << "Schreibe block" << std::endl;
+            std::cout << "Write block" << std::endl;
             /// Previous (upload) command continuation, store incoming data to the file
             std::cout << "Part " << ++(this->receivedPart) << ": ";
             this->fo->writeFileBlock(clientCommand);

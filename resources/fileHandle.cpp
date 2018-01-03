@@ -37,7 +37,7 @@ bool filehandle::changeDir(std::string newPath, bool strict) {
         std::cout << "Change to same dir requested (nothing done)!" << std::endl;
         return (EXIT_SUCCESS); // 0 (?)
     }
-    // std::cout << "dir " << this->getCurrentWorkingDir().append(newPath) << std::endl;
+    std::cout << "dir " << this->getCurrentWorkingDir().append(newPath) << std::endl;
     // Normal (sub-)directory given
     if (this->dirCanBeOpenend(this->getCurrentWorkingDir().append(newPath))) {
         this->completePath.push_back(newPath); // Add the new working dir to our path list
@@ -63,7 +63,7 @@ void filehandle::getValidFile(std::string &fileName) {
     std::string slash = "/";
     size_t foundSlash = 0;
     while ( (foundSlash = fileName.find_first_of(slash),(foundSlash)) != std::string::npos) {
-//        std::cout << " / @ " << foundSlash << std::endl;
+        std::cout << " / @ " << foundSlash << std::endl;
         fileName.erase(foundSlash++,1); // Remove all slashs
     }
 }
@@ -111,7 +111,7 @@ char* filehandle::readFileBlock(unsigned long &sizeInBytes) {
     return memblock;
 }
 
-/// @WARNING, @KLUDGE: Concurrent file access not catched
+/// @WARNING: Concurrent file access not catched
 int filehandle::readFile(std::string fileName) {
     stripServerRootString(fileName);
     this->currentOpenReadFile.open(fileName.c_str(), std::ios::in|std::ios::binary); // modes for binary file  |std::ios::ate
@@ -128,7 +128,8 @@ int filehandle::readFile(std::string fileName) {
 
 int filehandle::beginWriteFile(std::string fileName) {
     stripServerRootString(fileName);
-    this->currentOpenFile.open(fileName.c_str(), std::ios::out|std::ios::binary|std::ios::app); // output file
+    //this->currentOpenFile.open(fileName.c_str(), std::ios::out|std::ios::binary|std::ios::app); // output file
+    this->currentOpenFile.open(fileName.c_str(), std::ios::out|std::ios::binary); // output file
     if(!this->currentOpenFile) {
         std::cerr << "Cannot open output file '" << fileName << "'" << std::endl;
         return (EXIT_FAILURE);
@@ -137,7 +138,7 @@ int filehandle::beginWriteFile(std::string fileName) {
     return (EXIT_SUCCESS);
 }
 
-/// @WARNING, @KLUDGE: Concurrent file access not catched
+/// @WARNING: Concurrent file access not catched
 int filehandle::writeFileBlock(std::string content) {
     if(!this->currentOpenFile) {
         std::cerr << "Cannot write to output file" << std::endl;
@@ -175,7 +176,8 @@ bool filehandle::createFile(std::string &fileName, bool strict) {
         this->getValidFile(fileName); // Avoid touch ../file beyond server root!
     try {
         std::ofstream fileout;
-        fileout.open(this->getCurrentWorkingDir().append(fileName).c_str(), std::ios::out|std::ios::binary|std::ios::app);
+        //fileout.open(this->getCurrentWorkingDir().append(fileName).c_str(), std::ios::out|std::ios::binary|std::ios::app);
+        fileout.open(this->getCurrentWorkingDir().append(fileName).c_str(), std::ios::out|std::ios::binary);
         fileout.close();
     } catch (std::exception e) {
         std::cerr << e.what() << std::endl;
@@ -225,13 +227,13 @@ bool filehandle::deleteDirectory(std::string dirName, bool cancel, std::string p
     
     pathToDir.append(dirName);
 
-// std::cout << "Browse " << pathToDir << std::endl;
+    std::cout << "Browse " << pathToDir << std::endl;
     this->browse(pathToDir,*directories,*files,false);
 
     // Now walk over all files in the current directory and delete them
     fileIterator = files->begin();
     while(fileIterator != files->end() ) {
-// std::cout << "Removing file " << pathToDir + (*fileIterator) << std::endl;
+        std::cout << "Removing file " << pathToDir + (*fileIterator) << std::endl;
         cancel = (this->deleteFile(pathToDir + (*fileIterator++), false) || cancel);
     }
 
@@ -243,7 +245,7 @@ bool filehandle::deleteDirectory(std::string dirName, bool cancel, std::string p
             dirIterator++;
             continue;
         }
-// std::cout << "Recursive Call rmdir("<< (*dirIterator).append("/") << "," << pathToDir << ")" << std::endl;
+        std::cout << "Recursive Call rmdir("<< (*dirIterator).append("/") << "," << pathToDir << ")" << std::endl;
         // Only one error must occur and the cancel becomes true and aborts the deletions
         cancel = (this->deleteDirectory((*(dirIterator++)).append("/"), cancel, pathToDir) || cancel);
     }
@@ -447,7 +449,6 @@ void filehandle::browse(std::string dir, std::vector<std::string> &directories, 
                 if (((std::string)dirp->d_name).compare("..") == 0 && this->completePath.size() < 2)
                     continue;
 //                if( ((std::string)dirp->d_name).compare(".") == 0 || ((std::string)dirp->d_name).compare("..") == 0 ) continue;
-                /// @WARNING, @KLUDGE: symbolic links to directories not supported ?!
                 if( dirp->d_type == DT_DIR ) {
                     directories.push_back(std::string(dirp->d_name));
                 } else { // Otherwise it must be a file (no special treatment for devs, nodes, etc.)
