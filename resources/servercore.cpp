@@ -143,7 +143,7 @@ int servercore::start() {
         this->buildSelectList(); // Clear out data handled in the previous iteration, clear closed sockets
 
         // Multiplexes between the existing connections regarding to data waiting to be processed on that connection (that's actually what select does)
-        readworking_set = select(this->highSock+1, &(this->working_set), (fd_set*)0, (fd_set*)0, &timeout);
+        readworking_set = select(this->highSock+1, &(this->working_set), NULL , NULL , &timeout);
 
         if (readworking_set < 0) {
             std::cerr << "Error calling select" << std::endl;
