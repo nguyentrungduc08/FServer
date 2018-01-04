@@ -112,7 +112,7 @@ int servercore::handleNewConnection() {
     this->connections.push_back(conn);
     return (EXIT_SUCCESS);
 }
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 // Something is happening (=data ready to read) at a socket, either accept a new connection or handle the incoming data over an already opened socket
 void servercore::readSockets() {
     // OK, now working_set will be set with whatever socket(s) are ready for reading. First check our "listening" socket, and then check the sockets in connectlist
@@ -131,11 +131,8 @@ void servercore::readSockets() {
 }
 
 // Server entry point and main loop accepting and handling connections
-int servercore::start() {
-    struct timeval timeout; // Timeout for select
+int servercore::start() { 
     int readworking_set; // Number of sockets ready for reading
-    timeout.tv_sec = 2; // Timeout = 2 sec
-    timeout.tv_usec = 0;
     // Wait for connections, main server loop
     while (!this->shutdown) {
         //std::cout << "waiting connection form client....." << std::endl;
@@ -143,6 +140,9 @@ int servercore::start() {
         this->buildSelectList(); // Clear out data handled in the previous iteration, clear closed sockets
 
         // Multiplexes between the existing connections regarding to data waiting to be processed on that connection (that's actually what select does)
+        struct timeval timeout;
+        timeout.tv_sec = 2; // Timeout = 2 sec
+        timeout.tv_usec = 0;
         readworking_set = select(this->highSock+1, &(this->working_set), NULL , NULL , &timeout);
 
         if (readworking_set < 0) {

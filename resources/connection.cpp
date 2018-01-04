@@ -70,7 +70,7 @@ std::string serverconnection::commandParser(std::string command) {
         if (this->commandEquals(commandAndParameter.at(0), "bye") || this->commandEquals(commandAndParameter.at(0), "quit")) {
             std::cout << "Shutdown of connection requested" << std::endl;
             this->closureRequested = true;
-    //        close (this->fd);
+            close (this->fd);
         } else {
         // Unknown / no command / enter
             std::cout << "Unknown command encountered!" << std::endl;
