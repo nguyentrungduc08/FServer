@@ -135,7 +135,7 @@ int servercore::start() {
     int readworking_set; // Number of sockets ready for reading
     // Wait for connections, main server loop
     while (!this->shutdown) {
-        //std::cout << "waiting connection form client....." << std::endl;
+        std::cout << "waiting connection form client....." << std::endl;
 
         this->buildSelectList(); // Clear out data handled in the previous iteration, clear closed sockets
 
