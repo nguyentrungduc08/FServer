@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/resources/connection.o \
 	${OBJECTDIR}/resources/fileHandle.o \
+	${OBJECTDIR}/resources/md5.o \
 	${OBJECTDIR}/resources/servercore.o
 
 
@@ -79,6 +80,11 @@ ${OBJECTDIR}/resources/fileHandle.o: resources/fileHandle.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/fileHandle.o resources/fileHandle.cpp
+
+${OBJECTDIR}/resources/md5.o: resources/md5.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/md5.o resources/md5.cpp
 
 ${OBJECTDIR}/resources/servercore.o: resources/servercore.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources

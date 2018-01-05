@@ -7,6 +7,7 @@
       <itemPath>header/connection.h</itemPath>
       <itemPath>header/fileHandle.h</itemPath>
       <itemPath>header/fileserver.h</itemPath>
+      <itemPath>header/md5.h</itemPath>
       <itemPath>header/servercore.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -19,6 +20,7 @@
       <itemPath>resources/connection.cpp</itemPath>
       <itemPath>resources/fileHandle.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
+      <itemPath>resources/md5.cpp</itemPath>
       <itemPath>resources/servercore.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -49,6 +51,8 @@
       </item>
       <item path="header/fileserver.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="header/md5.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="header/servercore.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
@@ -56,6 +60,8 @@
       <item path="resources/connection.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/fileHandle.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/md5.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/servercore.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -86,6 +92,8 @@
       </item>
       <item path="header/fileserver.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="header/md5.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="header/servercore.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
@@ -93,6 +101,8 @@
       <item path="resources/connection.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/fileHandle.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/md5.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/servercore.cpp" ex="false" tool="1" flavor2="0">
       </item>
