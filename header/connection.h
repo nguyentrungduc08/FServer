@@ -52,6 +52,9 @@ public:
     
     std::string commandParser(std::string command);
     std::vector<std::string> extractParameters(std::string command);
+
+    bool authConnection(); 
+    
     virtual ~serverconnection();
     void run();
     void respondToQuery();

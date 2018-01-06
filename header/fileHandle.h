@@ -14,7 +14,7 @@
 #ifndef FILEHANDLE_H
 #define FILEHANDLE_H
 
-
+#include "../header/md5.h"
 #include <iostream>
 #include <fstream>
 #include <string>

@@ -92,6 +92,7 @@ int servercore::handleNewConnection() {
         return (EXIT_FAILURE); // Return at this point
     }
 
+
     // Get the client IP address
     char ipstr[INET6_ADDRSTRLEN];
     int port;
@@ -108,8 +109,16 @@ int servercore::handleNewConnection() {
     printf("Connection accepted: FD=%d - Slot=%d - Id=%d \n", fd, (this->connections.size()+1), ++(this->connId));
     // The new connection (object)
     serverconnection* conn = new serverconnection(fd, this->connId, this->dir, hostId, this->commandOffset); // The connection vector
-    // Add it to our list for better management / convenience
-    this->connections.push_back(conn);
+
+    if ( conn->authConnection()){
+        // Authen success  
+        // Add it to our list for better management / convenience
+        this->connections.push_back(conn);
+    } else{
+        // Authen fail
+        printf("Connection dropped: FD=%d - Slot=%d - Id=%d \n", fd, (this->connections.size()+1), this->connId);
+        return (EXIT_FAILURE);
+    } 
     return (EXIT_SUCCESS);
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              

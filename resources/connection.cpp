@@ -236,6 +236,36 @@ std::vector<std::string> serverconnection::extractParameters(std::string command
     return res;
 }
 
+
+/*
+
+*/
+bool serverconnection::authConnection(){
+    char buffer[BUFFER_SIZE];
+    int bytes;
+    std::string status;
+    bytes = recv(this->fd, buffer, sizeof(buffer), 0);
+
+    if (bytes > 0){
+        std::string md5CodeOfClient= std::string(buffer,bytes);
+
+        std::string md5server = md5("test");
+         
+        if (md5server == md5CodeOfClient){
+            status = "200 ok";
+            this->sendToClient(status);
+            return true;
+        } else{
+            status = "401 fail";
+            this->sendToClient(status);
+            return false;
+        }
+    }
+
+    return false;
+
+} 
+
 // Receives the incoming data and issues the apropraite commands and responds
 void serverconnection::respondToQuery() {
     char buffer[BUFFER_SIZE];
