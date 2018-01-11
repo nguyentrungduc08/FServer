@@ -39,7 +39,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/resources/connection.o \
 	${OBJECTDIR}/resources/fileHandle.o \
 	${OBJECTDIR}/resources/md5.o \
-	${OBJECTDIR}/resources/servercore.o
+	${OBJECTDIR}/resources/servercore.o \
+	${OBJECTDIR}/resources/ssl.o
 
 
 # C Compiler Flags
@@ -90,6 +91,11 @@ ${OBJECTDIR}/resources/servercore.o: resources/servercore.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/servercore.o resources/servercore.cpp
+
+${OBJECTDIR}/resources/ssl.o: resources/ssl.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/ssl.o resources/ssl.cpp
 
 # Subprojects
 .build-subprojects:
