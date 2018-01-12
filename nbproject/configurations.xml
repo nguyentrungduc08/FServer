@@ -46,6 +46,11 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerOptionItem>-L/usr/lib -lssl -lcrypto</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
       <item path="header/connection.h" ex="false" tool="3" flavor2="0">
       </item>

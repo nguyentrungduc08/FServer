@@ -57,7 +57,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=
+LDLIBSOPTIONS=-L/usr/lib -lssl -lcrypto
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}

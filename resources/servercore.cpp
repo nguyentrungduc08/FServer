@@ -5,7 +5,7 @@
  */
 
 #include "../header/servercore.h"
-#include "../header/connection.h"
+
 
 /*
  * constructor create server
@@ -14,6 +14,9 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
     if (chdir(dir.c_str())) //change working directory
         std::cerr << "Directory could not be changed to '" << dir << "'!" << std::endl;
     this->initSockets(port); // create socket to listening and set socket attribute
+    this->sslComm = new fssl();
+    this->sslComm->create_context();
+    this->sslComm->configure_context("SSL/server.csr","SSL/server.key");
     this->start();
 }
 
@@ -24,6 +27,7 @@ servercore::~servercore() {
     std::cout << "Server shutdown" << std::endl;
     close(this->s);
     this->freeAllConnections(); // Deletes all connection objects and frees their memory
+    delete sslComm;
 }
 
 // Builds the list of sockets to keep track on and removes the closed ones

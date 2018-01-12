@@ -15,7 +15,7 @@
 #define SERVERCORE_H
 
 #include "../header/connection.h"
-
+#include "../header/ssl.h"
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -77,6 +77,7 @@ private:
     sockaddr_in cli;
     socklen_t cli_size;
     unsigned short commandOffset;
+    fssl * sslComm;
 };
 
 #endif /* SERVERCORE_H */
