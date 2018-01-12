@@ -13,10 +13,10 @@
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) {
     if (chdir(dir.c_str())) //change working directory
         std::cerr << "Directory could not be changed to '" << dir << "'!" << std::endl;
-    this->initSockets(port); // create socket to listening and set socket attribute
     this->sslComm = new fssl();
     this->sslComm->create_context();
     this->sslComm->configure_context("SSL/server.csr","SSL/server.key");
+    this->initSockets(port); // create socket to listening and set socket attribute
     this->start();
 }
 
