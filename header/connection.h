@@ -28,7 +28,9 @@
 #include <sys/fcntl.h>
 #include <sys/unistd.h>
 #include <algorithm> // for transform command
-
+#include <resolv.h>
+#include "openssl/ssl.h"
+#include "openssl/err.h"
 // Separator for commands
 #define SEPARATOR " "
 
@@ -65,6 +67,7 @@ public:
 private:
     int fd; // Filedescriptor per each threaded object
     int fdflags;
+    SSL *ssl;
     bool closureRequested;
     std::vector<std::string> directories;
     std::vector<std::string> files;
@@ -75,8 +78,19 @@ private:
     bool downloadCommand;
     std::string parameter;
     filehandle* fo; // For browsing, writing and reading
+    
+    /*
+     * @response  data response to client
+     * @length size of data
+     * @return void
+     */
     void sendToClient(char* response, unsigned long length);
+    
+    /*
+     * @response 
+     */
     void sendToClient(std::string response);
+    
     bool commandEquals(std::string a, std::string b);
     std::string filterOutBlanks(std::string inString);
     static void getAllParametersAfter(std::vector<std::string> parameterVector, unsigned int currentParameter, std::string& theRest);

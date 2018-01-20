@@ -39,7 +39,6 @@ public:
 private:
     SSL_CTX * ctx;
     bool verify_client;
-    SSL *ssl;
 };
 
 

@@ -17,7 +17,10 @@ serverconnection::~serverconnection() {
 }
 
 // Constructor
-serverconnection::serverconnection(int filedescriptor, unsigned int connId, std::string defaultDir, std::string hostId, unsigned short commandOffset) : fd(filedescriptor), connectionId(connId), dir(defaultDir), hostAddress(hostId), commandOffset(commandOffset), closureRequested(false), uploadCommand(false), downloadCommand(false),  receivedPart(0), parameter("") {
+serverconnection::serverconnection(int filedescriptor, unsigned int connId, std::string defaultDir, std::string hostId, unsigned short commandOffset) 
+: fd(filedescriptor), connectionId(connId), dir(defaultDir), hostAddress(hostId), commandOffset(commandOffset), closureRequested(false), 
+ uploadCommand(false), downloadCommand(false),  receivedPart(0), parameter("") 
+{
 //    this->files = std::vector<std::string>();
     this->fo = new filehandle(this->dir); // File and directory browser
     std::cout << "Connection to client '" << this->hostAddress << "' established" << std::endl;

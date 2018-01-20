@@ -13,9 +13,11 @@
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) {
     if (chdir(dir.c_str())) //change working directory
         std::cerr << "Directory could not be changed to '" << dir << "'!" << std::endl;
-    this->sslComm = new fssl();
-    this->sslComm->create_context();
-    this->sslComm->configure_context("SSL/server.csr","SSL/server.key");
+    std::cout << "begin load certificate" << std::endl;
+    this->sslComm = new fssl();  //create and load some lib
+    this->sslComm->create_context(); //
+    this->sslComm->configure_context("CA/server.crt", "CA/server.key.pem");
+    std::cout << "load certificate finished" << std::endl;
     this->initSockets(port); // create socket to listening and set socket attribute
     this->start();
 }
@@ -83,8 +85,8 @@ int servercore::handleNewConnection() {
     }
 
     // Gets the socket fd flags and add the non-blocking flag to the sfd
-    this->setNonBlocking(fd);
-
+    this->setNonBlocking(fd);    
+    
     // Something (?) went wrong, new connection could not be handled
     if (fd == -1) {
         std::cerr << "Something went wrong, new connection could not be handled (Maybe server too busy, too many connections?)" << std::endl;
@@ -96,6 +98,9 @@ int servercore::handleNewConnection() {
         return (EXIT_FAILURE); // Return at this point
     }
 
+    SSL *ssl;
+    ssl = SSL_new(this->sslComm->get_ctx());
+    SSL_set_fd(ssl, fd);
 
     // Get the client IP address
     char ipstr[INET6_ADDRSTRLEN];
