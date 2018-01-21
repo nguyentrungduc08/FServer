@@ -6,6 +6,7 @@
 
 #include "../header/connection.h"
 #include "../header/fileserver.h"
+#include "../header/ssl.h"
 
 // Destructor, clean up all the mess
 serverconnection::~serverconnection() {
@@ -17,12 +18,17 @@ serverconnection::~serverconnection() {
 }
 
 // Constructor
-serverconnection::serverconnection(int filedescriptor, unsigned int connId, std::string defaultDir, std::string hostId, unsigned short commandOffset) 
-: fd(filedescriptor), connectionId(connId), dir(defaultDir), hostAddress(hostId), commandOffset(commandOffset), closureRequested(false), 
+serverconnection::serverconnection(int filedescriptor,SSL* sslcon, unsigned int connId, std::string defaultDir, std::string hostId, bool iSSL, unsigned short commandOffset) 
+: fd(filedescriptor), connectionId(connId), dir(defaultDir), hostAddress(hostId), isSSL(iSSL), commandOffset(commandOffset), closureRequested(false), 
  uploadCommand(false), downloadCommand(false),  receivedPart(0), parameter("") 
 {
 //    this->files = std::vector<std::string>();
     this->fo = new filehandle(this->dir); // File and directory browser
+    
+    SSL *ssl;
+    ssl = SSL_new(sslcon->get_ctx());
+    SSL_set_fd(ssl, fd);
+
     std::cout << "Connection to client '" << this->hostAddress << "' established" << std::endl;
 }
 
@@ -247,7 +253,11 @@ bool serverconnection::authConnection(){
     char buffer[BUFFER_SIZE];
     int bytes;
     std::string status;
-    bytes = recv(this->fd, buffer, sizeof(buffer), 0);
+    if (isSSL){
+        bytes = recv(this->fd, buffer, sizeof(buffer), 0);
+    } else{
+        bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
+    }
 
     if (bytes > 0){
         std::string md5CodeOfClient= std::string(buffer,bytes);
@@ -273,7 +283,13 @@ bool serverconnection::authConnection(){
 void serverconnection::respondToQuery() {
     char buffer[BUFFER_SIZE];
     int bytes;
-    bytes = recv(this->fd, buffer, sizeof(buffer), 0);
+
+    if (isSSL){
+        bytes = recv(this->fd, buffer, sizeof(buffer), 0);
+    } else{
+        bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
+    }
+
     // In non-blocking mode, bytes <= 0 does not mean a connection closure!
     if (bytes > 0) {
         std::string clientCommand = std::string(buffer, bytes);
@@ -307,7 +323,11 @@ void serverconnection::sendToClient(char* response, unsigned long length) {
     // Now we're sending the response
     unsigned int bytesSend = 0;
     while (bytesSend < length) {
-        int ret = send(this->fd, response+bytesSend, length-bytesSend, 0);
+        int ret;
+        if (!isSSL)
+            ret = send(this->fd, response+bytesSend, length-bytesSend, 0);
+        else
+            ret = SSL_write(this->ssl, response + bytesSend, length-bytesSend);
         if (ret <= 0) {
             return;
         }
@@ -320,7 +340,11 @@ void serverconnection::sendToClient(std::string response) {
     // Now we're sending the response
     unsigned int bytesSend = 0;
     while (bytesSend < response.length()) {
-        int ret = send(this->fd, response.c_str()+bytesSend, response.length()-bytesSend, 0);
+        int ret;
+        if (!isSSL)
+            ret = send(this->fd, response.c_str()+bytesSend, response.length()-bytesSend, 0);
+        else
+            ret = SSL_write(this->ssl, response.c_str()+bytesSend, response.length()-bytesSend);
         if (ret <= 0) {
             return;
         }

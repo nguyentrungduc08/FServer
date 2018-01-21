@@ -98,9 +98,6 @@ int servercore::handleNewConnection() {
         return (EXIT_FAILURE); // Return at this point
     }
 
-    SSL *ssl;
-    ssl = SSL_new(this->sslComm->get_ctx());
-    SSL_set_fd(ssl, fd);
 
     // Get the client IP address
     char ipstr[INET6_ADDRSTRLEN];
@@ -117,7 +114,7 @@ int servercore::handleNewConnection() {
 
     printf("Connection accepted: FD=%d - Slot=%d - Id=%d \n", fd, (this->connections.size()+1), ++(this->connId));
     // The new connection (object)
-    serverconnection* conn = new serverconnection(fd, this->connId, this->dir, hostId, this->commandOffset); // The connection vector
+    serverconnection* conn = new serverconnection(fd, this->connId, this->dir, hostId, true, this->commandOffset); // The connection vector
 
     if ( conn->authConnection()){
         // Authen success  

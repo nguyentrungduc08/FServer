@@ -50,7 +50,7 @@ public:
      * @hostId id of host
      * @commandOffset 
      */
-    serverconnection(int filedescriptor, unsigned int connId, std::string defaultDir, std::string hostId, unsigned short commandOffset = 1);
+    serverconnection(int filedescriptor, fssl * sslcon, unsigned int connId, std::string defaultDir, std::string hostId,bool iSSL, unsigned short commandOffset = 1);
     
     std::string commandParser(std::string command);
     std::vector<std::string> extractParameters(std::string command);
@@ -96,6 +96,7 @@ private:
     static void getAllParametersAfter(std::vector<std::string> parameterVector, unsigned int currentParameter, std::string& theRest);
     unsigned short commandOffset;
     unsigned long receivedPart;
+    bool isSSL;
 };
 
 
