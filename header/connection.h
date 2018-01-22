@@ -21,6 +21,7 @@
 #define CONNECTION_H
 
 #include "../header/fileHandle.h"
+#include "../header/ssl.h"
 #include <vector>
 #include <cstdlib>
 #include <string>

@@ -18,7 +18,7 @@ serverconnection::~serverconnection() {
 }
 
 // Constructor
-serverconnection::serverconnection(int filedescriptor,SSL* sslcon, unsigned int connId, std::string defaultDir, std::string hostId, bool iSSL, unsigned short commandOffset) 
+serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int connId, std::string defaultDir, std::string hostId, bool iSSL, unsigned short commandOffset) 
 : fd(filedescriptor), connectionId(connId), dir(defaultDir), hostAddress(hostId), isSSL(iSSL), commandOffset(commandOffset), closureRequested(false), 
  uploadCommand(false), downloadCommand(false),  receivedPart(0), parameter("") 
 {

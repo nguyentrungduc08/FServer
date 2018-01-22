@@ -7,11 +7,8 @@
 #include "../header/servercore.h"
 
 
-/*
- * constructor create server
- */
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) {
-    if (chdir(dir.c_str())) //change working directory
+    if ( chdir( dir.c_str() ) ) //change working directory
         std::cerr << "Directory could not be changed to '" << dir << "'!" << std::endl;
     std::cout << "begin load certificate" << std::endl;
     this->sslComm = new fssl();  //create and load some lib
@@ -35,18 +32,16 @@ servercore::~servercore() {
 // Builds the list of sockets to keep track on and removes the closed ones
 // @TODO: Crash if data is incoming over a closed socket connection???
 void servercore::buildSelectList() {
-    // First put together fd_set for select(), which consists of the sock variable in case a new connection is coming in, plus all the already accepted sockets
-    
-    // FD_ZERO() clears out the fd_set called working_set, so that it doesn't contain any file descriptors
+
     FD_ZERO(&(this->working_set));
 
-    // FD_SET() adds the file descriptor "sock" to the fd_set so that select() will return if a connection comes in on that socket (in which case accept() is called, etc.)
     FD_SET(this->s, &(this->working_set));
-
-    // Iterates over all the possible connections and adds those sockets to the fd_set and erases closed ones
+    
     std::vector<serverconnection*>::iterator iter = this->connections.begin();
+    
     while( iter != this->connections.end() ) {
-        if ((*iter)->getCloseRequestStatus() == true) { // This connection was closed, flag is set -> remove its corresponding object and free the memory
+        // This connection was closed, flag is set -> remove its corresponding object and free the memory
+        if ((*iter)->getCloseRequestStatus() == true) { 
             std::cout << "Connection with Id " << (*iter)->getConnectionId() << " closed! " << std::endl;
             delete (*iter); // Clean up
             this->connections.erase(iter); // Delete it from our vector
@@ -114,7 +109,7 @@ int servercore::handleNewConnection() {
 
     printf("Connection accepted: FD=%d - Slot=%d - Id=%d \n", fd, (this->connections.size()+1), ++(this->connId));
     // The new connection (object)
-    serverconnection* conn = new serverconnection(fd, this->connId, this->dir, hostId, true, this->commandOffset); // The connection vector
+    serverconnection* conn = new serverconnection(fd, this->sslComm ,this->connId, this->dir, hostId, true, this->commandOffset); // The connection vector
 
     if ( conn->authConnection()){
         // Authen success  
