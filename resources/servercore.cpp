@@ -71,7 +71,8 @@ void servercore::freeAllConnections() {
 // Accepts new connections and stores the connection object with fd in a vector
 int servercore::handleNewConnection() {
     int fd; // Socket file descriptor for incoming connections
-
+    int reuseAllowed = 1;
+    
     this->cli_size = sizeof(this->cli);
     fd = accept(this->s, (struct sockaddr*) &cli, &cli_size);
     if (fd < 0) {
@@ -92,7 +93,12 @@ int servercore::handleNewConnection() {
         }
         return (EXIT_FAILURE); // Return at this point
     }
-
+    
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuseAllowed, sizeof(reuseAllowed)) < 0) { //  enable reuse of socket, even when it is still occupied
+        std::cerr << "setsockopt() failed" << std::endl;
+        close (fd);
+        return EXIT_FAILURE;
+    }
 
     // Get the client IP address
     char ipstr[INET6_ADDRSTRLEN];
