@@ -26,9 +26,8 @@ serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int
     this->fo = new filehandle(this->dir); // File and directory browser
     
     if (iSSL){
-        SSL *ssl;
-        ssl = SSL_new(sslcon->get_ctx());
-        SSL_set_fd(ssl, this->fd);
+        this->ssl = SSL_new(sslcon->get_ctx());
+        SSL_set_fd(this->ssl, this->fd);
     } 
     
     std::cout << "Connection to client '" << this->hostAddress << "' established" << std::endl;
