@@ -36,16 +36,14 @@ servercore::~servercore() {
 // Builds the list of sockets to keep track on and removes the closed ones
 // @TODO: Crash if data is incoming over a closed socket connection???
 void servercore::buildSelectList() {
-
     FD_ZERO(&(this->working_set));
-
     FD_SET(this->s, &(this->working_set));
     
     std::vector<serverconnection*>::iterator iter = this->connections.begin();
     
     while( iter != this->connections.end() ) {
         // This connection was closed, flag is set -> remove its corresponding object and free the memory
-        if ((*iter)->getCloseRequestStatus() == true) { 
+        if ( (*iter)->getCloseRequestStatus() == true ) { 
             std::cout << "Connection with Id " << (*iter)->getConnectionId() << " closed! " << std::endl;
             delete (*iter); // Clean up
             this->connections.erase(iter); // Delete it from our vector
@@ -58,8 +56,9 @@ void servercore::buildSelectList() {
                 if (currentFD > this->highSock)
                     this->highSock = currentFD; // We need the highest socket for select
             }
+            ++iter; // Increment iterator
         }
-        ++iter; // Increment iterator
+        //++iter; // Increment iterator
     }
 }
 
