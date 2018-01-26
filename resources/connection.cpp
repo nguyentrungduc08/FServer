@@ -25,10 +25,12 @@ serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int
 //    this->files = std::vector<std::string>();
     this->fo = new filehandle(this->dir); // File and directory browser
     
-    SSL *ssl;
-    ssl = SSL_new(sslcon->get_ctx());
-    SSL_set_fd(ssl, fd);
-
+    if (iSSL){
+        SSL *ssl;
+        ssl = SSL_new(sslcon->get_ctx());
+        SSL_set_fd(ssl, this->fd);
+    } 
+    
     std::cout << "Connection to client '" << this->hostAddress << "' established" << std::endl;
 }
 
@@ -263,13 +265,16 @@ bool serverconnection::authConnection(){
         std::string md5CodeOfClient= std::string(buffer,bytes);
 
         std::string md5server = md5("test");
-         
+        std::cout << "@debug md5CodeOfClient " << md5CodeOfClient <<" md5server " << md5server << std::endl;
+        
         if (md5server == md5CodeOfClient){
             status = "200 ok";
+            std::cout <<"@debug status " << status << std::endl;
             this->sendToClient(status);
             return true;
         } else{
             status = "401 fail";
+            std::cout <<"@debug status " << status << std::endl;
             this->sendToClient(status);
             return false;
         }

@@ -20,6 +20,7 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#include "../header/fileserver.h"
 #include "../header/fileHandle.h"
 #include "../header/ssl.h"
 #include <vector>
@@ -51,13 +52,12 @@ public:
      * @hostId id of host
      * @commandOffset 
      */
-    serverconnection(int filedescriptor, fssl * sslcon, unsigned int connId, std::string defaultDir, std::string hostId,bool iSSL, unsigned short commandOffset = 1);
+    serverconnection(int filedescriptor, fssl * sslcon, unsigned int connId, std::string defaultDir, std::string hostId, bool iSSL, unsigned short commandOffset = 1);
     
     std::string commandParser(std::string command);
     std::vector<std::string> extractParameters(std::string command);
 
     bool authConnection(); 
-    
     virtual ~serverconnection();
     void run();
     void respondToQuery();

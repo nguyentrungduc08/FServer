@@ -14,12 +14,12 @@
 #ifndef FILESERVER_H
 #define FILESERVER_H
 
-#include "servercore.h"
 #include <cstdlib>
 #include <iostream>
 
 
 #define USE_SSL                 1
+#define NO_SSL                  2
 
 #define CMD_AUTHEN_LOGIN        801
 #define CMD_AUTHEN_SUCCESS      802

@@ -8,9 +8,6 @@
 
 
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) {
-    if ( chdir( dir.c_str() ) ) //change working directory
-        std::cerr << "Directory could not be changed to '" << dir << "'!" << std::endl;
-    
     if (USE_SSL){
         std::cout << "begin load certificate" << std::endl;
         this->sslComm = new fssl();  //create and load some lib
@@ -19,13 +16,16 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
         std::cout << "load certificate finished" << std::endl;
     }
     
+    if ( chdir( dir.c_str() ) ) //change working directory
+        std::cerr << "Directory could not be changed to '" << dir << "'!" << std::endl;
+   
     this->initSockets(port); // create socket to listening and set socket attribute
     this->start();
 }
 
 /* 
  * Free up used memory by cleaning up all the object variables;
-*/ 
+ */ 
 servercore::~servercore() {
     std::cout << "Server shutdown" << std::endl;
     close(this->s);
@@ -120,8 +120,12 @@ int servercore::handleNewConnection() {
 
     printf("Connection accepted: FD=%d - Slot=%d - Id=%d \n", fd, (this->connections.size()+1), ++(this->connId));
     // The new connection (object)
-    serverconnection* conn = new serverconnection(fd, this->sslComm ,this->connId, this->dir, hostId, true, this->commandOffset); // The connection vector
-
+    serverconnection* conn;
+    if (USE_SSL)
+        conn = new serverconnection(fd, this->sslComm ,this->connId, this->dir, hostId, true, this->commandOffset); // The connection vector
+    else 
+        conn = new serverconnection(fd, this->sslComm, this->connId, this->dir, hostId, false, this->commandOffset); 
+            
     if ( conn->authConnection()){
         // Authen success  
         // Add it to our list for better management / convenience

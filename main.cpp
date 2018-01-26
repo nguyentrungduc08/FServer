@@ -12,6 +12,9 @@
  */
 
 #include "header/fileserver.h"
+#include "header/servercore.h"
+#include "header/connection.h"
+#include "header/fileHandle.h"
 #include "header/md5.h"
 #include <cstdlib>
 
