@@ -13,7 +13,7 @@
 
 #ifndef SERVERCORE_H
 #define SERVERCORE_H
-
+#include "../header/fileserver.h"
 #include "../header/connection.h"
 #include "../header/ssl.h"
 #include <cstdio>
@@ -35,27 +35,43 @@
 class servercore {
 public:
     
-    //constructor to create server
     /*
-     - port: port to listent service 
-     - dir: set directory working
-     - commandOffset: ...
+     * constructor to create server
+     * @port: port to listent service 
+     * @dir: set directory working
+     * @commandOffset: ...
      */
     servercore(uint port,std::string dir, unsigned short commandOffset = 1);
+    
     ~servercore();
 
 private:
     
-    //start server 
+    /*
+     * Server entry point and main loop accepting and handling connections
+     */ 
     int start();
     
-    //create socket to server listenning 
+    /* 
+     * Initialization of sockets / socket list with options and error checking
+     * @port create socket to listening 
+     */ 
     void initSockets(int port);
-    //set attribute non-blocking for socket
+    
+    /* 
+     * Sets the given socket to non-blocking mode
+     * @sock parameter reference to set socket non-blocking
+     */
     void setNonBlocking(int &sock);
-    //build list socket to handle new connection or data from clients
+    
+    /*
+     * build list socket to handle new connection or data from clients
+     */
     void buildSelectList();
-    //read data from socket
+    
+    /*
+     * read data from socket
+     */
     void readSockets();
     
     /*
@@ -63,8 +79,11 @@ private:
      */
     int handleNewConnection();
     
-    
+    /*
+     * free all memories to  
+     */
     void freeAllConnections();
+    
     unsigned int maxConnectionsInQuery; // number of connections in query
     int s; // The main listening socket file descriptor
     int sflags; // Socket flags

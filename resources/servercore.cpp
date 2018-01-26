@@ -10,11 +10,15 @@
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) {
     if ( chdir( dir.c_str() ) ) //change working directory
         std::cerr << "Directory could not be changed to '" << dir << "'!" << std::endl;
-    std::cout << "begin load certificate" << std::endl;
-    this->sslComm = new fssl();  //create and load some lib
-    this->sslComm->create_context(); //
-    this->sslComm->configure_context("CA/server.crt", "CA/server.key.pem");
-    std::cout << "load certificate finished" << std::endl;
+    
+    if (USE_SSL){
+        std::cout << "begin load certificate" << std::endl;
+        this->sslComm = new fssl();  //create and load some lib
+        this->sslComm->create_context(); //
+        this->sslComm->configure_context("CA/server.crt", "CA/server.key.pem");
+        std::cout << "load certificate finished" << std::endl;
+    }
+    
     this->initSockets(port); // create socket to listening and set socket attribute
     this->start();
 }
@@ -74,13 +78,15 @@ int servercore::handleNewConnection() {
     int reuseAllowed = 1;
     
     this->cli_size = sizeof(this->cli);
+    
     fd = accept(this->s, (struct sockaddr*) &cli, &cli_size);
+    
     if (fd < 0) {
         std::cerr << "Error while accepting client" << std::endl;
         return (EXIT_FAILURE);
     }
 
-    // Gets the socket fd flags and add the non-blocking flag to the sfd
+    // Gets the socket fd flags and add the non-blocking flag to the fd
     this->setNonBlocking(fd);    
     
     // Something (?) went wrong, new connection could not be handled
@@ -123,7 +129,7 @@ int servercore::handleNewConnection() {
         this->connections.push_back(conn);
     } else{
         // Authen fail
-        printf("Connection dropped: FD=%d - Slot=%d - Id=%d \n", fd, (this->connections.size()+1), this->connId);
+        printf("Connection dropped: FD=%d - Slot=%d - Id=%d (authentication failure)\n", fd, (this->connections.size()+1), this->connId);
         return (EXIT_FAILURE);
     } 
     return (EXIT_SUCCESS);
@@ -146,7 +152,7 @@ void servercore::readSockets() {
     }
 }
 
-// Server entry point and main loop accepting and handling connections
+
 int servercore::start() { 
     int readworking_set; // Number of sockets ready for reading
     // Wait for connections, main server loop
@@ -157,7 +163,7 @@ int servercore::start() {
 
         // Multiplexes between the existing connections regarding to data waiting to be processed on that connection (that's actually what select does)
         struct timeval timeout;
-        timeout.tv_sec = 2; // Timeout = 2 sec
+        timeout.tv_sec = 3; // Timeout = 3 sec
         timeout.tv_usec = 0;
         readworking_set = select(this->highSock+1, &(this->working_set), NULL , NULL , &timeout);
 
@@ -171,10 +177,6 @@ int servercore::start() {
     return (EXIT_SUCCESS);
 }
 
-/* 
- * Sets the given socket to non-blocking mode
- * @sock parameter reference to set socket non-blocking
- */
 void servercore::setNonBlocking(int &sock) {
     this->sflags = fcntl(sock, F_GETFL); // Get socket flags
     int opts = fcntl(sock,F_GETFL, 0);
@@ -189,10 +191,6 @@ void servercore::setNonBlocking(int &sock) {
     }
 }
 
-/* 
- * Initialization of sockets / socket list with options and error checking
- * @port create socket to listening 
- */ 
 void servercore::initSockets(int port) {
     
     int reuseAllowed = 1; //set flag to set socket reusable 

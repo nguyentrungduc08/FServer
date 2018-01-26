@@ -19,5 +19,20 @@
 #include <iostream>
 
 
+#define USE_SSL                 1
+
+#define CMD_AUTHEN_LOGIN        801
+#define CMD_AUTHEN_SUCCESS      802
+#define CMD_ADD_CONTACT         803
+#define CMD_ADD_SUCCESS         804
+#define CMD_GET_CONTACTS        805
+#define CMD_CONTACTS_DATA       806 
+#define CMD_UPLOAD_FILE         807
+#define CMD_UPLOAD_READY        808
+#define CMD_MSG_FILE            809
+#define CMD_DOWNLOAD_FILE       800
+#define CMD_DOWNLOAD_FINISH     888
+
+
 #endif /* FILESERVER_H */
 
