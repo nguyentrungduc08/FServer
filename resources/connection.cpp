@@ -246,26 +246,31 @@ std::vector<std::string> serverconnection::extractParameters(std::string command
     return res;
 }
 
-
-/*
-
-*/
 bool serverconnection::authConnection(){
     char buffer[BUFFER_SIZE];
-    int bytes;
+    int bytes = -1;
     std::string status;
+    bzero(buffer, sizeof buffer);
+   
     if (isSSL){
+        if ( SSL_accept(this->ssl) == -1 ){     /* do SSL-protocol accept */
+            std::cerr << "server cannot accpet ssl connection!!!" << std::endl;
+            return false;
+        }
+        else    
+            bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
+           
+    } else {
         bytes = recv(this->fd, buffer, sizeof(buffer), 0);
-    } else{
-        bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
     }
-
+    
+    
     if (bytes > 0){
         std::string md5CodeOfClient= std::string(buffer,bytes);
 
         std::string md5server = md5("test");
         std::cout << "@debug md5CodeOfClient " << md5CodeOfClient <<" md5server " << md5server << std::endl;
-        
+
         if (md5server == md5CodeOfClient){
             status = "200 ok";
             std::cout <<"@debug status " << status << std::endl;
@@ -278,9 +283,8 @@ bool serverconnection::authConnection(){
             return false;
         }
     }
-
+    
     return false;
-
 } 
 
 // Receives the incoming data and issues the apropraite commands and responds
