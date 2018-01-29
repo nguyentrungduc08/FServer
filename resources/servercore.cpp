@@ -133,6 +133,7 @@ int servercore::handleNewConnection() {
     } else{
         // Authen fail
         printf("Connection dropped: FD=%d - Slot=%d - Id=%d (authentication failure)\n", fd, (this->connections.size()+1), this->connId);
+        delete conn;
         return (EXIT_FAILURE);
     } 
     return (EXIT_SUCCESS);

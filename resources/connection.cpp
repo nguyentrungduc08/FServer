@@ -253,9 +253,9 @@ bool serverconnection::authConnection(){
     bzero(buffer, sizeof buffer);
    
     if (isSSL){
-        if ( SSL_accept(this->ssl) == -1 ){     /* do SSL-protocol accept */
+        if ( SSL_accept(this->ssl) != 1 ) {     /* do SSL-protocol accept */
             std::cerr << "server cannot accpet ssl connection!!!" << std::endl;
-            return false;
+            //return false;
         }
         else    
             bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
@@ -332,7 +332,7 @@ void serverconnection::sendToClient(char* response, unsigned long length) {
     unsigned int bytesSend = 0;
     while (bytesSend < length) {
         int ret;
-        if (!isSSL)
+        if (!this->isSSL)
             ret = send(this->fd, response+bytesSend, length-bytesSend, 0);
         else
             ret = SSL_write(this->ssl, response + bytesSend, length-bytesSend);
@@ -349,7 +349,7 @@ void serverconnection::sendToClient(std::string response) {
     unsigned int bytesSend = 0;
     while (bytesSend < response.length()) {
         int ret;
-        if (!isSSL)
+        if (!this->isSSL)
             ret = send(this->fd, response.c_str()+bytesSend, response.length()-bytesSend, 0);
         else
             ret = SSL_write(this->ssl, response.c_str()+bytesSend, response.length()-bytesSend);
