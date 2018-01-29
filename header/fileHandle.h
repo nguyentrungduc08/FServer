@@ -34,7 +34,7 @@
 
 
 // Buffer size
-#define BUFFER_SIZE 409600
+#define BUFFER_SIZE 4096
 
 // This contains the designation for the server root directory
 #define SERVERROOTPATHSTRING "<root>/"

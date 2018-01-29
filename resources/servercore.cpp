@@ -125,6 +125,7 @@ int servercore::handleNewConnection() {
     
     // The new connection (object
     serverconnection* conn;
+    
     if (USE_SSL){
         conn = new serverconnection(fd, this->sslComm ,this->connId, this->dir, hostId, true, this->commandOffset); 
         std::cout << "@log servercore: use SSL model " << std::endl;
@@ -133,16 +134,22 @@ int servercore::handleNewConnection() {
         conn = new serverconnection(fd, this->sslComm, this->connId, this->dir, hostId, false, this->commandOffset); 
         std::cout << "@log servercore: use non-SSL model " << std::endl;
     }    
-    if ( conn->authConnection()){
-        // Authen success  
-        // Add it to our list for better management / convenience
-        this->connections.push_back(conn);
-    } else{
-        // Authen fail
-        printf("@log servercore: Connection dropped: FD=%d - Slot=%d - Id=%d (authentication failure)\n", fd, (this->connections.size()+1), this->connId);
-        delete conn;
-        return (EXIT_FAILURE);
-    } 
+    
+    conn->TLS_handshark();
+    
+    this->connections.push_back(conn);
+    
+    //sleep(3);
+//    if ( conn->authConnection()){
+//        // Authen success  
+//        // Add it to our list for better management / convenience
+//        this->connections.push_back(conn);
+//    } else{
+//        // Authen fail
+//        printf("@log servercore: Connection dropped: FD=%d - Slot=%d - Id=%d (authentication failure)\n", fd, (this->connections.size()+1), this->connId);
+//        delete conn;
+//        return (EXIT_FAILURE);
+//    } 
     return (EXIT_SUCCESS);
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
@@ -152,13 +159,26 @@ void servercore::readSockets() {
     // If a client is trying to connect() to our listening socket, select() will consider that as the socket being 'readable' and thus, if the listening socket is part of the fd_set, accept a new connection
     if (FD_ISSET(this->Mainsocket,&(this->working_set))) {
 //        this->handleNewConnection();
+        std::cout << "@log servercore: new connection " << std::endl;
         if (this->handleNewConnection()) return; // Always check for errors
+        
     }
     // Now check connectlist for available data
     // Run through our sockets and check to see if anything happened with them
     for (unsigned int listnum = 0; listnum < this->connections.size(); ++listnum) {
         if (FD_ISSET( this->connections.at(listnum)->getFD(), &(this->working_set) ) ) {
-            this->connections.at(listnum)->respondToQuery(); // Now that data is available, deal with it!
+            
+            if (this->connections.at(listnum)->get_Confirmed_state() == false ){
+                if (this->connections.at(listnum)->authConnection()){
+                    this->connections.at(listnum)->set_confirmed_state();
+                } else {
+                    delete connections.at(listnum);
+                    this->connections.erase(this->connections.begin()+listnum);
+                }
+            } else {
+                this->connections.at(listnum)->respondToQuery(); // Now that data is available, deal with it!
+            }
+            std::cout << "@log servercore: handle comming data " << std::endl;
         }
     }
 }

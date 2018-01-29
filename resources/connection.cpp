@@ -10,7 +10,7 @@
 
 // Destructor, clean up all the mess
 serverconnection::~serverconnection() {
-    std::cout << "@log conn: Connection terminated to client (connection id " << this->connectionId << ")" << std::endl;
+    std::cout << "#log conn: Connection terminated to client (connection id " << this->connectionId << ")" << std::endl;
     delete this->fo;
     close(this->fd);
     this->directories.clear();
@@ -25,13 +25,21 @@ serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int
 {
 //    this->files = std::vector<std::string>();
     this->fo = new filehandle(this->dir); // File and directory browser
-    
+    isComfirmed = false;
     if (iSSL){
         this->ssl = SSL_new(sslcon->get_ctx());
         SSL_set_fd(this->ssl, this->fd);
     } 
     
-    std::cout << "@log conn: Connection to client '" << this->hostAddress << "' established" << std::endl;
+    std::cout << "#log conn: Connection to client '" << this->hostAddress << "' established" << std::endl;
+}
+
+bool serverconnection::get_Confirmed_state(){
+    return this->isComfirmed;
+}
+
+void serverconnection::set_confirmed_state(){
+    this->isComfirmed = true;
 }
 
 // Check for matching (commands/strings) with compare method
@@ -53,7 +61,7 @@ std::string serverconnection::commandParser(std::string command) {
 //    for (int i = 0; i < parameters.size(); i++) std::cout << "P " << i << ":" << parameters.at(i) << ":" << std::endl;
     std::cout << "Connection " << this->connectionId << ": ";
 
-    /// @TODO: Test if prone to DOS-attacks (if loads of garbage is submitted)???
+    /// #TODO: Test if prone to DOS-attacks (if loads of garbage is submitted)???
     // If command with no argument was issued
     if (commandAndParameter.size() == 1) {
         if (this->commandEquals(commandAndParameter.at(0), "list")) {
@@ -236,15 +244,80 @@ std::vector<std::string> serverconnection::extractParameters(std::string command
     // First get the command by taking the string and walking from beginning to the first blank
     if ((pos = command.find(SEPARATOR, previouspos)) != std::string::npos) { // No empty string
         res.push_back(command.substr(int(previouspos),int(pos-previouspos))); // The command
-        std::cout << "@log conn: Command: " << res.back();
+        std::cout << "#log conn: Command: " << res.back();
     }
     if (command.length() > (pos+1)) {
         //For telnet testing commandOffset = 3 because of the enter control sequence at the end of the telnet command (otherwise = 1)
         res.push_back(command.substr(int(pos+1),int(command.length()-(pos+(this->commandOffset))))); // The parameter (if existent)
 //        res.push_back(command.substr(int(pos+1),int(command.length()-(pos+3)))); // The parameter (if existent)
-        std::cout << "@log conn: - Parameter: '" << res.back() << "'" << std::endl;
+        std::cout << "#log conn: - Parameter: '" << res.back() << "'" << std::endl;
     }
     return res;
+}
+
+void serverconnection::TLS_handshark(){
+    //handle ssl_handshake non-blocking modle
+    int status = -1;
+    struct timeval tv, tvRestore;
+    tv.tv_sec = 2;
+    tv.tv_usec = 0;
+    tvRestore = tv;
+       
+    fd_set writeFdSet;
+    fd_set readFdSet;
+             
+    do {
+        tv = tvRestore;
+        FD_ZERO(&writeFdSet);
+        FD_ZERO(&readFdSet);
+        status = SSL_accept(this->ssl);
+        switch (SSL_get_error(this->ssl, status)){
+            case SSL_ERROR_NONE:
+                status = 0;
+                std::cout << "#log conn: SSL_ERROR_NONE" << std::endl;
+                break;
+            case SSL_ERROR_WANT_WRITE:
+                FD_SET(this->fd, &writeFdSet);
+                status = 1;
+                std::cout << "#log conn: SSL_ERROR_WANT_WRITE" << std::endl;
+                break;
+            case SSL_ERROR_WANT_READ:
+                FD_SET(this->fd, &readFdSet);
+                status = 1;
+                std::cout << "#log conn: SSL_ERROR_WANT_READ" << std::endl;
+                break;
+            case SSL_ERROR_ZERO_RETURN:
+            case SSL_ERROR_SYSCALL:     
+                std::cout << "#log conn: Peer closed connection during SSL handshake,status: " << status << std::endl;
+                status = -1;
+                break;
+            default:
+                std::cout <<"#log conn: Unexpected error during SSL handshake,status: " << status << std::endl;
+                status = -1;
+                break;
+        }
+        if (status == 1)
+            {              
+                // Must have at least one handle to wait for at this point.
+                status = select(this->fd + 1, &readFdSet, &writeFdSet, NULL, &tv);
+
+                // 0 is timeout, so we're done.
+                // -1 is error, so we're done.
+                // Could be both handles set (same handle in both masks) so
+                // set to 1.
+                if (status >= 1)
+                    {
+                        status = 1;
+                    }
+                else // Timeout or failure
+                    {
+                        std::cout << "#log conn: SSL handshake - peer timeout or failure" << std::endl;
+                        status = -1;
+                    }
+            }
+                    
+        } while (status == 1 && !SSL_is_init_finished(this->ssl));
+        std::cout << "#log conn: SSL handshark successed" << std::endl;
 }
 
 bool serverconnection::authConnection(){
@@ -253,33 +326,65 @@ bool serverconnection::authConnection(){
     std::string status;
     bzero(buffer, sizeof buffer);
    
-    if (isSSL){
-        if ( SSL_accept(this->ssl) != 1 ) {     /* do SSL-protocol accept */
-            std::cerr << "@log conn: server cannot accpet ssl connection!!!" << std::endl;
-            //return false;
+    fd_set writeFdSet;
+    fd_set readFdSet;
+    int Sta = -1;
+    if (isSSL){ 
+//        if ( SSL_accept(this->ssl) != 1 ) {     /* do SSL-protocol accept */
+//            std::cerr << "#log conn: server cannot accpet ssl connection!!!" << std::endl;
+//            //return false;
+//        }
+//        else    
+//        sleep(3);
+        bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
+        
+        if (bytes < 0){
+            switch (SSL_get_error(this->ssl, Sta)){
+                case SSL_ERROR_NONE:
+                    Sta = 0;
+                    std::cout << "#log conn: SSL_read SSL_ERROR_NONE" << std::endl;
+                    break;
+                case SSL_ERROR_WANT_WRITE:
+                    FD_SET(this->fd, &writeFdSet);
+                    Sta = 1;
+                    std::cout << "#log conn: SSL_read SSL_ERROR_WANT_WRITE" << std::endl;
+                    break;
+                case SSL_ERROR_WANT_READ:
+                    FD_SET(this->fd, &readFdSet);
+                    Sta = 1;
+                    std::cout << "#log conn: SSL_read SSL_ERROR_WANT_READ" << std::endl;
+                    break;
+                case SSL_ERROR_ZERO_RETURN:
+                case SSL_ERROR_SYSCALL:     
+                    std::cout << "#log conn: SSL_read Peer closed connection during SSL handshake,status: " << status << std::endl;
+                    Sta = -1;
+                    break;
+                default:
+                    std::cout <<"#log conn: SSL_read Unexpected error during SSL handshake,status: " << status << std::endl;
+                    Sta = -1;
+                    break;
+            }
         }
-        else    
-            bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
            
     } else {
         bytes = recv(this->fd, buffer, sizeof(buffer), 0);
     }
     
-    
+    std::cout << "#log conn: size of data ssl read " << bytes << std::endl;
     if (bytes > 0){
         std::string md5CodeOfClient= std::string(buffer,bytes);
 
         std::string md5server = md5("test");
-        std::cout << "@log conn: debug md5CodeOfClient " << md5CodeOfClient <<" md5server " << md5server << std::endl;
+        std::cout << "#log conn: debug md5CodeOfClient " << md5CodeOfClient <<" md5server " << md5server << std::endl;
 
         if (md5server == md5CodeOfClient){
             status = "200 ok";
-            std::cout <<"@log conn: debug status " << status << std::endl;
+            std::cout <<"#log conn: debug status " << status << std::endl;
             this->sendToClient(status);
             return true;
         } else{
             status = "401 fail";
-            std::cout <<"@debug status " << status << std::endl;
+            std::cout <<"#debug status " << status << std::endl;
             this->sendToClient(status);
             return false;
         }
@@ -293,20 +398,22 @@ void serverconnection::respondToQuery() {
     char buffer[BUFFER_SIZE];
     int bytes;
 
-    if (isSSL){
+    if (!isSSL){
         bytes = recv(this->fd, buffer, sizeof(buffer), 0);
+        std::cout << "#log conn: read query TCP " << std::endl;
     } else{
         bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
+        std::cout << "#log conn: read query SSL " << std::endl;
     }
 
     // In non-blocking mode, bytes <= 0 does not mean a connection closure!
     if (bytes > 0) {
         std::string clientCommand = std::string(buffer, bytes);
-        std::cout << "@log conn: ++client command: " << std::endl;
+        std::cout << "#log conn: ++client command: " << std::endl;
         if (this->uploadCommand) { // (Previous) upload command
-            std::cout << "@log conn: Write block" << std::endl;
+            std::cout << "#log conn: Write block" << std::endl;
             /// Previous (upload) command continuation, store incoming data to the file
-            std::cout << "@log conn: Part " << ++(this->receivedPart) << ": ";
+            std::cout << "#log conn: Part " << ++(this->receivedPart) << ": ";
             this->fo->writeFileBlock(clientCommand);
         } else {
             // If not upload command issued, parse the incoming data for command and parameters

@@ -64,7 +64,10 @@ public:
     int getFD();
     bool getCloseRequestStatus();
     unsigned int getConnectionId();
+    void TLS_handshark();
 
+    bool get_Confirmed_state();
+    void set_confirmed_state();
 private:
     int fd; // Filedescriptor per each threaded object
     int fdflags;
@@ -83,6 +86,8 @@ private:
     unsigned long receivedPart;
     bool isSSL;
     
+    bool isComfirmed;
+    
     /*
      * @response  data response to client
      * @length size of data
@@ -100,6 +105,8 @@ private:
     std::string filterOutBlanks(std::string inString);
     
     static void getAllParametersAfter(std::vector<std::string> parameterVector, unsigned int currentParameter, std::string& theRest);
+    
+    
 
 };
 
