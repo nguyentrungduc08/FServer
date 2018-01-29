@@ -10,6 +10,7 @@ fssl::fssl(){
     OpenSSL_add_all_algorithms();
     SSL_library_init();
     SSL_load_error_strings();
+    this->ctx = NULL;
     this->verify_client = true;
 }
 
@@ -24,12 +25,11 @@ void fssl::create_context(){
             ERR_print_errors_fp(stderr);
             abort();
 	}
-
 }
 
 void fssl::configure_context(std::string cerfile, std::string keyfile){
     
-    printf("@begin load certificates \n");
+    printf("@log ssl: begin load certificates \n");
     
     if (SSL_CTX_load_verify_locations(this->ctx, cerfile.c_str(), keyfile.c_str()) != 1)
         ERR_print_errors_fp(stderr);
@@ -39,26 +39,26 @@ void fssl::configure_context(std::string cerfile, std::string keyfile){
     
     if (SSL_CTX_use_certificate_file(this->ctx, cerfile.c_str(), SSL_FILETYPE_PEM) <= 0 ){
         ERR_print_errors_fp(stderr);
-        printf("@SSL_CTX_use_certificate_file \n");
+        printf("@log ssl: SSL_CTX_use_certificate_file \n");
         abort();
     }
     
-    if (SSL_CTX_use_PrivateKey_file(this->ctx, keyfile.c_str(), SSL_FILETYPE_PEM) <=0){
+    if (SSL_CTX_use_PrivateKey_file(this->ctx, keyfile.c_str(), SSL_FILETYPE_PEM) <= 0){
         ERR_print_errors_fp(stderr);
-        printf("@SSL_CTX_use_PrivateKey_file \n");
+        printf("@log ssl: SSL_CTX_use_PrivateKey_file \n");
         abort();
     }
     
-    if ( !SSL_CTX_check_private_key(ctx) ){
+    if ( !SSL_CTX_check_private_key(this->ctx) ){
         fprintf(stderr, "Private key does not match the public certificate\n");
-        printf("@SSL_CTX_check_private_key \n");
+        printf("@log ssl: SSL_CTX_check_private_key \n");
         abort();
     }
     
-    printf("LoadCertificates Compleate Successfully.....\n");
+    printf("@log ssl: LoadCertificates Compleate Successfully.....\n");
 }
 
-SSL_CTX * fssl::get_ctx(){
+SSL_CTX* fssl::get_ctx(){
     return this->ctx;
 }
 

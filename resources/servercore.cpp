@@ -9,15 +9,15 @@
 
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) {
     if (USE_SSL){
-        std::cout << "begin load certificate" << std::endl;
+        std::cout << "@log servercore: begin load certificate" << std::endl;
         this->sslComm = new fssl();  //create and load some lib
         this->sslComm->create_context(); //
         this->sslComm->configure_context("CA/server.crt", "CA/server.key.pem");
-        std::cout << "load certificate finished" << std::endl;
+        std::cout << "@log servercore: load certificate finished" << std::endl;
     }
     
     if ( chdir( dir.c_str() ) ) //change working directory
-        std::cerr << "Directory could not be changed to '" << dir << "'!" << std::endl;
+        std::cerr << "@log servercore: Directory could not be changed to '" << dir << "'!" << std::endl;
    
     this->initSockets(port); // create socket to listening and set socket attribute
     this->start();
@@ -27,8 +27,8 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
  * Free up used memory by cleaning up all the object variables;
  */ 
 servercore::~servercore() {
-    std::cout << "Server shutdown" << std::endl;
-    close(this->s);
+    std::cout << "@log servercore: Server shutdown" << std::endl;
+    close(this->s); 
     this->freeAllConnections(); // Deletes all connection objects and frees their memory
     delete sslComm;
 }
@@ -44,7 +44,7 @@ void servercore::buildSelectList() {
     while( iter != this->connections.end() ) {
         // This connection was closed, flag is set -> remove its corresponding object and free the memory
         if ( (*iter)->getCloseRequestStatus() == true ) { 
-            std::cout << "Connection with Id " << (*iter)->getConnectionId() << " closed! " << std::endl;
+            std::cout << "@log servercore: Connection with Id " << (*iter)->getConnectionId() << " closed! " << std::endl;
             delete (*iter); // Clean up
             this->connections.erase(iter); // Delete it from our vector
             if ( this->connections.empty() || (iter == this->connections.end()) )
@@ -81,7 +81,7 @@ int servercore::handleNewConnection() {
     fd = accept(this->s, (struct sockaddr*) &cli, &cli_size);
     
     if (fd < 0) {
-        std::cerr << "Error while accepting client" << std::endl;
+        std::cerr << "@log servercore: Error while accepting client" << std::endl;
         return (EXIT_FAILURE);
     }
 
@@ -90,7 +90,7 @@ int servercore::handleNewConnection() {
     
     // Something (?) went wrong, new connection could not be handled
     if (fd == -1) {
-        std::cerr << "Something went wrong, new connection could not be handled (Maybe server too busy, too many connections?)" << std::endl;
+        std::cerr << "@log servercore: Something went wrong, new connection could not be handled (Maybe server too busy, too many connections?)" << std::endl;
         try {
             close(fd);
         } catch (std::exception e) {
@@ -100,7 +100,7 @@ int servercore::handleNewConnection() {
     }
     
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuseAllowed, sizeof(reuseAllowed)) < 0) { //  enable reuse of socket, even when it is still occupied
-        std::cerr << "setsockopt() failed" << std::endl;
+        std::cerr << "@log servercore: setsockopt() failed" << std::endl;
         close (fd);
         return EXIT_FAILURE;
     }
@@ -118,11 +118,11 @@ int servercore::handleNewConnection() {
         hostId = (std::string)ipstr;
     }
 
-    printf("Connection accepted: FD=%d - Slot=%d - Id=%d \n", fd, (this->connections.size()+1), ++(this->connId));
+    printf("@log servercore: Connection accepted: FD=%d - Slot=%d - Id=%d \n", fd, (this->connections.size()+1), ++(this->connId));
     // The new connection (object)
     serverconnection* conn;
     if (USE_SSL)
-        conn = new serverconnection(fd, this->sslComm ,this->connId, this->dir, hostId, true, this->commandOffset); // The connection vector
+        conn = new serverconnection(fd, this->sslComm ,this->connId, this->dir, hostId, true, this->commandOffset); 
     else 
         conn = new serverconnection(fd, this->sslComm, this->connId, this->dir, hostId, false, this->commandOffset); 
             
@@ -132,7 +132,7 @@ int servercore::handleNewConnection() {
         this->connections.push_back(conn);
     } else{
         // Authen fail
-        printf("Connection dropped: FD=%d - Slot=%d - Id=%d (authentication failure)\n", fd, (this->connections.size()+1), this->connId);
+        printf("@log servercore: Connection dropped: FD=%d - Slot=%d - Id=%d (authentication failure)\n", fd, (this->connections.size()+1), this->connId);
         delete conn;
         return (EXIT_FAILURE);
     } 
@@ -161,7 +161,7 @@ int servercore::start() {
     int readworking_set; // Number of sockets ready for reading
     // Wait for connections, main server loop
     while (!this->shutdown) {
-        std::cout << "waiting connection form client....." << std::endl;
+        std::cout << "@log servercore: waiting connection form client....." << std::endl;
 
         this->buildSelectList(); // Clear out data handled in the previous iteration, clear closed sockets
 
@@ -172,7 +172,7 @@ int servercore::start() {
         readworking_set = select(this->highSock+1, &(this->working_set), NULL , NULL , &timeout);
 
         if (readworking_set < 0) {
-            std::cerr << "Error calling select" << std::endl;
+            std::cerr << "@log servercore: Error calling select" << std::endl;
             return (EXIT_FAILURE);
         }
 
@@ -185,12 +185,12 @@ void servercore::setNonBlocking(int &sock) {
     this->sflags = fcntl(sock, F_GETFL); // Get socket flags
     int opts = fcntl(sock,F_GETFL, 0);
     if (opts < 0) {
-        std::cerr << "Error getting socket flags" << std::endl;
+        std::cerr << "@log servercore: Error getting socket flags" << std::endl;
         return;
     }
     opts = (opts | O_NONBLOCK);
     if (fcntl(sock,F_SETFL,opts) < 0) {
-        std::cerr << "Error setting socket to non-blocking" << std::endl;
+        std::cerr << "@log servercore: Error setting socket to non-blocking" << std::endl;
         return;
     }
 }
@@ -207,26 +207,26 @@ void servercore::initSockets(int port) {
     this->s = socket(PF_INET, SOCK_STREAM, 0); 
     //craete socket fail
     if (this->s == -1) {
-        std::cerr << "socket() failed" << std::endl;
+        std::cerr << "@log servercore: socket() failed" << std::endl;
         return;
     }
     else if (setsockopt(this->s, SOL_SOCKET, SO_REUSEADDR, &reuseAllowed, sizeof(reuseAllowed)) < 0) { //  enable reuse of socket, even when it is still occupied
-        std::cerr << "setsockopt() failed" << std::endl;
+        std::cerr << "@log servercore: setsockopt() failed" << std::endl;
         close (this->s);
         return;
     }
     
     this->setNonBlocking(this->s);
     if (bind(this->s, (struct sockaddr*) &addr, sizeof(addr)) == -1) {
-        std::cerr << ("bind() failed (do you have the apropriate rights? is the port unused?)") << std::endl;
+        std::cerr << ("@log servercore: bind() failed (do you have the apropriate rights? is the port unused?)") << std::endl;
         close (this->s);
         return;
     } // 2nd parameter (backlog): number of connections in query, can be also set SOMAXCONN
     else if (listen(this->s, this->maxConnectionsInQuery) == -1) {
-        std::cerr << ("listen () failed") << std::endl;
+        std::cerr << ("@log servercore: listen () failed") << std::endl;
         close (this->s);
         return;
     }
     this->highSock = this->s; // This is the first (and the main listening) socket
-    std::cout << "Server started and listening at port " << port << ", default server directory '" << this->dir << "'" << ((this->commandOffset == 3) ? ", for use with telnet" : "")  << std::endl;
+    std::cout << "@log servercore: Server started and listening at port " << port << ", default server directory '" << this->dir << "'" << ((this->commandOffset == 3) ? ", for use with telnet" : "")  << std::endl;
 }

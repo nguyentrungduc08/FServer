@@ -10,11 +10,12 @@
 
 // Destructor, clean up all the mess
 serverconnection::~serverconnection() {
-    std::cout << "Connection terminated to client (connection id " << this->connectionId << ")" << std::endl;
+    std::cout << "@log conn: Connection terminated to client (connection id " << this->connectionId << ")" << std::endl;
     delete this->fo;
     close(this->fd);
     this->directories.clear();
     this->files.clear();
+    SSL_free(this->ssl);
 }
 
 // Constructor
@@ -30,7 +31,7 @@ serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int
         SSL_set_fd(this->ssl, this->fd);
     } 
     
-    std::cout << "Connection to client '" << this->hostAddress << "' established" << std::endl;
+    std::cout << "@log conn: Connection to client '" << this->hostAddress << "' established" << std::endl;
 }
 
 // Check for matching (commands/strings) with compare method
@@ -235,13 +236,13 @@ std::vector<std::string> serverconnection::extractParameters(std::string command
     // First get the command by taking the string and walking from beginning to the first blank
     if ((pos = command.find(SEPARATOR, previouspos)) != std::string::npos) { // No empty string
         res.push_back(command.substr(int(previouspos),int(pos-previouspos))); // The command
-        std::cout << "Command: " << res.back();
+        std::cout << "@log conn: Command: " << res.back();
     }
     if (command.length() > (pos+1)) {
         //For telnet testing commandOffset = 3 because of the enter control sequence at the end of the telnet command (otherwise = 1)
         res.push_back(command.substr(int(pos+1),int(command.length()-(pos+(this->commandOffset))))); // The parameter (if existent)
 //        res.push_back(command.substr(int(pos+1),int(command.length()-(pos+3)))); // The parameter (if existent)
-        std::cout << " - Parameter: '" << res.back() << "'" << std::endl;
+        std::cout << "@log conn: - Parameter: '" << res.back() << "'" << std::endl;
     }
     return res;
 }
@@ -254,7 +255,7 @@ bool serverconnection::authConnection(){
    
     if (isSSL){
         if ( SSL_accept(this->ssl) != 1 ) {     /* do SSL-protocol accept */
-            std::cerr << "server cannot accpet ssl connection!!!" << std::endl;
+            std::cerr << "@log conn: server cannot accpet ssl connection!!!" << std::endl;
             //return false;
         }
         else    
@@ -269,11 +270,11 @@ bool serverconnection::authConnection(){
         std::string md5CodeOfClient= std::string(buffer,bytes);
 
         std::string md5server = md5("test");
-        std::cout << "@debug md5CodeOfClient " << md5CodeOfClient <<" md5server " << md5server << std::endl;
+        std::cout << "@log conn: debug md5CodeOfClient " << md5CodeOfClient <<" md5server " << md5server << std::endl;
 
         if (md5server == md5CodeOfClient){
             status = "200 ok";
-            std::cout <<"@debug status " << status << std::endl;
+            std::cout <<"@log conn: debug status " << status << std::endl;
             this->sendToClient(status);
             return true;
         } else{
@@ -301,11 +302,11 @@ void serverconnection::respondToQuery() {
     // In non-blocking mode, bytes <= 0 does not mean a connection closure!
     if (bytes > 0) {
         std::string clientCommand = std::string(buffer, bytes);
-        std::cout << "++client command: " << std::endl;
+        std::cout << "@log conn: ++client command: " << std::endl;
         if (this->uploadCommand) { // (Previous) upload command
-            std::cout << "Write block" << std::endl;
+            std::cout << "@log conn: Write block" << std::endl;
             /// Previous (upload) command continuation, store incoming data to the file
-            std::cout << "Part " << ++(this->receivedPart) << ": ";
+            std::cout << "@log conn: Part " << ++(this->receivedPart) << ": ";
             this->fo->writeFileBlock(clientCommand);
         } else {
             // If not upload command issued, parse the incoming data for command and parameters
