@@ -28,7 +28,7 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
  */ 
 servercore::~servercore() {
     std::cout << "@log servercore: Server shutdown" << std::endl;
-    close(this->s); 
+    close(this->Mainsocket); 
     this->freeAllConnections(); // Deletes all connection objects and frees their memory
     delete sslComm;
 }
@@ -37,7 +37,7 @@ servercore::~servercore() {
 // @TODO: Crash if data is incoming over a closed socket connection???
 void servercore::buildSelectList() {
     FD_ZERO(&(this->working_set));
-    FD_SET(this->s, &(this->working_set));
+    FD_SET(this->Mainsocket, &(this->working_set));
     
     std::vector<serverconnection*>::iterator iter = this->connections.begin();
     
@@ -78,7 +78,7 @@ int servercore::handleNewConnection() {
     
     this->cli_size = sizeof(this->cli);
     
-    fd = accept(this->s, (struct sockaddr*) &cli, &cli_size);
+    fd = accept(this->Mainsocket, (struct sockaddr*) &this->cli, &this->cli_size);
     
     if (fd < 0) {
         std::cerr << "@log servercore: Error while accepting client" << std::endl;
@@ -119,13 +119,20 @@ int servercore::handleNewConnection() {
     }
 
     printf("@log servercore: Connection accepted: FD=%d - Slot=%d - Id=%d \n", fd, (this->connections.size()+1), ++(this->connId));
-    // The new connection (object)
+    
+    //update highSock 
+    this->highSock = (fd > this->highSock) ? fd:this->highSock;
+    
+    // The new connection (object
     serverconnection* conn;
-    if (USE_SSL)
+    if (USE_SSL){
         conn = new serverconnection(fd, this->sslComm ,this->connId, this->dir, hostId, true, this->commandOffset); 
-    else 
+        std::cout << "@log servercore: use SSL model " << std::endl;
+    }
+    else{ 
         conn = new serverconnection(fd, this->sslComm, this->connId, this->dir, hostId, false, this->commandOffset); 
-            
+        std::cout << "@log servercore: use non-SSL model " << std::endl;
+    }    
     if ( conn->authConnection()){
         // Authen success  
         // Add it to our list for better management / convenience
@@ -143,7 +150,7 @@ int servercore::handleNewConnection() {
 void servercore::readSockets() {
     // OK, now working_set will be set with whatever socket(s) are ready for reading. First check our "listening" socket, and then check the sockets in connectlist
     // If a client is trying to connect() to our listening socket, select() will consider that as the socket being 'readable' and thus, if the listening socket is part of the fd_set, accept a new connection
-    if (FD_ISSET(this->s,&(this->working_set))) {
+    if (FD_ISSET(this->Mainsocket,&(this->working_set))) {
 //        this->handleNewConnection();
         if (this->handleNewConnection()) return; // Always check for errors
     }
@@ -155,7 +162,6 @@ void servercore::readSockets() {
         }
     }
 }
-
 
 int servercore::start() { 
     int readworking_set; // Number of sockets ready for reading
@@ -204,29 +210,29 @@ void servercore::initSockets(int port) {
     this->addr.sin_addr.s_addr = INADDR_ANY; // Server can be connected to from any host
     // PF_INET: domain, Internet; SOCK_STREAM: datastream, TCP / SOCK_DGRAM = UDP => WARNING, this can change the byte order!; for 3rd parameter==0: TCP preferred
     
-    this->s = socket(PF_INET, SOCK_STREAM, 0); 
+    this->Mainsocket = socket(PF_INET, SOCK_STREAM, 0); 
     //craete socket fail
-    if (this->s == -1) {
+    if (this->Mainsocket == -1) {
         std::cerr << "@log servercore: socket() failed" << std::endl;
         return;
     }
-    else if (setsockopt(this->s, SOL_SOCKET, SO_REUSEADDR, &reuseAllowed, sizeof(reuseAllowed)) < 0) { //  enable reuse of socket, even when it is still occupied
+    else if (setsockopt(this->Mainsocket, SOL_SOCKET, SO_REUSEADDR, &reuseAllowed, sizeof(reuseAllowed)) < 0) { //  enable reuse of socket, even when it is still occupied
         std::cerr << "@log servercore: setsockopt() failed" << std::endl;
-        close (this->s);
+        close (this->Mainsocket);
         return;
     }
     
-    this->setNonBlocking(this->s);
-    if (bind(this->s, (struct sockaddr*) &addr, sizeof(addr)) == -1) {
+    this->setNonBlocking(this->Mainsocket);
+    if (bind(this->Mainsocket, (struct sockaddr*) &addr, sizeof(addr)) == -1) {
         std::cerr << ("@log servercore: bind() failed (do you have the apropriate rights? is the port unused?)") << std::endl;
-        close (this->s);
+        close (this->Mainsocket);
         return;
     } // 2nd parameter (backlog): number of connections in query, can be also set SOMAXCONN
-    else if (listen(this->s, this->maxConnectionsInQuery) == -1) {
+    else if (listen(this->Mainsocket, this->maxConnectionsInQuery) == -1) {
         std::cerr << ("@log servercore: listen () failed") << std::endl;
-        close (this->s);
+        close (this->Mainsocket);
         return;
     }
-    this->highSock = this->s; // This is the first (and the main listening) socket
+    this->highSock = this->Mainsocket; // This is the first (and the main listening) socket
     std::cout << "@log servercore: Server started and listening at port " << port << ", default server directory '" << this->dir << "'" << ((this->commandOffset == 3) ? ", for use with telnet" : "")  << std::endl;
 }

@@ -85,7 +85,7 @@ private:
     void freeAllConnections();
     
     unsigned int maxConnectionsInQuery; // number of connections in query
-    int s; // The main listening socket file descriptor
+    int Mainsocket; // The main listening socket file descriptor
     int sflags; // Socket flags
     std::vector<serverconnection*> connections;// Manage the connected sockets / connections in a list with an iterator
     int highSock; // Highest #'d file descriptor, needed for select()
