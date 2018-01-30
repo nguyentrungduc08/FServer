@@ -318,7 +318,7 @@ void serverconnection::TLS_handshark(){
                     
         } while (status == 1 && !SSL_is_init_finished(this->ssl));
         std::cout << "#log conn: SSL handshark successed" << std::endl;
-        SSL_set_accept_state(this->ssl);
+        //SSL_set_accept_state(this->ssl);
 }
 
 bool serverconnection::authConnection(){
