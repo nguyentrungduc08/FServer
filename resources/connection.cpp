@@ -390,7 +390,6 @@ bool serverconnection::authConnection(){
             return false;
         }
     }
-    
     return false;
 } 
 
@@ -421,18 +420,22 @@ void serverconnection::respondToQuery() {
             std::cout << "#log conn: ++client command: " << clientCommand << std::endl;
             std::string res = this->commandParser(clientCommand);
             
-            if (!this->downloadCommand) {
-                this->sendToClient(res); // Send response to client if no binary file
-                this->downloadCommand = false;
+            if (!this->uploadCommand){
+                this->closureRequested = true;
             }
+            
+            //if (!this->downloadCommand) {
+            //    this->sendToClient(res); // Send response to client if no binary file
+            //    this->downloadCommand = false;
+            //}
         }
     } else { // no bytes incoming over this connection
         if (this->uploadCommand) { // If upload command was issued previously and no data is left to receive, close the file and connection
-            this->fo->closeWriteFile();
-            this->uploadCommand = false;
-            this->downloadCommand = false;
+            //this->fo->closeWriteFile();
+            //this->uploadCommand = false;
+            //this->downloadCommand = false;
             //this->closureRequested = true;
-            this->receivedPart = 0;
+            //this->receivedPart = 0;
         }
     }
 }
