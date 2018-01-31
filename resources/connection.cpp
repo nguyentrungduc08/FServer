@@ -139,7 +139,7 @@ std::string serverconnection::commandParser(std::string command) {
         } else
         if (this->commandEquals(commandAndParameter.at(0), "upload")) {
             this->uploadCommand = true; // upload hit!
-            std::cout << "Preparing download of file '" << this->parameter << "'" << std::endl;
+            std::cout << "Preparing upload of file '" << this->parameter << "'" << std::endl;
             // all bytes (=parameters[2]) after the upload <file> command belong to the file
             //res = this->fo->beginWriteFile(this->parameter);
             res = (this->fo->beginWriteFile(this->parameter) ? "Preparing for upload failed" : "Preparing for upload successful");
@@ -410,7 +410,7 @@ void serverconnection::respondToQuery() {
     // In non-blocking mode, bytes <= 0 does not mean a connection closure!
     if (bytes > 0) {  
         std::string clientCommand = std::string(buffer, bytes);
-        std::cout << "#log conn: ++client command: " << std::endl;
+        //std::cout << "#log conn: ++client command: " << std::endl;
         if (this->uploadCommand) { // (Previous) upload command
             std::cout << "#log conn: Write block" << std::endl;
             // Previous (upload) command continuation, store incoming data to the file
@@ -418,7 +418,7 @@ void serverconnection::respondToQuery() {
             this->fo->writeFileBlock(clientCommand);
         } else {
             // If not upload command issued, parse the incoming data for command and parameters
-            
+            std::cout << "#log conn: ++client command: " << clientCommand << std::endl;
             std::string res = this->commandParser(clientCommand);
             
             if (!this->downloadCommand) {
