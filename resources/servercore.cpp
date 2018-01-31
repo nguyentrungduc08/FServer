@@ -26,11 +26,12 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
 /* 
  * Free up used memory by cleaning up all the object variables;
  */ 
+
 servercore::~servercore() {
     std::cout << "@log servercore: Server shutdown" << std::endl;
     close(this->Mainsocket); 
     this->freeAllConnections(); // Deletes all connection objects and frees their memory
-    delete sslComm;
+    delete this->sslComm;
 }
 
 // Builds the list of sockets to keep track on and removes the closed ones
@@ -156,24 +157,27 @@ int servercore::handleNewConnection() {
 // Something is happening (=data ready to read) at a socket, either accept a new connection or handle the incoming data over an already opened socket
 void servercore::readSockets() {
     // OK, now working_set will be set with whatever socket(s) are ready for reading. First check our "listening" socket, and then check the sockets in connectlist
-    // If a client is trying to connect() to our listening socket, select() will consider that as the socket being 'readable' and thus, if the listening socket is part of the fd_set, accept a new connection
+    // If a client is trying to connect() to our listening socket, select() will consider that as the socket being 'readable' and thus, 
+    // if the listening socket is part of the fd_set, accept a new connection
     if (FD_ISSET(this->Mainsocket,&(this->working_set))) {
 //        this->handleNewConnection();
         std::cout << "@log servercore: new connection " << std::endl;
         if (this->handleNewConnection()) return; // Always check for errors
-        
     }
     // Now check connectlist for available data
     // Run through our sockets and check to see if anything happened with them
     for (unsigned int listnum = 0; listnum < this->connections.size(); ++listnum) {
         if (FD_ISSET( this->connections.at(listnum)->getFD(), &(this->working_set) ) ) {
             
-            if (this->connections.at(listnum)->get_Confirmed_state() == false ){
-                if (this->connections.at(listnum)->authConnection()){
+            //check auth connection
+            if (!this->connections.at(listnum)->get_Confirmed_state()){
+                if ( this->connections.at(listnum)->authConnection() ){
+                    // auth success. confirm connection
                     this->connections.at(listnum)->set_confirmed_state();
                 } else {
+                    // auth fail. drop connection 
                     delete connections.at(listnum);
-                    this->connections.erase(this->connections.begin()+listnum);
+                    this->connections.erase( this->connections.begin() + listnum );
                 }
             } else {
                 this->connections.at(listnum)->respondToQuery(); // Now that data is available, deal with it!
@@ -190,7 +194,6 @@ int servercore::start() {
         std::cout << "@log servercore: waiting connection form client....." << std::endl;
 
         this->buildSelectList(); // Clear out data handled in the previous iteration, clear closed sockets
-
         // Multiplexes between the existing connections regarding to data waiting to be processed on that connection (that's actually what select does)
         struct timeval timeout;
         timeout.tv_sec = 3; // Timeout = 3 sec
@@ -243,6 +246,7 @@ void servercore::initSockets(int port) {
     }
     
     this->setNonBlocking(this->Mainsocket);
+    
     if (bind(this->Mainsocket, (struct sockaddr*) &addr, sizeof(addr)) == -1) {
         std::cerr << ("@log servercore: bind() failed (do you have the apropriate rights? is the port unused?)") << std::endl;
         close (this->Mainsocket);

@@ -402,7 +402,7 @@ void serverconnection::respondToQuery() {
     if (!isSSL){
         bytes = recv(this->fd, buffer, sizeof(buffer), 0);
         std::cout << "#log conn: read query TCP " << std::endl;
-    } else{
+    } else {
         bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
         std::cout << "#log conn: read query SSL " << std::endl;
     }
