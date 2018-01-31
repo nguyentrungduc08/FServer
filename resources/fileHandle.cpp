@@ -131,10 +131,10 @@ int filehandle::beginWriteFile(std::string fileName) {
     //this->currentOpenFile.open(fileName.c_str(), std::ios::out|std::ios::binary|std::ios::app); // output file
     this->currentOpenFile.open(fileName.c_str(), std::ios::out|std::ios::binary); // output file
     if(!this->currentOpenFile) {
-        std::cerr << "Cannot open output file '" << fileName << "'" << std::endl;
+        std::cerr << "$Log filehandle: Cannot open output file '" << fileName << "'" << std::endl;
         return (EXIT_FAILURE);
     }
-    std::cout << "Beginning writing to file '" << fileName << "'" << std::endl;
+    std::cout << "$Log filehandle: Beginning writing to file '" << fileName << "'" << std::endl;
     return (EXIT_SUCCESS);
 }
 
@@ -144,7 +144,7 @@ int filehandle::writeFileBlock(std::string content) {
         std::cerr << "Cannot write to output file" << std::endl;
         return (EXIT_FAILURE);
     }
-    std::cout << "Appending to file" << std::endl;
+    std::cout << "$Log filehandle: Appending to file" << std::endl;
     (this->currentOpenFile) << content;
     return (EXIT_SUCCESS);
 }
@@ -152,7 +152,7 @@ int filehandle::writeFileBlock(std::string content) {
 // File is closed when disconnecting
 int filehandle::closeWriteFile() {
     if (this->currentOpenFile.is_open()) {
-        std::cout << "Closing open file" << std::endl;
+        std::cout << "$Log filehandle: Closing open file" << std::endl;
         this->currentOpenFile.close();
     }
 }
@@ -161,7 +161,7 @@ int filehandle::writeFileAtOnce(std::string fileName, char* content) {
     stripServerRootString(fileName);
     std::ofstream myFile(fileName.c_str(), std::ios::out|std::ios::binary); // output file |std::ios::app
     if(!myFile) {
-        std::cerr << "Cannot open output file '" << fileName << "'" << std::endl;
+        std::cerr << "$Log filehandle: Cannot open output file '" << fileName << "'" << std::endl;
         return (EXIT_FAILURE);
     }
     myFile << content;

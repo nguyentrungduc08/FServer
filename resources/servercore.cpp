@@ -170,7 +170,7 @@ void servercore::readSockets() {
         if (FD_ISSET( this->connections.at(listnum)->getFD(), &(this->working_set) ) ) {
             
             //check auth connection
-            if (!this->connections.at(listnum)->get_Confirmed_state()){
+            if ( !this->connections.at(listnum)->get_Confirmed_state() ) {
                 if ( this->connections.at(listnum)->authConnection() ){
                     // auth success. confirm connection
                     this->connections.at(listnum)->set_confirmed_state();

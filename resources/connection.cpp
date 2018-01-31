@@ -58,10 +58,10 @@ std::string serverconnection::commandParser(std::string command) {
     struct stat Status;
     // Commands can have either 0 or 1 parameters, e.g. 'browse' or 'browse ./'
     std::vector<std::string> commandAndParameter = this->extractParameters(command);
-//    for (int i = 0; i < parameters.size(); i++) std::cout << "P " << i << ":" << parameters.at(i) << ":" << std::endl;
-    std::cout << "Connection " << this->connectionId << ": ";
+    // for (int i = 0; i < parameters.size(); i++) std::cout << "P " << i << ":" << parameters.at(i) << ":" << std::endl;
+    std::cout << "#log conn: Connection " << this->connectionId << ": ";
 
-    /// #TODO: Test if prone to DOS-attacks (if loads of garbage is submitted)???
+    // #TODO: Test if prone to DOS-attacks (if loads of garbage is submitted)???
     // If command with no argument was issued
     if (commandAndParameter.size() == 1) {
         if (this->commandEquals(commandAndParameter.at(0), "list")) {
@@ -142,7 +142,7 @@ std::string serverconnection::commandParser(std::string command) {
             std::cout << "Preparing download of file '" << this->parameter << "'" << std::endl;
             // all bytes (=parameters[2]) after the upload <file> command belong to the file
             //res = this->fo->beginWriteFile(this->parameter);
-            res = (this->fo->beginWriteFile(this->parameter) ? "Upload failed" : "Upload successful");
+            res = (this->fo->beginWriteFile(this->parameter) ? "Preparing for upload failed" : "Preparing for upload successful");
         } else
         if (this->commandEquals(commandAndParameter.at(0), "cd")) { // Changes the current working directory on the server
             std::cout << "Change of working dir to '" << this->parameter << "' requested" << std::endl;
@@ -408,20 +408,22 @@ void serverconnection::respondToQuery() {
     }
 
     // In non-blocking mode, bytes <= 0 does not mean a connection closure!
-    if (bytes > 0) {
+    if (bytes > 0) {  
         std::string clientCommand = std::string(buffer, bytes);
         std::cout << "#log conn: ++client command: " << std::endl;
         if (this->uploadCommand) { // (Previous) upload command
             std::cout << "#log conn: Write block" << std::endl;
-            /// Previous (upload) command continuation, store incoming data to the file
-            std::cout << "#log conn: Part " << ++(this->receivedPart) << ": ";
+            // Previous (upload) command continuation, store incoming data to the file
+            std::cout << "#log conn: Part" << ++(this->receivedPart) << ": ";
             this->fo->writeFileBlock(clientCommand);
         } else {
             // If not upload command issued, parse the incoming data for command and parameters
+            
             std::string res = this->commandParser(clientCommand);
+            
             if (!this->downloadCommand) {
                 this->sendToClient(res); // Send response to client if no binary file
-              this->downloadCommand = false;
+                this->downloadCommand = false;
             }
         }
     } else { // no bytes incoming over this connection
