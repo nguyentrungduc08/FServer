@@ -431,7 +431,7 @@ void serverconnection::respondToQuery() {
             this->fo->closeWriteFile();
             this->uploadCommand = false;
             this->downloadCommand = false;
-            this->closureRequested = true;
+            //this->closureRequested = true;
             this->receivedPart = 0;
         }
     }
