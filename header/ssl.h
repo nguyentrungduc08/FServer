@@ -14,17 +14,7 @@
 #ifndef SSL_H
 #define SSL_H
 
-#include <errno.h>
-#include <unistd.h>
-#include <malloc.h>
-#include <string>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <resolv.h>
-#include "openssl/ssl.h"
-#include "openssl/err.h"
+#include "fileserver.h"
 
 class  fssl{
 public:

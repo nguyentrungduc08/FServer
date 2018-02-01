@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/resources/Packet.o \
 	${OBJECTDIR}/resources/connection.o \
 	${OBJECTDIR}/resources/fileHandle.o \
 	${OBJECTDIR}/resources/md5.o \
@@ -71,6 +72,11 @@ ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+
+${OBJECTDIR}/resources/Packet.o: resources/Packet.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/Packet.o resources/Packet.cpp
 
 ${OBJECTDIR}/resources/connection.o: resources/connection.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources

@@ -16,21 +16,6 @@
 #include "../header/fileserver.h"
 #include "../header/connection.h"
 #include "../header/ssl.h"
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/fcntl.h>
-#include <sys/param.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <resolv.h>
-#include "openssl/ssl.h"
-#include "openssl/err.h"
 
 class servercore {
 public:
@@ -56,7 +41,7 @@ private:
      * Initialization of sockets / socket list with options and error checking
      * @port create socket to listening 
      */ 
-    void initSockets(int port);
+    int initSockets(int port);
     
     /* 
      * Sets the given socket to non-blocking mode
@@ -86,7 +71,7 @@ private:
     
     unsigned int maxConnectionsInQuery; // number of connections in query
     int Mainsocket; // The main listening socket file descriptor
-    int sflags; // Socket flags
+    int sflags;
     std::vector<serverconnection*> connections;// Manage the connected sockets / connections in a list with an iterator
     int highSock; // Highest #'d file descriptor, needed for select()
     fd_set working_set; // set of socket file descriptors we want to wake up for, using select()
@@ -99,7 +84,7 @@ private:
     sockaddr_in cli;
     socklen_t cli_size;
     unsigned short commandOffset;
-    fssl * sslComm;
+    fssl * sslConn;
 };
 
 #endif /* SERVERCORE_H */

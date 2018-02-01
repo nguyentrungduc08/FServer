@@ -15,23 +15,7 @@
 #define FILEHANDLE_H
 
 #include "../header/md5.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstdlib>
-#include <vector>
-#include <sstream>
-#include <list>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <dirent.h>
-#include <locale.h>
-#include <pwd.h>
-#include <grp.h>
-#include <stdint.h>
-#include <unistd.h>
-
+#include "../header/fileserver.h"
 
 // Buffer size
 #define BUFFER_SIZE 4096

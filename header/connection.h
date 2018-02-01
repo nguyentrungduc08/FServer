@@ -23,16 +23,7 @@
 #include "../header/fileserver.h"
 #include "../header/fileHandle.h"
 #include "../header/ssl.h"
-#include <vector>
-#include <cstdlib>
-#include <string>
-#include <iostream>
-#include <sys/fcntl.h>
-#include <sys/unistd.h>
-#include <algorithm> // for transform command
-#include <resolv.h>
-#include "openssl/ssl.h"
-#include "openssl/err.h"
+
 // Separator for commands
 #define SEPARATOR " "
 

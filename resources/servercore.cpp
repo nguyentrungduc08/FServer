@@ -10,9 +10,9 @@
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) {
     if (USE_SSL){
         std::cout << "@log servercore: begin load certificate" << std::endl;
-        this->sslComm = new fssl();  //create and load some lib
-        this->sslComm->create_context(); //
-        this->sslComm->configure_context("CA/server.crt", "CA/server.key.pem");
+        this->sslConn = new fssl();  //create and load some lib
+        this->sslConn->create_context(); //
+        this->sslConn->configure_context("CA/server.crt", "CA/server.key.pem");
         std::cout << "@log servercore: load certificate finished" << std::endl;
     }
     
@@ -31,7 +31,7 @@ servercore::~servercore() {
     std::cout << "@log servercore: Server shutdown" << std::endl;
     close(this->Mainsocket); 
     this->freeAllConnections(); // Deletes all connection objects and frees their memory
-    delete this->sslComm;
+    delete this->sslConn;
 }
 
 // Builds the list of sockets to keep track on and removes the closed ones
@@ -128,29 +128,18 @@ int servercore::handleNewConnection() {
     serverconnection* conn;
     
     if (USE_SSL){
-        conn = new serverconnection(fd, this->sslComm ,this->connId, this->dir, hostId, true, this->commandOffset); 
+        conn = new serverconnection(fd, this->sslConn ,this->connId, this->dir, hostId, true, this->commandOffset); 
         std::cout << "@log servercore: use SSL model " << std::endl;
     }
     else{ 
-        conn = new serverconnection(fd, this->sslComm, this->connId, this->dir, hostId, false, this->commandOffset); 
+        conn = new serverconnection(fd, this->sslConn, this->connId, this->dir, hostId, false, this->commandOffset); 
         std::cout << "@log servercore: use non-SSL model " << std::endl;
     }    
     
     conn->TLS_handshark();
     
     this->connections.push_back(conn);
-    
-    //sleep(3);
-//    if ( conn->authConnection()){
-//        // Authen success  
-//        // Add it to our list for better management / convenience
-//        this->connections.push_back(conn);
-//    } else{
-//        // Authen fail
-//        printf("@log servercore: Connection dropped: FD=%d - Slot=%d - Id=%d (authentication failure)\n", fd, (this->connections.size()+1), this->connId);
-//        delete conn;
-//        return (EXIT_FAILURE);
-//    } 
+
     return (EXIT_SUCCESS);
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
@@ -224,9 +213,9 @@ void servercore::setNonBlocking(int &sock) {
     }
 }
 
-void servercore::initSockets(int port) {
+int servercore::initSockets(int port) {
     
-    int reuseAllowed = 1; //set flag to set socket reusable 
+    int reuseAllowed = 1; 
     this->maxConnectionsInQuery = 500; //set maximum connect to server simultaneously
     this->addr.sin_family = AF_INET; // PF_INET;
     this->addr.sin_port = htons(port); 
@@ -234,15 +223,15 @@ void servercore::initSockets(int port) {
     // PF_INET: domain, Internet; SOCK_STREAM: datastream, TCP / SOCK_DGRAM = UDP => WARNING, this can change the byte order!; for 3rd parameter==0: TCP preferred
     
     this->Mainsocket = socket(PF_INET, SOCK_STREAM, 0); 
-    //craete socket fail
+
     if (this->Mainsocket == -1) {
         std::cerr << "@log servercore: socket() failed" << std::endl;
-        return;
+        return FALSE;
     }
     else if (setsockopt(this->Mainsocket, SOL_SOCKET, SO_REUSEADDR, &reuseAllowed, sizeof(reuseAllowed)) < 0) { //  enable reuse of socket, even when it is still occupied
         std::cerr << "@log servercore: setsockopt() failed" << std::endl;
         close (this->Mainsocket);
-        return;
+        return FALSE;
     }
     
     this->setNonBlocking(this->Mainsocket);
@@ -250,13 +239,15 @@ void servercore::initSockets(int port) {
     if (bind(this->Mainsocket, (struct sockaddr*) &addr, sizeof(addr)) == -1) {
         std::cerr << ("@log servercore: bind() failed (do you have the apropriate rights? is the port unused?)") << std::endl;
         close (this->Mainsocket);
-        return;
+        return FALSE;
     } // 2nd parameter (backlog): number of connections in query, can be also set SOMAXCONN
     else if (listen(this->Mainsocket, this->maxConnectionsInQuery) == -1) {
         std::cerr << ("@log servercore: listen () failed") << std::endl;
         close (this->Mainsocket);
-        return;
+        return FALSE;
     }
     this->highSock = this->Mainsocket; // This is the first (and the main listening) socket
     std::cout << "@log servercore: Server started and listening at port " << port << ", default server directory '" << this->dir << "'" << ((this->commandOffset == 3) ? ", for use with telnet" : "")  << std::endl;
+    
+    return TRUE;
 }
