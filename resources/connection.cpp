@@ -13,9 +13,9 @@ serverconnection::~serverconnection() {
     std::cout << "#log conn: Connection terminated to client (connection id " << this->connectionId << ")" << std::endl;
     delete this->fo;
     close(this->fd);
+    SSL_free(this->ssl);
     this->directories.clear();
     this->files.clear();
-    SSL_free(this->ssl);
 }
 
 // Constructor

@@ -14,13 +14,29 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-class Packet {
+#include "fileserver.h"
+
+class Packet
+{
 public:
     Packet();
-    Packet(const Packet& orig);
-    virtual ~Packet();
-private:
+    Packet(const PACKET & pk);
+    Packet(std::string s);
+    ~Packet();
 
+    bool appendData(int cmd);
+    bool appendData(std::string s);
+    std::string readHeader();
+    std::string readData();
+    PACKET getData();
+    
+    int getCMDHeader();
+    
+private:
+    PACKET data;
+
+    PACKET buildIntField(int cmd);
+    PACKET buildStringField(std::string sdata);
 };
 
 #endif /* PACKET_H */

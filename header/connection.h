@@ -22,6 +22,7 @@
 
 #include "../header/fileserver.h"
 #include "../header/fileHandle.h"
+#include "../header/Packet.h"
 #include "../header/ssl.h"
 
 // Separator for commands

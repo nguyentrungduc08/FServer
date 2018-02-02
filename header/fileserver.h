@@ -67,6 +67,16 @@
 #define CMD_SHARE_CONFIRM       14
 #define CMF_SHARE_FINISH        15
 
+#define PACKET std::vector<unsigned char>
+
+#define rep(i,n) for(int i = 0; i < (int) n; ++i)
+
+struct USER{
+    std::string username;
+    std::string password;
+};
+
+
 
 #endif /* FILESERVER_H */
 

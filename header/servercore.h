@@ -72,7 +72,9 @@ private:
     unsigned int maxConnectionsInQuery; // number of connections in query
     int Mainsocket; // The main listening socket file descriptor
     int sflags;
+    
     std::vector<serverconnection*> connections;// Manage the connected sockets / connections in a list with an iterator
+    
     int highSock; // Highest #'d file descriptor, needed for select()
     fd_set working_set; // set of socket file descriptors we want to wake up for, using select()
     std::string dir; //path of directory working 
