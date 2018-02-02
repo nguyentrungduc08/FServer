@@ -6,7 +6,7 @@
 
 /* 
  * File:   Packet.h
- * Author: hydra
+ * Author: nguyen trung duc
  *
  * Created on February 1, 2018, 5:31 PM
  */
@@ -21,16 +21,17 @@ class Packet
 public:
     Packet();
     Packet(const PACKET & pk);
-    Packet(std::string s);
+    Packet(const std::string & s);
+    
     ~Packet();
 
     bool appendData(int cmd);
     bool appendData(std::string s);
-    std::string readHeader();
     std::string readData();
     PACKET getData();
     
     int getCMDHeader();
+    
     
 private:
     PACKET data;
