@@ -72,6 +72,10 @@
 #define rep(i,n)                for(int i = 0; i < (int)n; ++i)
 #define Ford(i,a,b)             for(int i = (int)a; i >= (int)b; --i)
 #define For(i,a,b)              for(int i = (int)a; i <= (int)b; ++i)
+#define pb 						push_back
+#define X 						first
+#define Y						second
+
 
 struct USER{
     std::string username;

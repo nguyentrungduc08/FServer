@@ -1,5 +1,5 @@
 # FileServer
-* Available commands:
+### Available commands :
 - browse - lists all files and directories in the current server working directory
 - ls <dir> - lists all files and directories in the specified directory
 - download <file> - sends the binary data of the specified file over the connection the command was received
@@ -19,4 +19,4 @@
 - getgroup <file|dir> - returns the file or directory group
 - bye - terminates the connection the command is received on
 - quit - same as disconnect
-*
+

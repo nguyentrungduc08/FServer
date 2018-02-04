@@ -77,7 +77,7 @@ bool Packet::appendData(int cmd){
     pk.clear();
     pk = buildIntField(cmd);
 
-    this->data.insert(this->data.begin(), pk.begin(), pk.end());
+    std::copy(pk.begin(), pk.end(), std::back_inserter(this->data));
 
     return true;
 }
@@ -88,7 +88,7 @@ bool Packet::appendData(std::string s){
     pk.clear();
     pk = buildStringField(s);
 
-    this->data.insert(this->data.begin(), pk.begin(), pk.end());
+    std::copy(pk.begin(), pk.end(), std::back_inserter(this->data) );
     return true;
 }
 
@@ -96,7 +96,25 @@ bool Packet::appendData(std::string s){
 int Packet::getCMDHeader(){
     int cmd = 0;
     //cmd+= (this->data[0] << 24) + (this->data[1] << 16) + (this->data[2] << 8) + (this->data[3]);
-    rep(i,4)
+    for(int i = 0; i < 4; ++i)
         cmd+= ((int)this->data[i] << ( 24 - i * 8 ) );
+    
+    this->data.erase(this->data.begin(), this->data.begin() + 4);
     return cmd;
+}
+
+
+bool Packet::IsAvailableData()
+{
+    return (this->data.size() > 0) ? true : false;
+}
+
+std::string Packet::getContent(){
+    int len = this->getCMDHeader();
+    
+    std::string res (this->data.begin(), this->data.begin() + len);
+
+    this->data.erase(this->data.begin(), this->data.begin() + len);
+
+    return res;
 }

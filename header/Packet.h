@@ -27,11 +27,13 @@ public:
 
     bool appendData(int cmd);
     bool appendData(std::string s);
-    std::string readData();
+    bool IsAvailableData();
     PACKET getData();
     
+
     int getCMDHeader();
-    
+    std::string getContent();
+
     
 private:
     PACKET data;
