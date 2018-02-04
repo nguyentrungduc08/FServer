@@ -25,6 +25,7 @@ serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int
 {
 //    this->files = std::vector<std::string>();
     this->fo = new filehandle(this->dir); // File and directory browser
+    //this->isTL
     isComfirmed = false;
     if (iSSL){
         this->ssl = SSL_new(sslcon->get_ctx());

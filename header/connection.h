@@ -79,7 +79,7 @@ private:
     bool isSSL;
     
     bool isComfirmed;
-    
+    bool isTLSHandsharkfinish;
     /*
      * @response  data response to client
      * @length size of data
