@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/resources/Packet.o \
 	${OBJECTDIR}/resources/connection.o \
+	${OBJECTDIR}/resources/database.o \
 	${OBJECTDIR}/resources/fileHandle.o \
 	${OBJECTDIR}/resources/md5.o \
 	${OBJECTDIR}/resources/servercore.o \
@@ -58,7 +59,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L/usr/lib -lssl -lcrypto
+LDLIBSOPTIONS=-L/usr/lib -lssl -lcrypto -lmysqlclient
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -82,6 +83,11 @@ ${OBJECTDIR}/resources/connection.o: resources/connection.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection.o resources/connection.cpp
+
+${OBJECTDIR}/resources/database.o: resources/database.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/database.o resources/database.cpp
 
 ${OBJECTDIR}/resources/fileHandle.o: resources/fileHandle.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources

@@ -22,7 +22,16 @@ last_login DATE,
 status TINYINT NOT NULL DEFAULT 0
 );
 ```
-create table filesB
+
+insert data for USERS table
+```
+INSERT INTO `USERS` (`username`,`password`,`create_date`,`last_login`) VALUES ("user1", "user1", '2018-02-5','2018-02-5');
+INSERT INTO `USERS` (`username`,`password`,`create_date`,`last_login`) VALUES ("user2", "user2", '2018-02-5','2018-02-5');
+INSERT INTO `USERS` (`username`,`password`,`create_date`,`last_login`) VALUES ("user3", "user3", '2018-02-5','2018-02-5');
+INSERT INTO `USERS` (`username`,`password`,`create_date`,`last_login`) VALUES ("user4", "user4", '2018-02-5','2018-02-5');
+```
+
+create table filesB for backup file
 
 ```
 CREATE TABLE FILESB(
@@ -38,7 +47,7 @@ file_status TINYINT NOT NULL DEFAULT 0
 ```
 
 
-create table filesT
+create table filesT for transfer file
 
 ```
 CREATE TABLE FILEST(
@@ -52,4 +61,14 @@ file_length INT,
 upload_time DATE,
 file_status TINYINT NOT NULL DEFAULT 0
 );
+```
+
+create user 
+```
+CREATE USER testuser@localhost IDENTIFIED BY 'testuser';
+```
+
+grant all priviliges to testuser on FILE database
+```
+GRANT ALL ON FILE.* to testuser@localhost;
 ```
