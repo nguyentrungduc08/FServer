@@ -25,23 +25,17 @@ serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int
 {
 //    this->files = std::vector<std::string>();
     this->fo = new filehandle(this->dir); // File and directory browser
-    //this->isTL
-    isComfirmed = false;
+    this->TLSHandsharkState = false;
+    this->ConfirmedState = false;
+    
     if (iSSL){
         this->ssl = SSL_new(sslcon->get_ctx());
         SSL_set_fd(this->ssl, this->fd);
-    } 
+    }
     
     std::cout << "#log conn: Connection to client '" << this->hostAddress << "' established" << std::endl;
 }
 
-bool serverconnection::get_Confirmed_state(){
-    return this->isComfirmed;
-}
-
-void serverconnection::set_confirmed_state(){
-    this->isComfirmed = true;
-}
 
 // Check for matching (commands/strings) with compare method
 bool serverconnection::commandEquals(std::string a, std::string b) {
@@ -487,4 +481,28 @@ bool serverconnection::getCloseRequestStatus() {
 
 unsigned int serverconnection::getConnectionId() {
     return this->connectionId;
+}
+
+bool serverconnection::get_TLShandshark_state(){
+    
+}
+
+void serverconnection::set_TLShandshark_state(bool state){
+    this->TLSHandsharkState = state;
+}
+
+bool serverconnection::get_authen_state(){
+    return this->ConfirmedState;
+}
+
+void serverconnection::set_authen_state(bool state){
+    this->ConfirmedState = state;
+}
+
+void serverconnection::set_confirmed_state(bool state){
+    this->ConfirmedState = state;
+}
+
+bool serverconnection::get_Confirmed_state(){
+    return this->ConfirmedState;
 }

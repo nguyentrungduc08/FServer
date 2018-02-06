@@ -59,27 +59,31 @@ public:
     void TLS_handshark();
 
     bool get_Confirmed_state();
-    void set_confirmed_state();
+    void set_confirmed_state(bool state);
+    bool get_TLShandshark_state();
+    void set_TLShandshark_state(bool state);
+    bool get_authen_state();
+    void set_authen_state(bool state);
+    
 private:
     int fd; // Filedescriptor per each threaded object
     int fdflags;
     SSL *ssl;
-    bool closureRequested;
     std::vector<std::string> directories;
     std::vector<std::string> files;
     unsigned int connectionId;
     std::string dir;
     std::string hostAddress;
-    bool uploadCommand;
-    bool downloadCommand;
     std::string parameter;
     filehandle* fo; // For browsing, writing and reading
     unsigned short commandOffset;
     unsigned long receivedPart;
+    bool closureRequested;
+    bool uploadCommand;
+    bool downloadCommand;
     bool isSSL;
-    
-    bool isComfirmed;
-    bool isTLSHandsharkfinish;
+    bool ConfirmedState;
+    bool TLSHandsharkState;
     /*
      * @response  data response to client
      * @length size of data

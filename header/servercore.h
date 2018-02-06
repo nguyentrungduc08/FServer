@@ -16,6 +16,7 @@
 #include "../header/fileserver.h"
 #include "../header/connection.h"
 #include "../header/ssl.h"
+#include "database.h"
 
 class servercore {
 public:
@@ -74,6 +75,7 @@ private:
     int sflags;
     
     std::vector<serverconnection*> connections;// Manage the connected sockets / connections in a list with an iterator
+    std::vector<USER> listUser;
     
     int highSock; // Highest #'d file descriptor, needed for select()
     fd_set working_set; // set of socket file descriptors we want to wake up for, using select()
@@ -87,6 +89,7 @@ private:
     socklen_t cli_size;
     unsigned short commandOffset;
     fssl * sslConn;
+    database *DataBase;
 };
 
 #endif /* SERVERCORE_H */

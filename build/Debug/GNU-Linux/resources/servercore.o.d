@@ -9,7 +9,8 @@ build/Debug/GNU-Linux/resources/servercore.o: resources/servercore.cpp \
  resources/../header/../header/../header/Packet.h \
  resources/../header/../header/../header/fileserver.h \
  resources/../header/../header/../header/ssl.h \
- resources/../header/../header/ssl.h
+ resources/../header/../header/ssl.h resources/../header/database.h \
+ resources/../header/fileserver.h
 
 resources/../header/servercore.h:
 
@@ -32,3 +33,7 @@ resources/../header/../header/../header/fileserver.h:
 resources/../header/../header/../header/ssl.h:
 
 resources/../header/../header/ssl.h:
+
+resources/../header/database.h:
+
+resources/../header/fileserver.h:

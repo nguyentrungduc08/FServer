@@ -8,6 +8,20 @@
 
 
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) {
+    this->connections.clear();
+    this->listUser.clear();
+    this->DataBase = new database();
+    
+    if ( !this->DataBase->doConnection("testuser","testuser","FILE") ){
+        std::cerr << "ERROR connecting to database!!!!" << std::endl;
+    } else{
+        this->listUser = this->DataBase->getListUser();
+        rep(i,this->listUser.size()){
+            std::cout << "Id: " << this->listUser.at(i).id << " Username: " << this->listUser.at(i).username << " Password: " << this->listUser.at(i).password << std::endl;
+        }
+        std::cout << "@log servercore: load list user successfull." << std::endl;
+    }
+    
     if (USE_SSL){
         std::cout << "@log servercore: begin load certificate" << std::endl;
         this->sslConn = new fssl();  //create and load some lib
@@ -162,7 +176,7 @@ void servercore::readSockets() {
             if ( !this->connections.at(listnum)->get_Confirmed_state() ) {
                 if ( this->connections.at(listnum)->authConnection() ){
                     // auth success. confirm connection
-                    this->connections.at(listnum)->set_confirmed_state();
+                    this->connections.at(listnum)->set_confirmed_state(true);
                 } else {
                     // auth fail. drop connection 
                     delete connections.at(listnum);

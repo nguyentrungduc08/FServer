@@ -26,12 +26,13 @@ bool database::doConnection(std::string username, std::string password, std::str
         return false;
     }
     
-    if (mysql_real_connect(this->ServerDatabase, "localhost", "testuser", "testuser", "FILE", 0, NULL, 0) == NULL ){
+    //if (mysql_real_connect(this->ServerDatabase, "localhost", "testuser", "testuser", "FILE", 0, NULL, 0) == NULL ){
+    if (mysql_real_connect(this->ServerDatabase, "localhost", username.c_str() , password.c_str() , database.c_str(), 0, NULL, 0) == NULL ){
         this->finish_with_error();
         mysql_close(this->ServerDatabase);
         return false;
     } else {
-        std::cout << "Conection success" << std::endl;
+        std::cout << "Conection success  to database " << database << std::endl;
     }
     return true;
 }
