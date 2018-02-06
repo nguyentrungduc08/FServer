@@ -373,6 +373,8 @@ bool serverconnection::authConnection(const  std::vector<USER> & listUser) {
             password = pk->getContent();
         }
         
+        std::cout <<"#log conn: User request username: " <<username << " password: " << password << std::endl;
+        
         delete pk;
         
         rep(i,listUser.size()){
