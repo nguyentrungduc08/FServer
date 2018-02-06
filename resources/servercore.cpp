@@ -150,7 +150,7 @@ int servercore::handleNewConnection() {
         std::cout << "@log servercore: use non-SSL model " << std::endl;
     }    
     
-    //conn->TLS_handshark();
+    conn->TLS_handshark();
     
     this->connections.push_back(conn);
 
@@ -173,11 +173,12 @@ void servercore::readSockets() {
     for (unsigned int listnum = 0; listnum < this->connections.size(); ++listnum) {
         if (FD_ISSET( this->connections.at(listnum)->getFD(), &(this->working_set) ) ) {
             
+            /*
             if ( !this->connections.at(listnum)->get_TLShandshark_state() ){
                 this->connections.at(listnum)->TLS_handshark();
                 continue;
             } 
-            
+            */
             if ( !this->connections.at(listnum)->get_authen_state() ) {
                 if ( this->connections.at(listnum)->authConnection(this->listUser) ) {
                     this->connections.at(listnum)->set_authen_state(true);

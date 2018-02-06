@@ -1,5 +1,14 @@
 # script create database:
 
+install mysql linux(ubuntu)
+```
+sudo apt-get install libmysqlclient-dev
+```
+Access the MySQL shell
+```
+mysql -u root -p
+```
+
 create database 
 ```
 CREATE DATABASE FILE;
@@ -11,7 +20,6 @@ USE FILE
 ```
 
 create table users
-
 ```
 CREATE TABLE USERS (
 id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, 
@@ -32,7 +40,6 @@ INSERT INTO `USERS` (`username`,`password`,`create_date`,`last_login`) VALUES ("
 ```
 
 create table filesB for backup file
-
 ```
 CREATE TABLE FILESB(
 id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -48,7 +55,6 @@ file_status TINYINT NOT NULL DEFAULT 0
 
 
 create table filesT for transfer file
-
 ```
 CREATE TABLE FILEST(
 id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
