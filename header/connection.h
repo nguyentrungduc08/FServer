@@ -55,6 +55,7 @@ public:
     void respondToQuery();
     int getFD();
     bool getCloseRequestStatus();
+    void setCloseRequestStatus(bool status);
     unsigned int getConnectionId();
     
     void TLS_handshark();

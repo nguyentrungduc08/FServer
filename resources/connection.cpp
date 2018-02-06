@@ -386,22 +386,7 @@ bool serverconnection::authConnection(const  std::vector<USER> & listUser) {
         
         std::cout <<"#log conn: debug status login fail" << std::endl;
         return false;
-        //std::string md5CodeOfClient= std::string(buffer,bytes);
-
-        //std::string md5server = md5("test");
-        //std::cout << "#log conn: debug md5CodeOfClient " << md5CodeOfClient <<" md5server " << md5server << std::endl;
-
-        //if (md5server == md5CodeOfClient){
-        //    status = "200 ok";
-        //    std::cout <<"#log conn: debug status " << status << std::endl;
-        //    this->sendToClient(status);
-        //    return true;
-        //} else{
-        //    status = "401 fail";
-        //    std::cout <<"#debug status " << status << std::endl;
-        //    this->sendToClient(status);
-        //    return false;
-        //}
+        
     }
     return false;
 } 
@@ -495,6 +480,10 @@ int serverconnection::getFD() {
 // Returns whether the connection was requested to be closed (by client)
 bool serverconnection::getCloseRequestStatus() {
     return this->closureRequested;
+}
+
+void serverconnection::setCloseRequestStatus(bool status){
+    this->closureRequested = status;
 }
 
 unsigned int serverconnection::getConnectionId() {

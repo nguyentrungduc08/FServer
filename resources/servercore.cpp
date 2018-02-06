@@ -173,19 +173,16 @@ void servercore::readSockets() {
     for (unsigned int listnum = 0; listnum < this->connections.size(); ++listnum) {
         if (FD_ISSET( this->connections.at(listnum)->getFD(), &(this->working_set) ) ) {
             
-            /*
-            if ( !this->connections.at(listnum)->get_TLShandshark_state() ){
-                this->connections.at(listnum)->TLS_handshark();
-                continue;
-            } 
-            */
             if ( !this->connections.at(listnum)->get_authen_state() ) {
+                
                 if ( this->connections.at(listnum)->authConnection(this->listUser) ) {
                     this->connections.at(listnum)->set_authen_state(true);
                 } else{
-                    delete connections.at(listnum);
-                    this->connections.erase( this->connections.begin() + listnum );
-                }
+                    //delete connections.at(listnum);
+                    //this->connections.erase( this->connections.begin() + listnum );
+                    this->connections.at(listnum)->setCloseRequestStatus(false);
+                }   
+                
             } else {
                 this->connections.at(listnum)->respondToQuery();
             }
