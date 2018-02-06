@@ -250,7 +250,7 @@ std::vector<std::string> serverconnection::extractParameters(std::string command
     return res;
 }
 
-void serverconnection::TLS_handshark(){
+void serverconnection::TLS_handshark() {
     //handle ssl_handshake non-blocking modle
     int status = -1;
     struct timeval tv, tvRestore;
@@ -282,12 +282,14 @@ void serverconnection::TLS_handshark(){
                 std::cout << "#log conn: SSL_ERROR_WANT_READ" << std::endl;
                 break;
             case SSL_ERROR_ZERO_RETURN:
+                std::cerr << "#log conn: SSL_ERROR_ZERO_RETURN" << std::endl;
+                break;
             case SSL_ERROR_SYSCALL:     
                 std::cout << "#log conn: Peer closed connection during SSL handshake,status: " << status << std::endl;
                 status = -1;
                 break;
             default:
-                std::cout <<"#log conn: Unexpected error during SSL handshake,status: " << status << std::endl;
+                std::cout << "#log conn: Unexpected error during SSL handshake,status: " << status << std::endl;
                 status = -1;
                 break;
         }
@@ -316,7 +318,7 @@ void serverconnection::TLS_handshark(){
         //SSL_set_accept_state(this->ssl);
 }
 
-bool serverconnection::authConnection(){
+bool serverconnection::authConnection(const  std::vector<USER> & listUser) {
     char buffer[BUFFER_SIZE];
     int bytes = -1;
     std::string status;
@@ -326,12 +328,6 @@ bool serverconnection::authConnection(){
     fd_set readFdSet;
     int Sta = -1;
     if (isSSL){ 
-//        if ( SSL_accept(this->ssl) != 1 ) {     /* do SSL-protocol accept */
-//            std::cerr << "#log conn: server cannot accpet ssl connection!!!" << std::endl;
-//            //return false;
-//        }
-//        else    
-//        sleep(3);
         bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
         
         if (bytes < 0){
@@ -368,22 +364,42 @@ bool serverconnection::authConnection(){
     
     std::cout << "#log conn: size of data ssl read " << bytes << std::endl;
     if (bytes > 0){
-        std::string md5CodeOfClient= std::string(buffer,bytes);
-
-        std::string md5server = md5("test");
-        std::cout << "#log conn: debug md5CodeOfClient " << md5CodeOfClient <<" md5server " << md5server << std::endl;
-
-        if (md5server == md5CodeOfClient){
-            status = "200 ok";
-            std::cout <<"#log conn: debug status " << status << std::endl;
-            this->sendToClient(status);
-            return true;
-        } else{
-            status = "401 fail";
-            std::cout <<"#debug status " << status << std::endl;
-            this->sendToClient(status);
-            return false;
+        Packet *pk = new Packet(std::string(buffer,bytes));
+        
+        int cmd = pk->getCMDHeader();
+        std::string username, password;
+        if (cmd == CMD_AUTHEN_LOGIN){
+            username = pk->getContent();
+            password = pk->getContent();
         }
+        
+        delete pk;
+        
+        rep(i,listUser.size()){
+            if ( listUser.at(i).username == username && listUser.at(i).password == password ){
+                std::cout <<"#log conn: debug status login ok" << std::endl;
+                return true;
+            } 
+        }
+        
+        std::cout <<"#log conn: debug status login fail" << std::endl;
+        return false;
+        //std::string md5CodeOfClient= std::string(buffer,bytes);
+
+        //std::string md5server = md5("test");
+        //std::cout << "#log conn: debug md5CodeOfClient " << md5CodeOfClient <<" md5server " << md5server << std::endl;
+
+        //if (md5server == md5CodeOfClient){
+        //    status = "200 ok";
+        //    std::cout <<"#log conn: debug status " << status << std::endl;
+        //    this->sendToClient(status);
+        //    return true;
+        //} else{
+        //    status = "401 fail";
+        //    std::cout <<"#debug status " << status << std::endl;
+        //    this->sendToClient(status);
+        //    return false;
+        //}
     }
     return false;
 } 
@@ -499,10 +515,4 @@ void serverconnection::set_authen_state(bool state){
     this->ConfirmedState = state;
 }
 
-void serverconnection::set_confirmed_state(bool state){
-    this->ConfirmedState = state;
-}
 
-bool serverconnection::get_Confirmed_state(){
-    return this->ConfirmedState;
-}

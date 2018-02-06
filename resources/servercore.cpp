@@ -150,7 +150,7 @@ int servercore::handleNewConnection() {
         std::cout << "@log servercore: use non-SSL model " << std::endl;
     }    
     
-    conn->TLS_handshark();
+    //conn->TLS_handshark();
     
     this->connections.push_back(conn);
 
@@ -167,24 +167,42 @@ void servercore::readSockets() {
         std::cout << "@log servercore: new connection " << std::endl;
         if (this->handleNewConnection()) return; // Always check for errors
     }
+    
     // Now check connectlist for available data
     // Run through our sockets and check to see if anything happened with them
     for (unsigned int listnum = 0; listnum < this->connections.size(); ++listnum) {
         if (FD_ISSET( this->connections.at(listnum)->getFD(), &(this->working_set) ) ) {
             
-            //check auth connection
-            if ( !this->connections.at(listnum)->get_Confirmed_state() ) {
-                if ( this->connections.at(listnum)->authConnection() ){
-                    // auth success. confirm connection
-                    this->connections.at(listnum)->set_confirmed_state(true);
-                } else {
-                    // auth fail. drop connection 
+            if ( !this->connections.at(listnum)->get_TLShandshark_state() ){
+                this->connections.at(listnum)->TLS_handshark();
+                continue;
+            } 
+            
+            if ( !this->connections.at(listnum)->get_authen_state() ) {
+                if ( this->connections.at(listnum)->authConnection(this->listUser) ) {
+                    this->connections.at(listnum)->set_authen_state(true);
+                } else{
                     delete connections.at(listnum);
                     this->connections.erase( this->connections.begin() + listnum );
                 }
             } else {
-                this->connections.at(listnum)->respondToQuery(); // Now that data is available, deal with it!
+                this->connections.at(listnum)->respondToQuery();
             }
+            
+            
+//            //check auth connection
+//            if ( !this->connections.at(listnum)->get_Confirmed_state() ) {
+//                if ( this->connections.at(listnum)->authConnection() ){
+//                    // auth success. confirm connection
+//                    this->connections.at(listnum)->set_confirmed_state(true);
+//                } else {
+//                    // auth fail. drop connection 
+//                    delete connections.at(listnum);
+//                    this->connections.erase( this->connections.begin() + listnum );
+//                }
+//            } else {
+//                this->connections.at(listnum)->respondToQuery(); // Now that data is available, deal with it!
+//            }
             std::cout << "@log servercore: handle comming data " << std::endl;
         }
     }

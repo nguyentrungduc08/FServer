@@ -49,17 +49,16 @@ public:
     std::string commandParser(std::string command);
     std::vector<std::string> extractParameters(std::string command);
 
-    bool authConnection(); 
+    bool authConnection(const std::vector<USER> & listUser); 
     virtual ~serverconnection();
     void run();
     void respondToQuery();
     int getFD();
     bool getCloseRequestStatus();
     unsigned int getConnectionId();
+    
     void TLS_handshark();
 
-    bool get_Confirmed_state();
-    void set_confirmed_state(bool state);
     bool get_TLShandshark_state();
     void set_TLShandshark_state(bool state);
     bool get_authen_state();
