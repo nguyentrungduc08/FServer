@@ -42,8 +42,8 @@
 #include <unistd.h>
 
 
-#define TRUE 1
-#define FALSE 0
+#define TRUE                    1
+#define FALSE                   0
 
 #define USE_SSL                 1
 #define NO_SSL                  2
@@ -67,7 +67,7 @@
 #define CMD_SHARE_CONFIRM       14
 #define CMF_SHARE_FINISH        15
 
-#define PACKET                  std::vector<unsigned char>
+#define PACKET                  std::vector<char>
 
 #define rep(i,n)                for(int i = 0; i < (int)n; ++i)
 #define Ford(i,a,b)             for(int i = (int)a; i >= (int)b; --i)

@@ -347,12 +347,14 @@ bool serverconnection::authConnection(const  std::vector<USER> & listUser) {
                     std::cout << "#log conn: SSL_read SSL_ERROR_WANT_READ" << std::endl;
                     break;
                 case SSL_ERROR_ZERO_RETURN:
+                    std::cout << "#log conn: SSL_ERROR_ZERO_RETURN" << std::endl;
+                    break;
                 case SSL_ERROR_SYSCALL:     
                     std::cout << "#log conn: SSL_read Peer closed connection during SSL handshake,status: " << status << std::endl;
                     Sta = -1;
                     break;
                 default:
-                    std::cout <<"#log conn: SSL_read Unexpected error during SSL handshake,status: " << status << std::endl;
+                    std::cout << "#log conn: SSL_read Unexpected error during SSL handshake,status: " << status << std::endl;
                     Sta = -1;
                     break;
             }
@@ -368,25 +370,28 @@ bool serverconnection::authConnection(const  std::vector<USER> & listUser) {
         
         int cmd = pk->getCMDHeader();
         std::string username, password;
-        if (cmd == CMD_AUTHEN_LOGIN){
+        
+        if (cmd == CMD_AUTHEN_LOGIN && !this->ConfirmedState){
             username = pk->getContent();
             password = pk->getContent();
+        } else {
+            this->ConfirmedState = false;
+            return false;
         }
         
-        std::cout <<"#log conn: User request username: " <<username << " password: " << password << std::endl;
+        std::cout << "#log conn: User request username: " <<username << " password: " << password << std::endl;
         
         delete pk;
         
         rep(i,listUser.size()){
             if ( listUser.at(i).username == username && listUser.at(i).password == password ){
-                std::cout <<"#log conn: debug status login ok" << std::endl;
+                std::cout << "#log conn: debug status login ok" << std::endl;
                 return true;
             } 
         }
         
-        std::cout <<"#log conn: debug status login fail" << std::endl;
+        std::cout << "#log conn: debug status login fail" << std::endl;
         return false;
-        
     }
     return false;
 } 

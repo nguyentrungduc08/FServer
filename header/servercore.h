@@ -13,9 +13,10 @@
 
 #ifndef SERVERCORE_H
 #define SERVERCORE_H
-#include "../header/fileserver.h"
-#include "../header/connection.h"
-#include "../header/ssl.h"
+
+#include "fileserver.h"
+#include "connection.h"
+#include "ssl.h"
 #include "database.h"
 
 class servercore {
@@ -72,7 +73,6 @@ private:
     
     unsigned int maxConnectionsInQuery; // number of connections in query
     int Mainsocket; // The main listening socket file descriptor
-    int sflags;
     
     std::vector<serverconnection*> connections;// Manage the connected sockets / connections in a list with an iterator
     std::vector<USER> listUser;

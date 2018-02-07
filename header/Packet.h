@@ -22,7 +22,7 @@ public:
     Packet();
     Packet(const PACKET & pk);
     Packet(const std::string & s);
-    
+    Packet(char *arr, int len);
     ~Packet();
 
     bool appendData(int cmd);

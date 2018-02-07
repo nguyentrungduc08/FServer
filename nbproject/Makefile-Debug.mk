@@ -72,42 +72,42 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/fileserver: ${OBJECTFILES}
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/resources/Packet.o: resources/Packet.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/Packet.o resources/Packet.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/Packet.o resources/Packet.cpp
 
 ${OBJECTDIR}/resources/connection.o: resources/connection.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection.o resources/connection.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection.o resources/connection.cpp
 
 ${OBJECTDIR}/resources/database.o: resources/database.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/database.o resources/database.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/database.o resources/database.cpp
 
 ${OBJECTDIR}/resources/fileHandle.o: resources/fileHandle.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/fileHandle.o resources/fileHandle.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/fileHandle.o resources/fileHandle.cpp
 
 ${OBJECTDIR}/resources/md5.o: resources/md5.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/md5.o resources/md5.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/md5.o resources/md5.cpp
 
 ${OBJECTDIR}/resources/servercore.o: resources/servercore.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/servercore.o resources/servercore.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/servercore.o resources/servercore.cpp
 
 ${OBJECTDIR}/resources/ssl.o: resources/ssl.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/ssl.o resources/ssl.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/ssl.o resources/ssl.cpp
 
 # Subprojects
 .build-subprojects:

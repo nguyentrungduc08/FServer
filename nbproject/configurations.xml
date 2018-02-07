@@ -50,6 +50,9 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <ccTool>
+          <standard>8</standard>
+        </ccTool>
         <linkerTool>
           <linkerLibItems>
             <linkerOptionItem>-L/usr/lib -lssl -lcrypto</linkerOptionItem>

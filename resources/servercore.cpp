@@ -14,6 +14,7 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
     
     if ( !this->DataBase->doConnection("testuser","testuser","FILE") ){
         std::cerr << "ERROR connecting to database!!!!" << std::endl;
+        exit(EXIT_FAILURE);
     } else{
         this->listUser = this->DataBase->getListUser();
         rep(i,this->listUser.size()){
@@ -28,7 +29,7 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
         this->sslConn->create_context(); //
         this->sslConn->configure_context("CA/server.crt", "CA/server.key.pem");
         std::cout << "@log servercore: load certificate finished" << std::endl;
-    }
+    } 
     
     if ( chdir( dir.c_str() ) ) //change working directory
         std::cerr << "@log servercore: Directory could not be changed to '" << dir << "'!" << std::endl;
@@ -46,6 +47,7 @@ servercore::~servercore() {
     close(this->Mainsocket); 
     this->freeAllConnections(); // Deletes all connection objects and frees their memory
     delete this->sslConn;
+    delete this->DataBase;
 }
 
 // Builds the list of sockets to keep track on and removes the closed ones
@@ -58,7 +60,7 @@ void servercore::buildSelectList() {
     
     while( iter != this->connections.end() ) {
         // This connection was closed, flag is set -> remove its corresponding object and free the memory
-        if ( (*iter)->getCloseRequestStatus() == true ) { 
+        if ( (*iter)->getCloseRequestStatus() ) { 
             std::cout << "@log servercore: Connection with Id " << (*iter)->getConnectionId() << " closed! " << std::endl;
             delete (*iter); // Clean up
             this->connections.erase(iter); // Delete it from our vector
@@ -163,74 +165,66 @@ void servercore::readSockets() {
     // If a client is trying to connect() to our listening socket, select() will consider that as the socket being 'readable' and thus, 
     // if the listening socket is part of the fd_set, accept a new connection
     if (FD_ISSET(this->Mainsocket,&(this->working_set))) {
-//        this->handleNewConnection();
         std::cout << "@log servercore: new connection " << std::endl;
-        if (this->handleNewConnection()) return; // Always check for errors
+        // Always check for errors
+        if (this->handleNewConnection() == EXIT_FAILURE ){
+            std::cerr << "@log servercore: error handle new connection!!!!" << std::endl;
+            return;
+        }  
     }
     
     // Now check connectlist for available data
     // Run through our sockets and check to see if anything happened with them
     for (unsigned int listnum = 0; listnum < this->connections.size(); ++listnum) {
-        if (FD_ISSET( this->connections.at(listnum)->getFD(), &(this->working_set) ) ) {
-            
+        if ( FD_ISSET( this->connections.at(listnum)->getFD(), &(this->working_set) ) ) {
+            std::cout << "@log servercore: handle comming data to exist socket " << this->connections.at(listnum)->getFD() << std::endl;
             if ( !this->connections.at(listnum)->get_authen_state() ) {
-                
+                //if not authen connection 
                 if ( this->connections.at(listnum)->authConnection(this->listUser) ) {
+                    //if check auth success
                     this->connections.at(listnum)->set_authen_state(true);
-                } else{
-                    //delete connections.at(listnum);
-                    //this->connections.erase( this->connections.begin() + listnum );
-                    this->connections.at(listnum)->setCloseRequestStatus(false);
+                } else {
+                    //if check auth fail
+                    this->connections.at(listnum)->setCloseRequestStatus(true);
                 }   
-                
+               
             } else {
-                this->connections.at(listnum)->respondToQuery();
+                //if this connection authenticated -> handle data commining
+                std::cout << "@log servercore: main connection establish $$$$$" << std::endl;
+                //this->connections.at(listnum)->respondToQuery();
             }
-            
-            
-//            //check auth connection
-//            if ( !this->connections.at(listnum)->get_Confirmed_state() ) {
-//                if ( this->connections.at(listnum)->authConnection() ){
-//                    // auth success. confirm connection
-//                    this->connections.at(listnum)->set_confirmed_state(true);
-//                } else {
-//                    // auth fail. drop connection 
-//                    delete connections.at(listnum);
-//                    this->connections.erase( this->connections.begin() + listnum );
-//                }
-//            } else {
-//                this->connections.at(listnum)->respondToQuery(); // Now that data is available, deal with it!
-//            }
-            std::cout << "@log servercore: handle comming data " << std::endl;
         }
     }
 }
 
 int servercore::start() { 
-    int readworking_set; // Number of sockets ready for reading
+    int readworking_set = -1; // Number of sockets ready for reading
     // Wait for connections, main server loop
+    struct timeval timeout, working_timeout;
+    timeout.tv_sec = 3; // Timeout = 3 sec
+    timeout.tv_usec = 0;
+    
+
     while (!this->shutdown) {
         std::cout << "@log servercore: waiting connection form client....." << std::endl;
 
         this->buildSelectList(); // Clear out data handled in the previous iteration, clear closed sockets
         // Multiplexes between the existing connections regarding to data waiting to be processed on that connection (that's actually what select does)
-        struct timeval timeout;
-        timeout.tv_sec = 3; // Timeout = 3 sec
-        timeout.tv_usec = 0;
-        readworking_set = select(this->highSock+1, &(this->working_set), NULL , NULL , &timeout);
+        working_timeout = timeout;
+        
+        readworking_set = select(this->highSock+1, &(this->working_set), NULL , NULL , &working_timeout);
 
         if (readworking_set < 0) {
             std::cerr << "@log servercore: Error calling select" << std::endl;
             return (EXIT_FAILURE);
         }
-
+            
         this->readSockets(); // Handle the sockets (accept new connections or handle incoming data or do nothing [if no data])
     }
     return (EXIT_SUCCESS);
 }
 
 void servercore::setNonBlocking(int &sock) {
-    this->sflags = fcntl(sock, F_GETFL); // Get socket flags
     int opts = fcntl(sock,F_GETFL, 0);
     if (opts < 0) {
         std::cerr << "@log servercore: Error getting socket flags" << std::endl;

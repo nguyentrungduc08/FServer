@@ -20,10 +20,10 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "../header/fileserver.h"
-#include "../header/fileHandle.h"
-#include "../header/Packet.h"
-#include "../header/ssl.h"
+#include "fileserver.h"
+#include "fileHandle.h"
+#include "Packet.h"
+#include "ssl.h"
 
 // Separator for commands
 #define SEPARATOR " "
@@ -53,13 +53,12 @@ public:
     virtual ~serverconnection();
     void run();
     void respondToQuery();
+    unsigned int getConnectionId();
+    void TLS_handshark();
+    
     int getFD();
     bool getCloseRequestStatus();
     void setCloseRequestStatus(bool status);
-    unsigned int getConnectionId();
-    
-    void TLS_handshark();
-
     bool get_TLShandshark_state();
     void set_TLShandshark_state(bool state);
     bool get_authen_state();
@@ -101,12 +100,7 @@ private:
     std::string filterOutBlanks(std::string inString);
     
     static void getAllParametersAfter(std::vector<std::string> parameterVector, unsigned int currentParameter, std::string& theRest);
-    
-    
-
 };
-
-
 
 #endif /* CONNECTION_H */
 

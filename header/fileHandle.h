@@ -14,8 +14,8 @@
 #ifndef FILEHANDLE_H
 #define FILEHANDLE_H
 
-#include "../header/md5.h"
-#include "../header/fileserver.h"
+#include "md5.h"
+#include "fileserver.h"
 
 // Buffer size
 #define BUFFER_SIZE 4096
