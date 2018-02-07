@@ -23,6 +23,7 @@
 #include "fileserver.h"
 #include "fileHandle.h"
 #include "Packet.h"
+#include "Session.h"
 #include "ssl.h"
 
 // Separator for commands
@@ -51,8 +52,8 @@ public:
 
     bool authConnection(const std::vector<USER> & listUser); 
     virtual ~serverconnection();
-    void run();
     void respondToQuery();
+    void respondAuthen();
     unsigned int getConnectionId();
     void TLS_handshark();
     
@@ -66,17 +67,25 @@ public:
     
 private:
     int fd; // Filedescriptor per each threaded object
-    int fdflags;
+    
     SSL *ssl;
+    filehandle* fo; // For browsing, writing and reading
+    Session * session;
+    
     std::vector<std::string> directories;
     std::vector<std::string> files;
     unsigned int connectionId;
     std::string dir;
     std::string hostAddress;
     std::string parameter;
-    filehandle* fo; // For browsing, writing and reading
+    
+    
     unsigned short commandOffset;
     unsigned long receivedPart;
+    
+    bool isMainSocket;
+    bool isFileSocket;
+    
     bool closureRequested;
     bool uploadCommand;
     bool downloadCommand;

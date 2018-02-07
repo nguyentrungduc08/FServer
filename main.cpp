@@ -18,6 +18,7 @@
 #include "header/md5.h"
 #include "header/Packet.h"
 #include "header/database.h"
+#include "header/Session.h"
 
 using namespace std;
 
@@ -76,17 +77,22 @@ void testFunction(){
         cout << "Content: " << pk->getContent() << endl;
     }
     
+    Session * ss = new Session();
+    ss->buildSession(2,"192.1.1.1");
+    
+    delete ss;
+    /*
     database *data = new database();
     
     vector<USER> listuser; 
     listuser = data->getListUser();
     
     cout << "size of list user: "<< listuser.size() << endl;
-            
+    */        
     cout << "md5 of 'grape': " << md5("testuser") << endl;
 
     delete pk;
-    delete data;
+    //delete data;
 
     return;
 }

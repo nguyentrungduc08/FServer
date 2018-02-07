@@ -187,7 +187,8 @@ void servercore::readSockets() {
                     //if check auth fail
                     this->connections.at(listnum)->setCloseRequestStatus(true);
                 }   
-               
+                this->connections.at(listnum)->respondAuthen();
+                continue;
             } else {
                 //if this connection authenticated -> handle data commining
                 std::cout << "@log servercore: main connection establish $$$$$" << std::endl;

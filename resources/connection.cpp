@@ -24,9 +24,12 @@ serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int
  uploadCommand(false), downloadCommand(false),  receivedPart(0), parameter("") 
 {
 //    this->files = std::vector<std::string>();
+    this->session = new Session();
     this->fo = new filehandle(this->dir); // File and directory browser
     this->TLSHandsharkState = false;
     this->ConfirmedState = false;
+    this->isMainSocket = false;
+    this->isFileSocket = false;
     
     if (iSSL){
         this->ssl = SSL_new(sslcon->get_ctx());
@@ -396,6 +399,23 @@ bool serverconnection::authConnection(const  std::vector<USER> & listUser) {
     return false;
 } 
 
+void serverconnection::respondAuthen(){
+    if (this->ConfirmedState && !this->closureRequested){
+        this->session->buildSession(this->connectionId, this->hostAddress);
+        std::string ses = this->session->getSession();
+        Packet *pk = new Packet();
+        pk->appendData(CMD_AUTHEN_SUCCESS);
+        pk->appendData(ses);
+        SSL_write(this->ssl, &pk->getData()[0], pk->getData().size() );
+        delete pk;
+    } else{
+        Packet *pk = new Packet();
+        pk->appendData(CMD_AUTHEN_FAIL);
+        SSL_write(this->ssl, &pk->getData()[0], pk->getData().size() );
+        delete pk;
+    } 
+}
+
 // Receives the incoming data and issues the apropraite commands and responds
 void serverconnection::respondToQuery() {
     char buffer[BUFFER_SIZE];
@@ -496,7 +516,7 @@ unsigned int serverconnection::getConnectionId() {
 }
 
 bool serverconnection::get_TLShandshark_state(){
-    
+    return this->TLSHandsharkState;
 }
 
 void serverconnection::set_TLShandshark_state(bool state){

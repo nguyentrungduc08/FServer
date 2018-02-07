@@ -18,6 +18,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <sstream>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -50,7 +52,8 @@
 
 #define CMD_AUTHEN_LOGIN        1
 #define CMD_AUTHEN_SUCCESS      2
-
+#define CMD_AUTHEN_FAIL         121
+    
 #define CMD_ADD_CONTACT         3
 #define CMD_ADD_SUCCESS         4
 

@@ -5,6 +5,7 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>header/Packet.h</itemPath>
+      <itemPath>header/Session.h</itemPath>
       <itemPath>header/connection.h</itemPath>
       <itemPath>header/database.h</itemPath>
       <itemPath>header/fileHandle.h</itemPath>
@@ -17,6 +18,7 @@
                    displayName="Resource Files"
                    projectFiles="true">
       <itemPath>resources/Packet.cpp</itemPath>
+      <itemPath>resources/Session.cpp</itemPath>
       <itemPath>resources/connection.cpp</itemPath>
       <itemPath>resources/database.cpp</itemPath>
       <itemPath>resources/fileHandle.cpp</itemPath>
@@ -62,6 +64,8 @@
       </compileType>
       <item path="header/Packet.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="header/Session.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="header/connection.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="header/database.h" ex="false" tool="3" flavor2="0">
@@ -79,6 +83,8 @@
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/Packet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/Session.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/connection.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -115,6 +121,8 @@
       </compileType>
       <item path="header/Packet.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="header/Session.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="header/connection.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="header/database.h" ex="false" tool="3" flavor2="0">
@@ -132,6 +140,8 @@
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/Packet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/Session.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/connection.cpp" ex="false" tool="1" flavor2="0">
       </item>
