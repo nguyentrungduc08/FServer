@@ -406,6 +406,7 @@ void serverconnection::respondAuthen(){
         Packet *pk = new Packet();
         pk->appendData(CMD_AUTHEN_SUCCESS);
         pk->appendData(ses);
+        std::cout << "#log conn: " << ses << std::endl;
         SSL_write(this->ssl, &pk->getData()[0], pk->getData().size() );
         delete pk;
     } else{

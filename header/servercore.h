@@ -67,7 +67,7 @@ private:
     int handleNewConnection();
     
     /*
-     * free all memories to  
+     * free all memories 
      */
     void freeAllConnections();
     
@@ -76,8 +76,10 @@ private:
     
     std::vector<serverconnection*> connections;// Manage the connected sockets / connections in a list with an iterator
     std::vector<USER> listUser;
+    std::vector<serverconnection*> mainConnections;
+    std::vector<serverconnection*> fileConnections;
     
-    int highSock; // Highest #'d file descriptor, needed for select()
+    int highSock; 
     fd_set working_set; // set of socket file descriptors we want to wake up for, using select()
     std::string dir; //path of directory working 
     unsigned int connId; //
