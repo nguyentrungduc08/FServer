@@ -92,6 +92,7 @@ private:
     bool isSSL;
     bool ConfirmedState;
     bool TLSHandsharkState;
+    
     /*
      * @response  data response to client
      * @length size of data

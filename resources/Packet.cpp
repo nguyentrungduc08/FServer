@@ -6,7 +6,7 @@
 
 /* 
  * File:   Packet.cpp
- * Author: hydra
+ * Author: nguyen trung duc
  * 
  * Created on February 1, 2018, 5:32 PM
  */
@@ -42,7 +42,7 @@ PACKET Packet::buildIntField(int cmd){
     vc.push_back( (char) 0xFF & (cmd >> 8 ) );
     vc.push_back( (char) 0xFF &  cmd        );
     */
-    
+   
     return vc;
 }
 

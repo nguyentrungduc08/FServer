@@ -41,7 +41,6 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
 /* 
  * Free up used memory by cleaning up all the object variables;
  */ 
-
 servercore::~servercore() {
     std::cout << "@log servercore: Server shutdown" << std::endl;
     close(this->Mainsocket); 
@@ -140,7 +139,7 @@ int servercore::handleNewConnection() {
     //update highSock 
     this->highSock = (fd > this->highSock) ? fd:this->highSock;
     
-    // The new connection (object
+    // The new connection 
     serverconnection* conn;
     
     if (USE_SSL){
@@ -204,7 +203,6 @@ int servercore::start() {
     struct timeval timeout, working_timeout;
     timeout.tv_sec = 3; // Timeout = 3 sec
     timeout.tv_usec = 0;
-    
 
     while (!this->shutdown) {
         std::cout << "@log servercore: waiting connection form client....." << std::endl;
@@ -239,7 +237,6 @@ void servercore::setNonBlocking(int &sock) {
 }
 
 int servercore::initSockets(int port) {
-    
     int reuseAllowed = 1; 
     this->maxConnectionsInQuery = 500; //set maximum connect to server simultaneously
     this->addr.sin_family = AF_INET; // PF_INET;
