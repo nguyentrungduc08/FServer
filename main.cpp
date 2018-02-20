@@ -28,8 +28,12 @@ void testFunction();
  * 
  */
 int main(int argc, char** argv) {
+
     //testFunction();
-    
+    rep(a,8)
+        cout << i << " ";
+    cout << endl;
+
     unsigned short commandOffset = 1; // For telnet, we need 3 because of the enter control sequence at the end of command (+2 characters)
     unsigned int port = 4242; // Port to listen on (>1024 for no root permissions required)
     std::string dir = "./"; // Default dir 

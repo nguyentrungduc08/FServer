@@ -76,7 +76,7 @@ private:
     int Mainsocket; // The main listening socket file descriptor
     int highSock;
     unsigned int connId; 
-    bool shutdown; //to set serer on/off
+    bool shutdown; //to set server on/off
     sockaddr_in addr; // set server information
     struct sockaddr_storage addrStorage; //get info of connection
     socklen_t addrLength;
