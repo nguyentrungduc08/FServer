@@ -71,18 +71,11 @@ private:
      */
     void freeAllConnections();
     
+
     unsigned int maxConnectionsInQuery; // number of connections in query
     int Mainsocket; // The main listening socket file descriptor
-    
-    std::vector<serverconnection*> connections;// Manage the connected sockets / connections in a list with an iterator
-    std::vector<USER> listUser;
-    std::vector<serverconnection*> mainConnections;
-    std::vector<serverconnection*> fileConnections;
-    
-    int highSock; 
-    fd_set working_set; // set of socket file descriptors we want to wake up for, using select()
-    std::string dir; //path of directory working 
-    unsigned int connId; //
+    int highSock;
+    unsigned int connId; 
     bool shutdown; //to set serer on/off
     sockaddr_in addr; // set server information
     struct sockaddr_storage addrStorage; //get info of connection
@@ -90,6 +83,14 @@ private:
     sockaddr_in cli;
     socklen_t cli_size;
     unsigned short commandOffset;
+    fd_set working_set; // set of socket file descriptors we want to wake up for, using select()
+    std::string dir; //path of directory working 
+
+    std::vector<serverconnection*> connections;// Manage the connected sockets / connections in a list with an iterator
+    std::vector<USER> listUser;
+    std::vector<serverconnection*> mainConnections;
+    std::vector<serverconnection*> fileConnections;
+     
     fssl * sslConn;
     database *DataBase;
 };
