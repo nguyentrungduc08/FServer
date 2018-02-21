@@ -13,12 +13,15 @@
       <itemPath>header/md5.h</itemPath>
       <itemPath>header/servercore.h</itemPath>
       <itemPath>header/ssl.h</itemPath>
+      <itemPath>header/wrap.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
       <itemPath>resources/Packet.cpp</itemPath>
       <itemPath>resources/Session.cpp</itemPath>
+      <itemPath>lib/Werror.cpp</itemPath>
+      <itemPath>lib/Wsock.cpp</itemPath>
       <itemPath>resources/connection.cpp</itemPath>
       <itemPath>resources/database.cpp</itemPath>
       <itemPath>resources/fileHandle.cpp</itemPath>
@@ -80,6 +83,12 @@
       </item>
       <item path="header/ssl.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="header/wrap.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="lib/Werror.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="lib/Wsock.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/Packet.cpp" ex="false" tool="1" flavor2="0">
@@ -136,6 +145,12 @@
       <item path="header/servercore.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="header/ssl.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="header/wrap.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="lib/Werror.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="lib/Wsock.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>

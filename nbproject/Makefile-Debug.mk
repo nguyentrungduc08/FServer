@@ -35,6 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/lib/Werror.o \
+	${OBJECTDIR}/lib/Wsock.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/resources/Packet.o \
 	${OBJECTDIR}/resources/Session.o \
@@ -69,6 +71,16 @@ LDLIBSOPTIONS=-L/usr/lib -lssl -lcrypto -lmysqlclient
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/fileserver: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/fileserver ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/lib/Werror.o: lib/Werror.cpp
+	${MKDIR} -p ${OBJECTDIR}/lib
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/lib/Werror.o lib/Werror.cpp
+
+${OBJECTDIR}/lib/Wsock.o: lib/Wsock.cpp
+	${MKDIR} -p ${OBJECTDIR}/lib
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/lib/Wsock.o lib/Wsock.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}

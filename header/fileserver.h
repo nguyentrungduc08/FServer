@@ -70,6 +70,10 @@
 #define CMD_SHARE_CONFIRM       14
 #define CMF_SHARE_FINISH        15
 
+#define MAXCONN                 1000
+#define	MAXLINE                 4096	/* max text line length */
+#define	BUFFSIZE                8192	/* buffer size for reads and writes */
+
 #define PACKET                  std::vector<char>
 
 #define rep(i,n)                for(int i = 0; i < (int)n; ++i)

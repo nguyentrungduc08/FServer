@@ -163,6 +163,8 @@ void servercore::readSockets() {
     // OK, now working_set will be set with whatever socket(s) are ready for reading. First check our "listening" socket, and then check the sockets in connectlist
     // If a client is trying to connect() to our listening socket, select() will consider that as the socket being 'readable' and thus, 
     // if the listening socket is part of the fd_set, accept a new connection
+    
+    // accept TCP handshark + TLS handshark
     if (FD_ISSET(this->Mainsocket,&(this->working_set))) {
         std::cout << "@log servercore: new connection " << std::endl;
         // Always check for errors
