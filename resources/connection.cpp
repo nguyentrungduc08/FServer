@@ -322,6 +322,9 @@ void serverconnection::TLS_handshark() {
 }
 
 bool serverconnection::authConnection(const  std::vector<USER> & listUser) {
+    
+    std::cout << "#log conn: authen connection!!!!" << std::endl;
+    
     char buffer[BUFFER_SIZE];
     int bytes = -1;
     std::string status;
@@ -351,6 +354,7 @@ bool serverconnection::authConnection(const  std::vector<USER> & listUser) {
                     break;
                 case SSL_ERROR_ZERO_RETURN:
                     std::cout << "#log conn: SSL_ERROR_ZERO_RETURN" << std::endl;
+                    Sta = -1;
                     break;
                 case SSL_ERROR_SYSCALL:     
                     std::cout << "#log conn: SSL_read Peer closed connection during SSL handshake,status: " << status << std::endl;
