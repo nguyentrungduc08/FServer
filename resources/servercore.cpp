@@ -157,14 +157,34 @@ int servercore::handleNewConnection() {
 
     return (EXIT_SUCCESS);
 }
+
+void servercore::handleMainConnection(serverconnection* & conn){
+    if ( conn->get_authen_state() ) {
+                //if not authen connection 
+                if ( conn->authConnection(this->listUser) ) {
+                    //if check auth success
+                    conn->set_authen_state(true);
+                } else {
+                    //if check auth fail
+                    conn->setCloseRequestStatus(true);
+                }   
+                conn->respondAuthen();
+    } else {
+        //if this connection authenticated -> handle data commining
+        std::cout << "@log servercore: main connection establish $$$$$" << std::endl;
+        //this->connections.at(index)->respondToQuery();
+    }
+}
+    
+void servercore::handleFileConnection(serverconnection* & conn){
+    
+}
+
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 // Something is happening (=data ready to read) at a socket, either accept a new connection or handle the incoming data over an already opened socket
 void servercore::readSockets() {
-    // OK, now working_set will be set with whatever socket(s) are ready for reading. First check our "listening" socket, and then check the sockets in connectlist
-    // If a client is trying to connect() to our listening socket, select() will consider that as the socket being 'readable' and thus, 
-    // if the listening socket is part of the fd_set, accept a new connection
-    
-    // accept TCP handshark + TLS handshark
+
+    // accept connection. <TCP handshark + TLS handshark>
     if (FD_ISSET(this->Mainsocket,&(this->working_set))) {
         std::cout << "@log servercore: new connection " << std::endl;
         // Always check for errors
@@ -176,27 +196,39 @@ void servercore::readSockets() {
     
     // Now check connectlist for available data
     // Run through our sockets and check to see if anything happened with them
-    for (unsigned int listnum = 0; listnum < this->connections.size(); ++listnum) {
-        if ( FD_ISSET( this->connections.at(listnum)->getFD(), &(this->working_set) ) ) {
-            std::cout << "@log servercore: handle comming data to exist socket " << this->connections.at(listnum)->getFD() << std::endl;
-            if ( !this->connections.at(listnum)->get_authen_state() ) {
-                //if not authen connection 
-                if ( this->connections.at(listnum)->authConnection(this->listUser) ) {
-                    //if check auth success
-                    this->connections.at(listnum)->set_authen_state(true);
-                } else {
-                    //if check auth fail
-                    this->connections.at(listnum)->setCloseRequestStatus(true);
-                }   
-                this->connections.at(listnum)->respondAuthen();
+    for (unsigned int index = 0; index < this->connections.size(); ++index) {
+        if ( FD_ISSET( this->connections.at(index)->getFD(), &(this->working_set) ) ) {
+            std::cout << "@log servercore: handle comming data to exist socket " << this->connections.at(index)->getFD() << std::endl;
+            
+            //handle new connection to mainsocket, maybe is mainconnection or fileconnection
+            //need to classify is mainconnection or fileconnection 
+            if ( !this->connections.at(index)->get_isFileConnection() && !this->connections.at(index)->get_isFileConnection())
+            {
+                std::cout << "@log servercore: handle new connection" << std::endl;
+                this->connections.at(index)->classify_connection();
                 continue;
-            } else {
-                //if this connection authenticated -> handle data commining
-                std::cout << "@log servercore: main connection establish $$$$$" << std::endl;
-                //this->connections.at(listnum)->respondToQuery();
             }
+            
+            //data comming to socket main connection
+            //handle cmd 
+            if ( this->connections.at(index)->get_isMainConnection() ){
+                std::cout << "@log servercore: handle main connection" << std::endl;
+                handleMainConnection(this->connections.at(index));
+                continue;
+            }
+            
+            //data comming to file socket.
+            //handle read/write file
+            if ( this->connections.at(index)->get_isFileConnection() ){
+                std::cout << "@log servercore: handle file connection" << std::endl;
+                
+                continue;
+            }
+
         }
     }
+    
+    
 }
 
 int servercore::start() { 

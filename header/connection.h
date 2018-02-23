@@ -50,6 +50,8 @@ public:
     std::string commandParser(std::string command);
     std::vector<std::string> extractParameters(std::string command);
 
+    void classify_connection();
+    
     bool authConnection(const std::vector<USER> & listUser); 
     virtual ~serverconnection();
     void respondToQuery();
@@ -64,6 +66,12 @@ public:
     void set_TLShandshark_state(bool state);
     bool get_authen_state();
     void set_authen_state(bool state);
+    
+    void set_isMainConnection(bool state);
+    bool get_isMainConnection();
+    
+    void set_isFileConnection(bool state);
+    bool get_isFileConnection();
     
 private:
     int fd; // Filedescriptor per each threaded object

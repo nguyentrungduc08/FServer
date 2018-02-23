@@ -71,6 +71,10 @@ private:
      */
     void freeAllConnections();
     
+    void handleMainConnection(serverconnection* & conn);
+    
+    void handleFileConnection(serverconnection* & conn);
+    
 
     unsigned int maxConnectionsInQuery; // number of connections in query
     int Mainsocket; // The main listening socket file descriptor

@@ -33,7 +33,7 @@ public:
 
     int getCMDHeader();
     std::string getContent();
-
+    std::string getData_stdString();
     
 private:
     PACKET data;
@@ -41,6 +41,7 @@ private:
     PACKET buildIntField(int cmd);
     PACKET buildStringField(std::string sdata);
 };
+
 
 #endif /* PACKET_H */
 

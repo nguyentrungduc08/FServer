@@ -421,6 +421,40 @@ void serverconnection::respondAuthen(){
     } 
 }
 
+void serverconnection::classify_connection(){
+    std::cout << "#log conn: Classify connection." << std::endl;
+    char buffer[BUFFER_SIZE];
+    int bytes = -1;
+    std::string status;
+    bzero(buffer, sizeof buffer);
+    
+    bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
+    
+    if (bytes > 0){
+        Packet *pk = new Packet(std::string(buffer,bytes));
+        
+        int cmd = pk->getCMDHeader();
+        
+        std::cout << "#log conn: recieved data " << cmd << std::endl;
+        
+        if (cmd == CMD_IS_MAIN_CONNECTION) {    
+            std::cout << "#log conn: This is main connection." << std::endl;
+            this->isMainSocket = true;
+            return;
+        }
+        
+        if (cmd == CMD_IS_FILE_CONNECTION) {    
+            std::cout << "#log conn: This is file connection." << std::endl;
+            this->isFileSocket = true;
+            return;
+        }
+        
+    } 
+    std::cout << "#log conn: " << bytes << std::endl;
+    this->closureRequested  = true;
+    return;
+}
+
 // Receives the incoming data and issues the apropraite commands and responds
 void serverconnection::respondToQuery() {
     char buffer[BUFFER_SIZE];
@@ -536,4 +570,18 @@ void serverconnection::set_authen_state(bool state){
     this->ConfirmedState = state;
 }
 
+void serverconnection::set_isMainConnection(bool state){
+    this->isMainSocket = state;
+}
 
+bool serverconnection::get_isMainConnection(){
+    return this->isMainSocket;
+}
+    
+void serverconnection::set_isFileConnection(bool state){
+    this->isFileSocket = state;
+}
+
+bool serverconnection::get_isFileConnection(){
+    return this->isFileSocket;
+}
