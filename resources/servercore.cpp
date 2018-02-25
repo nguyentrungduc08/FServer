@@ -159,16 +159,16 @@ int servercore::handleNewConnection() {
 }
 
 void servercore::handleMainConnection(serverconnection* & conn){
-    if ( conn->get_authen_state() ) {
-                //if not authen connection 
-                if ( conn->authConnection(this->listUser) ) {
-                    //if check auth success
-                    conn->set_authen_state(true);
-                } else {
-                    //if check auth fail
-                    conn->setCloseRequestStatus(true);
-                }   
-                conn->respondAuthen();
+    if ( !conn->get_authen_state() ) {
+        //if not authen connection 
+        if ( conn->authConnection(this->listUser) ) {
+            //if check auth success
+            conn->set_authen_state(true);
+        } else {
+            //if check auth fail
+            conn->setCloseRequestStatus(true);
+        }   
+        conn->respondAuthen();
     } else {
         //if this connection authenticated -> handle data commining
         std::cout << "@log servercore: main connection establish $$$$$" << std::endl;
@@ -177,7 +177,7 @@ void servercore::handleMainConnection(serverconnection* & conn){
 }
     
 void servercore::handleFileConnection(serverconnection* & conn){
-    
+    std::cout << "@log servercore: handle file connection!!!" << std::endl;
 }
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
@@ -213,7 +213,7 @@ void servercore::readSockets() {
             //handle cmd 
             if ( this->connections.at(index)->get_isMainConnection() ){
                 std::cout << "@log servercore: handle main connection" << std::endl;
-                handleMainConnection(this->connections.at(index));
+                this->handleMainConnection(this->connections.at(index));
                 continue;
             }
             
@@ -221,14 +221,12 @@ void servercore::readSockets() {
             //handle read/write file
             if ( this->connections.at(index)->get_isFileConnection() ){
                 std::cout << "@log servercore: handle file connection" << std::endl;
-                
+                this->handleFileConnection(this->connections.at(index));
                 continue;
             }
 
         }
     }
-    
-    
 }
 
 int servercore::start() { 
