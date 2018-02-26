@@ -31,6 +31,9 @@ serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int
     this->isMainSocket = false;
     this->isFileSocket = false;
     
+    this->timeout.tv_sec = 5;
+    this->timeout.tv_usec = 0;
+    
     if (iSSL){
         this->ssl = SSL_new(sslcon->get_ctx());
         SSL_set_fd(this->ssl, this->fd);
@@ -421,12 +424,24 @@ void serverconnection::respondAuthen(){
     } 
 }
 
+void serverconnection::respondClassifyConnectionDone(bool state){
+    Packet *pk = new Packet();
+    
+    if (state){
+        pk->appendData(CMD_CLASSIFY_DONE);
+        SSL_write(this->ssl, &pk->getData()[0], pk->getData().size());
+    } else {
+        pk->appendData(CMD_CLASSIFY_FAIL);
+        SSL_write(this->ssl, &pk->getData()[0], pk->getData().size());
+    }
+}
+
+
 void serverconnection::classify_connection(){
     std::cout << "#log conn: Classify connection." << std::endl;
     char buffer[BUFFER_SIZE];
     int bytes = -1;
-    std::string status;
-    bzero(buffer, sizeof buffer);
+    bzero(buffer, sizeof(buffer));
     
     bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
     
@@ -440,18 +455,21 @@ void serverconnection::classify_connection(){
         if (cmd == CMD_IS_MAIN_CONNECTION) {    
             std::cout << "#log conn: This is main connection." << std::endl;
             this->isMainSocket = true;
+            this->respondClassifyConnectionDone(true);
             return;
         }
         
         if (cmd == CMD_IS_FILE_CONNECTION) {    
             std::cout << "#log conn: This is file connection." << std::endl;
             this->isFileSocket = true;
+            this->respondClassifyConnectionDone(true);
             return;
         }
         
     } 
     std::cout << "#log conn: " << bytes << std::endl;
     this->closureRequested  = true;
+    this->respondClassifyConnectionDone(false);
     return;
 }
 

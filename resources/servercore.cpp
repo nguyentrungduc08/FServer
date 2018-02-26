@@ -202,7 +202,7 @@ void servercore::readSockets() {
             
             //handle new connection to mainsocket, maybe is mainconnection or fileconnection
             //need to classify is mainconnection or fileconnection 
-            if ( !this->connections.at(index)->get_isFileConnection() && !this->connections.at(index)->get_isFileConnection())
+            if ( !this->connections.at(index)->get_isMainConnection() && !this->connections.at(index)->get_isFileConnection())
             {
                 std::cout << "@log servercore: handle new connection" << std::endl;
                 this->connections.at(index)->classify_connection();

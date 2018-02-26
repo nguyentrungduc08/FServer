@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
     return (EXIT_SUCCESS);
 }
 
-void testFunction(){
+void testFunction() {
     Packet *pk = new Packet();
     
     pk->appendData((int) CMD_DOWNLOAD_FINISH);

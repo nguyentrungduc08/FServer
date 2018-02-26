@@ -87,6 +87,7 @@ private:
     std::string hostAddress;
     std::string parameter;
     
+    struct timeval timeout;
     
     unsigned short commandOffset;
     unsigned long receivedPart;
@@ -118,6 +119,8 @@ private:
     std::string filterOutBlanks(std::string inString);
     
     static void getAllParametersAfter(std::vector<std::string> parameterVector, unsigned int currentParameter, std::string& theRest);
+    
+    void respondClassifyConnectionDone(bool state);
 };
 
 #endif /* CONNECTION_H */
