@@ -179,6 +179,7 @@ void servercore::handleMainConnection(serverconnection* & conn){
     
 void servercore::handleFileConnection(serverconnection* & conn){
     std::cout << "@log servercore: handle file connection!!!" << std::endl;
+    conn->respondToQuery();
 }
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              

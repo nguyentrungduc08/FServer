@@ -489,7 +489,8 @@ void serverconnection::respondToQuery() {
     // In non-blocking mode, bytes <= 0 does not mean a connection closure!
     if (bytes > 0) {  
         std::string clientCommand = std::string(buffer, bytes);
-        //std::cout << "#log conn: ++client command: " << std::endl;
+        std::cout << "#log conn: ++client command: " << std::endl;
+        
         if (this->uploadCommand) { // (Previous) upload command
             std::cout << "#log conn: Write block" << std::endl;
             // Previous (upload) command continuation, store incoming data to the file
