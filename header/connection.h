@@ -47,6 +47,8 @@ public:
      */
     serverconnection(int filedescriptor, fssl * sslcon, unsigned int connId, std::string defaultDir, std::string hostId, bool iSSL, unsigned short commandOffset = 1);
     
+    void getAllData();
+    
     std::string commandParser(std::string command);
     std::vector<std::string> extractParameters(std::string command);
 

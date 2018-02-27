@@ -172,6 +172,7 @@ void servercore::handleMainConnection(serverconnection* & conn){
     } else {
         //if this connection authenticated -> handle data commining
         std::cout << "@log servercore: main connection establish $$$$$" << std::endl;
+        conn->getAllData();
         //this->connections.at(index)->respondToQuery();
     }
 }

@@ -603,3 +603,11 @@ void serverconnection::set_isFileConnection(bool state){
 bool serverconnection::get_isFileConnection(){
     return this->isFileSocket;
 }
+
+
+void serverconnection::getAllData(){
+    char buf[BUFFSIZE];
+    SSL_read(this->ssl, buf, sizeof(buf));
+    std::cout <<"#log conn: " << buf << std::endl;
+    return;
+}
