@@ -18,7 +18,8 @@ database::database() {
     std::cout << "Create SQL object, MySQL version: " << mysql_get_client_info() << std::endl;
 }
 
-bool database::doConnection(std::string username, std::string password, std::string database){
+bool 
+database::doConnection(std::string username, std::string password, std::string database){
     this->ServerDatabase = mysql_init(NULL);
     
     if (this->ServerDatabase == NULL){
@@ -44,14 +45,16 @@ database::~database() {
     mysql_close(this->ServerDatabase);
 }
 
-void database::finish_with_error()
+void 
+database::finish_with_error()
 {
     std::cerr << "ERROR server database: " << mysql_error(this->ServerDatabase) << std::endl;
     mysql_close(this->ServerDatabase);
     exit(EXIT_FAILURE);        
 }
 
-std::vector<USER> database::getListUser(){
+std::vector<USER> 
+database::getListUser(){
     std::vector<USER> listuser;
     if ( mysql_query(this->ServerDatabase, "SELECT * FROM USERS") ) {
         this->finish_with_error();

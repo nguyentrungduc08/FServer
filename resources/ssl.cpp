@@ -18,7 +18,8 @@ fssl::~fssl(){
     SSL_CTX_free(this->ctx);
 }
 
-void fssl::create_context(){
+void 
+fssl::create_context(){
     this->ctx = SSL_CTX_new( TLSv1_2_server_method() );
     if ( this->ctx == NULL )
 	{
@@ -27,7 +28,8 @@ void fssl::create_context(){
 	}
 }
 
-void fssl::configure_context(std::string cerfile, std::string keyfile){
+void 
+fssl::configure_context(std::string cerfile, std::string keyfile){
     
     printf("@log ssl: begin load certificates \n");
     
@@ -58,10 +60,12 @@ void fssl::configure_context(std::string cerfile, std::string keyfile){
     printf("@log ssl: LoadCertificates Compleate Successfully.....\n");
 }
 
-SSL_CTX* fssl::get_ctx(){
+SSL_CTX* 
+fssl::get_ctx(){
     return this->ctx;
 }
 
-void fssl::set_verify_client(bool is_verify){
+void 
+fssl::set_verify_client(bool is_verify){
     this->verify_client = is_verify;
 }

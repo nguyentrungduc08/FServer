@@ -25,21 +25,19 @@ public:
     Packet(char *arr, int len);
     ~Packet();
 
-    bool appendData(int cmd);
-    bool appendData(std::string s);
-    bool IsAvailableData();
-    PACKET getData();
-    
-
-    int getCMDHeader();
+    bool        appendData(int cmd);
+    bool        appendData(std::string s);
+    bool        IsAvailableData();
+    PACKET      getData();
+    int         getCMDHeader();
     std::string getContent();
     std::string getData_stdString();
     
 private:
-    PACKET data;
+    PACKET      data;
 
-    PACKET buildIntField(int cmd);
-    PACKET buildStringField(std::string sdata);
+    PACKET      buildIntField(int cmd);
+    PACKET      buildStringField(std::string sdata);
 };
 
 

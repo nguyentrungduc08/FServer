@@ -46,7 +46,8 @@ PACKET Packet::buildIntField(int cmd){
     return vc;
 }
 
-PACKET Packet::buildStringField(std::string sField){
+PACKET 
+Packet::buildStringField(std::string sField){
     int leng = sField.length();
 
     PACKET sData;
@@ -60,11 +61,13 @@ PACKET Packet::buildStringField(std::string sField){
     return sData;
 }
 
-PACKET Packet::getData(){
+PACKET 
+Packet::getData(){
     return this->data;
 }
 
-bool Packet::appendData(int cmd){
+bool 
+Packet::appendData(int cmd){
     std::cout << "%Log build paccket: buil Int" << std::endl;
     PACKET pk;
     pk.clear();
@@ -75,7 +78,8 @@ bool Packet::appendData(int cmd){
     return true;
 }
 
-bool Packet::appendData(std::string s){
+bool 
+Packet::appendData(std::string s){
     std::cout << "%Log build paccket: buil string" << std::endl;
     PACKET pk;
     pk.clear();
@@ -86,7 +90,8 @@ bool Packet::appendData(std::string s){
 }
 
 
-int Packet::getCMDHeader(){
+int 
+Packet::getCMDHeader(){
     int cmd = 0;
     //cmd+= (this->data[0] << 24) + (this->data[1] << 16) + (this->data[2] << 8) + (this->data[3]);
     for(int i = 0; i < 4; ++i)
@@ -97,12 +102,14 @@ int Packet::getCMDHeader(){
 }
 
 
-bool Packet::IsAvailableData()
+bool 
+Packet::IsAvailableData()
 {
     return (this->data.size() > 0) ? true : false;
 }
 
-std::string Packet::getContent(){
+std::string 
+Packet::getContent(){
     int len = this->getCMDHeader();
     
     std::string res (this->data.begin(), this->data.begin() + len);
@@ -112,7 +119,8 @@ std::string Packet::getContent(){
     return res;
 }
 
-std::string Packet::getData_stdString(){
+std::string 
+Packet::getData_stdString(){
     std::string da(this->data.begin(), this->data.end());
     return da;
 }

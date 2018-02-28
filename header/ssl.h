@@ -21,14 +21,14 @@ public:
     fssl();
     ~fssl();
     
-    void create_context();
-    void configure_context(std::string cerfile, std::string keyfile);
-    SSL_CTX * get_ctx();
-    void set_verify_client(bool is_verify);
+    void        create_context();
+    void        configure_context(std::string cerfile, std::string keyfile);
+    SSL_CTX*    get_ctx();
+    void        set_verify_client(bool is_verify);
     
 private:
-    SSL_CTX * ctx;
-    bool verify_client;
+    SSL_CTX*    ctx;
+    bool        verify_client;
 };
 
 

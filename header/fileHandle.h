@@ -40,41 +40,41 @@ public:
     filehandle(std::string dir);
     virtual ~filehandle();
     
-    int readFile(std::string fileName);
-    char* readFileBlock(unsigned long &sizeInBytes);
+    int                         readFile(std::string fileName);
+    char*                       readFileBlock(unsigned long &sizeInBytes);
     
-    int writeFileAtOnce(std::string fileName, char* content);
-    
-    int beginWriteFile(std::string fileName);
-    int writeFileBlock(std::string content);
-    int closeWriteFile();
-    bool changeDir(std::string newPath, bool strict = true);
-    std::string getCurrentWorkingDir(bool showRootPath = true);
-    bool createFile(std::string &fileName, bool strict = true);
-    bool createDirectory(std::string &dirName, bool strict = true);
-    bool deleteDirectory(std::string dirName, bool cancel = false, std::string pathToDir = "");
-    bool deleteFile(std::string fileName, bool strict = true);
-    void browse(std::string dir, std::vector<std::string> &directories, std::vector<std::string> &files, bool strict = true);
-    bool dirCanBeOpenend(std::string dir); //check this folder can be opened.
-    std::string getParentDir();
-    unsigned long getDirSize(std::string dirName);
-    std::vector<std::string> getStats(std::string fileName, struct stat Status);
-    void clearListOfDeletedFiles();
-    void clearListOfDeletedDirectories();
-    std::vector<std::string> getListOfDeletedFiles();
-    std::vector<std::string> getListOfDeletedDirectories();
-    bool dirIsBelowServerRoot(std::string dirName);
+    int                         writeFileAtOnce(std::string fileName, char* content);
+    int                         beginWriteFile(std::string fileName);
+    int                         writeFileBlock(std::string content);
+    int                         closeWriteFile();
+    bool                        changeDir(std::string newPath, bool strict = true);
+    std::string                 getCurrentWorkingDir(bool showRootPath = true);
+    bool                        createFile(std::string &fileName, bool strict = true);
+    bool                        createDirectory(std::string &dirName, bool strict = true);
+    bool                        deleteDirectory(std::string dirName, bool cancel = false, std::string pathToDir = "");
+    bool                        deleteFile(std::string fileName, bool strict = true);
+    void                        browse(std::string dir, std::vector<std::string> &directories, std::vector<std::string> &files, bool strict = true);
+    bool                        dirCanBeOpenend(std::string dir); //check this folder can be opened.
+    std::string                 getParentDir();
+    unsigned long               getDirSize(std::string dirName);
+    std::vector<std::string>    getStats(std::string fileName, struct stat Status);
+    void                        clearListOfDeletedFiles();
+    void                        clearListOfDeletedDirectories();
+    std::vector<std::string>    getListOfDeletedFiles();
+    std::vector<std::string>    getListOfDeletedDirectories();
+    bool                        dirIsBelowServerRoot(std::string dirName);
+
 private:
+    std::vector<std::string>    deletedDirectories;
+    std::vector<std::string>    deletedFiles;
+    std::ofstream               currentOpenFile; //stream to read data from socket
+    std::ifstream               currentOpenReadFile; //stream to send data to socket
+    std::list<std::string>      completePath; // The path from server root dir upwards to the current working dir, each list element containing one dir
     
-    std::vector<std::string> deletedDirectories;
-    std::vector<std::string> deletedFiles;
-    void getValidDir(std::string &dirName);
-    void getValidFile(std::string &fileName);
-    void stripServerRootString(std::string &dirOrFileName);
-    std::ofstream currentOpenFile; //stream to read data from socket
-    std::ifstream currentOpenReadFile; //stream to send data to socket
-    std::list<std::string> completePath; // The path from server root dir upwards to the current working dir, each list element containing one dir
-    static void IntToString(int i, std::string &res);
+    void                        getValidDir(std::string &dirName);
+    void                        getValidFile(std::string &fileName);
+    void                        stripServerRootString(std::string &dirOrFileName);
+    static void                 IntToString(int i, std::string &res);
 };
 
 

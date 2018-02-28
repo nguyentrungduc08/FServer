@@ -44,7 +44,8 @@ serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int
 
 
 // Check for matching (commands/strings) with compare method
-bool serverconnection::commandEquals(std::string a, std::string b) {
+bool 
+serverconnection::commandEquals(std::string a, std::string b) {
     // Convert to lower case for case-insensitive checking
     std::transform(a.begin(), a.end(),a.begin(), tolower);
     int found = a.find(b);
@@ -52,7 +53,8 @@ bool serverconnection::commandEquals(std::string a, std::string b) {
 }
 
 // Command switch for the issued client command, only called when this->command is set to 0
-std::string serverconnection::commandParser(std::string command) {
+std::string 
+serverconnection::commandParser(std::string command) {
     this->parameter;
     std::string res = "";
     this->uploadCommand = false;
@@ -238,7 +240,8 @@ std::string serverconnection::commandParser(std::string command) {
 }
 
 // Extracts the command and parameter (if existent) from the client call
-std::vector<std::string> serverconnection::extractParameters(std::string command) {
+std::vector<std::string> 
+serverconnection::extractParameters(std::string command) {
     std::vector<std::string> res = std::vector<std::string>();
     std::size_t previouspos = 0;
     std::size_t pos;
@@ -256,7 +259,8 @@ std::vector<std::string> serverconnection::extractParameters(std::string command
     return res;
 }
 
-void serverconnection::TLS_handshark() {
+void 
+serverconnection::TLS_handshark() {
     //handle ssl_handshake non-blocking modle
     int status = -1;
     struct timeval tv, tvRestore;
@@ -324,7 +328,8 @@ void serverconnection::TLS_handshark() {
         //SSL_set_accept_state(this->ssl);
 }
 
-bool serverconnection::authConnection(const  std::vector<USER> & listUser) {
+bool 
+serverconnection::authConnection(const  std::vector<USER> & listUser) {
     
     std::cout << "#log conn: authen connection!!!!" << std::endl;
     
@@ -406,7 +411,8 @@ bool serverconnection::authConnection(const  std::vector<USER> & listUser) {
     return false;
 } 
 
-void serverconnection::respondAuthen(){
+void 
+serverconnection::respondAuthen(){
     if (this->ConfirmedState && !this->closureRequested){
         this->session->buildSession(this->connectionId, this->hostAddress);
         std::string ses = this->session->getSession();
@@ -424,7 +430,8 @@ void serverconnection::respondAuthen(){
     } 
 }
 
-void serverconnection::respondClassifyConnectionDone(bool state){
+void 
+serverconnection::respondClassifyConnectionDone(bool state){
     Packet *pk = new Packet();
     
     if (state){
@@ -437,7 +444,8 @@ void serverconnection::respondClassifyConnectionDone(bool state){
 }
 
 
-void serverconnection::classify_connection(){
+void 
+serverconnection::classify_connection(){
     std::cout << "#log conn: Classify connection." << std::endl;
     char buffer[BUFFER_SIZE];
     int bytes = -1;
@@ -474,7 +482,8 @@ void serverconnection::classify_connection(){
 }
 
 // Receives the incoming data and issues the apropraite commands and responds
-void serverconnection::respondToQuery() {
+void 
+serverconnection::respondToQuery() {
     char buffer[BUFFER_SIZE];
     int bytes;
 
@@ -522,7 +531,8 @@ void serverconnection::respondToQuery() {
 }
 
 // Sends the given string to the client using the current connection
-void serverconnection::sendToClient(char* response, unsigned long length) {
+void 
+serverconnection::sendToClient(char* response, unsigned long length) {
     // Now we're sending the response
     unsigned int bytesSend = 0;
     while (bytesSend < length) {
@@ -539,7 +549,8 @@ void serverconnection::sendToClient(char* response, unsigned long length) {
 }
 
 // Sends the given string to the client using the current connection
-void serverconnection::sendToClient(std::string response) {
+void 
+serverconnection::sendToClient(std::string response) {
     // Now we're sending the response
     unsigned int bytesSend = 0;
     while (bytesSend < response.length()) {
@@ -556,57 +567,70 @@ void serverconnection::sendToClient(std::string response) {
 }
 
 // Returns the file descriptor of the current connection
-int serverconnection::getFD() {
+int 
+serverconnection::getFD() {
     return this->fd;
 }
 
 // Returns whether the connection was requested to be closed (by client)
-bool serverconnection::getCloseRequestStatus() {
+bool 
+serverconnection::getCloseRequestStatus() {
     return this->closureRequested;
 }
 
-void serverconnection::setCloseRequestStatus(bool status){
+void 
+serverconnection::setCloseRequestStatus(bool status){
     this->closureRequested = status;
 }
 
-unsigned int serverconnection::getConnectionId() {
+unsigned int 
+serverconnection::getConnectionId() {
     return this->connectionId;
 }
 
-bool serverconnection::get_TLShandshark_state(){
+bool 
+serverconnection::get_TLShandshark_state(){
     return this->TLSHandsharkState;
 }
 
-void serverconnection::set_TLShandshark_state(bool state){
+void 
+serverconnection::set_TLShandshark_state(bool state){
     this->TLSHandsharkState = state;
 }
 
-bool serverconnection::get_authen_state(){
+bool 
+serverconnection::get_authen_state(){
     return this->ConfirmedState;
 }
 
-void serverconnection::set_authen_state(bool state){
+void 
+serverconnection::set_authen_state(bool state){
     this->ConfirmedState = state;
 }
 
-void serverconnection::set_isMainConnection(bool state){
+void 
+serverconnection::set_isMainConnection(bool state){
     this->isMainSocket = state;
 }
 
-bool serverconnection::get_isMainConnection(){
+bool 
+serverconnection::get_isMainConnection(){
     return this->isMainSocket;
 }
     
-void serverconnection::set_isFileConnection(bool state){
+void 
+serverconnection::set_isFileConnection(bool state){
     this->isFileSocket = state;
 }
 
-bool serverconnection::get_isFileConnection(){
+bool 
+serverconnection::get_isFileConnection(){
     return this->isFileSocket;
 }
 
 
-void serverconnection::getAllData(){
+void 
+serverconnection::getAllData(){
     char buf[BUFFSIZE];
     SSL_read(this->ssl, buf, sizeof(buf));
     std::cout <<"#log conn: " << buf << std::endl;

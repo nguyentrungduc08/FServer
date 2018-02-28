@@ -22,7 +22,8 @@ Session::Session(const Session& orig) {
 Session::~Session() {
 }
 
-void Session::setCurrentTime(){
+void 
+Session::setCurrentTime(){
     time_t rawtime;
     struct tm * timeinfo;
     char buffer[80];
@@ -35,7 +36,8 @@ void Session::setCurrentTime(){
     this->currentTime = str;
 }
 
-void Session::buildSession(int conid, std::string ipAddr){
+void 
+Session::buildSession(int conid, std::string ipAddr){
     this->setCurrentTime();
     std::stringstream ss;
     ss << conid;
@@ -44,10 +46,12 @@ void Session::buildSession(int conid, std::string ipAddr){
     //std::cout <<"input : " << conid << " " << ipAddr << " " << this->currentTime << " output: " << this->sessionCode << std::endl; 
 }
 
-std::string Session::getSession(){
+std::string 
+Session::getSession(){
     return this->sessionCode;
 }
 
-std::string Session::getCurrentTime(){
+std::string 
+Session::getCurrentTime(){
     return this->currentTime;
 }

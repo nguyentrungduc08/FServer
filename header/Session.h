@@ -23,7 +23,7 @@ public:
     Session(const Session& orig);
     virtual ~Session();
 
-    void buildSession(int conid, std::string ipAddr);
+    void        buildSession(int conid, std::string ipAddr);
     std::string getSession();
     std::string getCurrentTime();
     
@@ -31,7 +31,7 @@ private:
     std::string sessionCode;
     std::string currentTime;
     
-    void setCurrentTime();
+    void        setCurrentTime();
 };
 
 #endif /* SESSION_H */

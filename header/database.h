@@ -25,15 +25,16 @@ class database {
 public:
     database();
     database(const database& orig);
-    
-    bool doConnection(std::string username, std::string password, std::string database);
-    std::vector<USER> getListUser();
     virtual ~database();
     
-private:
-    MYSQL *ServerDatabase;
+    bool                doConnection(std::string username, std::string password, std::string database);
+    std::vector<USER>   getListUser();
     
-    void finish_with_error();
+    
+private:
+    MYSQL*              ServerDatabase;
+    
+    void                finish_with_error();
 };
 
 #endif /* DATABASE_H */
