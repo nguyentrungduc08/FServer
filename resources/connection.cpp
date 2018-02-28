@@ -19,23 +19,26 @@ serverconnection::~serverconnection() {
 }
 
 // Constructor
-serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int connId, std::string defaultDir, std::string hostId, bool iSSL, unsigned short commandOffset) 
-: fd(filedescriptor), connectionId(connId), dir(defaultDir), hostAddress(hostId), isSSL(iSSL), commandOffset(commandOffset), closureRequested(false), 
- uploadCommand(false), downloadCommand(false),  receivedPart(0), parameter("") 
+serverconnection::serverconnection(int filedescriptor,fssl* sslcon, unsigned int connId, 
+                                    std::string defaultDir, std::string hostId, bool iSSL, 
+                                    unsigned short commandOffset) 
+                                    : fd(filedescriptor), connectionId(connId), dir(defaultDir), 
+                                    hostAddress(hostId), isSSL(iSSL), commandOffset(commandOffset), 
+                                    closureRequested(false), uploadCommand(false), downloadCommand(false),  
+                                    receivedPart(0), parameter("") 
 {
 //    this->files = std::vector<std::string>();
-    this->session = new Session();
-    this->fo = new filehandle(this->dir); // File and directory browser
+    this->session           = new Session();
+    this->fo                = new filehandle(this->dir); // File and directory browser
     this->TLSHandsharkState = false;
-    this->ConfirmedState = false;
-    this->isMainSocket = false;
-    this->isFileSocket = false;
-    
-    this->timeout.tv_sec = 5;
-    this->timeout.tv_usec = 0;
+    this->ConfirmedState    = false;
+    this->isMainSocket      = false;
+    this->isFileSocket      = false;
+    this->timeout.tv_sec    = 5;
+    this->timeout.tv_usec   = 0;
     
     if (iSSL){
-        this->ssl = SSL_new(sslcon->get_ctx());
+        this->ssl           = SSL_new(sslcon->get_ctx());
         SSL_set_fd(this->ssl, this->fd);
     }
     

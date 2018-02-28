@@ -6,8 +6,9 @@
 
 #include "../header/servercore.h"
 
-
-servercore::servercore(uint port, std::string dir, unsigned short commandOffset) : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) {
+servercore::servercore(uint port, std::string dir, unsigned short commandOffset) 
+                        : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) 
+{
     this->connections.clear();
     this->listUser.clear();
     this->DataBase = new database();
@@ -41,7 +42,8 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
 /* 
  * Free up used memory by cleaning up all the object variables;
  */ 
-servercore::~servercore() {
+servercore::~servercore() 
+{
     std::cout << "@log servercore: Server shutdown" << std::endl;
     close(this->Mainsocket); 
     this->freeAllConnections(); // Deletes all connection objects and frees their memory
@@ -52,7 +54,8 @@ servercore::~servercore() {
 // Builds the list of sockets to keep track on and removes the closed ones
 // @TODO: Crash if data is incoming over a closed socket connection???
 void 
-servercore::buildSelectList() {
+servercore::buildSelectList() 
+{
     FD_ZERO(&(this->working_set));
     FD_SET(this->Mainsocket, &(this->working_set));
     
@@ -81,7 +84,8 @@ servercore::buildSelectList() {
 
 // Clean up everything
 void 
-servercore::freeAllConnections() {
+servercore::freeAllConnections() 
+{
     std::vector<serverconnection*>::iterator iter = this->connections.begin();
     while( iter != this->connections.end() ) {
         delete (*(iter++)); // Clean up, issue destructor implicitly
@@ -91,13 +95,12 @@ servercore::freeAllConnections() {
 
 // Accepts new connections and stores the connection object with fd in a vector
 int 
-servercore::handleNewConnection() {
+servercore::handleNewConnection() 
+{
     int fd; // Socket file descriptor for incoming connections
-    int reuseAllowed = 1;
-    
-    this->cli_size = sizeof(this->cli);
-    
-    fd = accept(this->Mainsocket, (struct sockaddr*) &this->cli, &this->cli_size);
+    int reuseAllowed        = 1;
+    this->cli_size          = sizeof(this->cli);
+    fd                      = accept(this->Mainsocket, (struct sockaddr*) &this->cli, &this->cli_size);
     
     if (fd < 0) {
         std::cerr << "@log servercore: Error while accepting client" << std::endl;
@@ -125,11 +128,12 @@ servercore::handleNewConnection() {
     }
 
     // Get the client IP address
-    char ipstr[INET6_ADDRSTRLEN];
-    int port;
+    char        ipstr[INET6_ADDRSTRLEN];
+    int         port;
+    std::string hostId = "";
     this->addrLength = sizeof this->addrStorage;
     getpeername(fd, (struct sockaddr*) &this->addrStorage, &(this->addrLength));
-    std::string hostId = "";
+    
     if (this->addr.sin_family == AF_INET) {
         struct sockaddr_in* fd = (struct sockaddr_in*) &(this->addrStorage);
         port = ntohs(fd->sin_port);
@@ -155,14 +159,13 @@ servercore::handleNewConnection() {
     }    
     
     conn->TLS_handshark();
-    
     this->connections.push_back(conn);
-
     return (EXIT_SUCCESS);
 }
 
 void 
-servercore::handleMainConnection(serverconnection* & conn){
+servercore::handleMainConnection(serverconnection* & conn)
+{
     if ( !conn->get_authen_state() ) {
         //if not authen connection 
         if ( conn->authConnection(this->listUser) ) {
@@ -182,16 +185,17 @@ servercore::handleMainConnection(serverconnection* & conn){
 }
     
 void 
-servercore::handleFileConnection(serverconnection* & conn){
+servercore::handleFileConnection(serverconnection* & conn)
+{
     std::cout << "@log servercore: handle file connection!!!" << std::endl;
+    
     conn->respondToQuery();
 }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 // Something is happening (=data ready to read) at a socket, either accept a new connection or handle the incoming data over an already opened socket
 void 
-servercore::readSockets() {
-
+servercore::readSockets() 
+{
     // accept connection. <TCP handshark + TLS handshark>
     if (FD_ISSET(this->Mainsocket,&(this->working_set))) {
         std::cout << "@log servercore: new connection " << std::endl;
@@ -205,7 +209,7 @@ servercore::readSockets() {
     // Now check connectlist for available data
     // Run through our sockets and check to see if anything happened with them
     for (unsigned int index = 0; index < this->connections.size(); ++index) {
-        if ( FD_ISSET( this->connections.at(index)->getFD(), &(this->working_set) ) ) {
+        if (FD_ISSET(this->connections.at(index)->getFD(), &(this->working_set))) {
             std::cout << "@log servercore: handle comming data to exist socket " << this->connections.at(index)->getFD() << std::endl;
             
             //handle new connection to mainsocket, maybe is mainconnection or fileconnection
@@ -238,10 +242,10 @@ servercore::readSockets() {
 }
 
 int 
-servercore::start() { 
-    int readworking_set = -1; // Number of sockets ready for reading
-    // Wait for connections, main server loop
-    struct timeval timeout, working_timeout;
+servercore::start() 
+{ 
+    int             readworking_set = -1; // Number of sockets ready for reading
+    struct timeval  timeout, working_timeout;
     timeout.tv_sec = 3; // Timeout = 3 sec
     timeout.tv_usec = 0;
 
@@ -265,7 +269,8 @@ servercore::start() {
 }
 
 void 
-servercore::setNonBlocking(int &sock) {
+servercore::setNonBlocking(int &sock) 
+{
     int opts = fcntl(sock,F_GETFL, 0);
     if (opts < 0) {
         std::cerr << "@log servercore: Error getting socket flags" << std::endl;
@@ -279,7 +284,8 @@ servercore::setNonBlocking(int &sock) {
 }
 
 int 
-servercore::initSockets(int port) {
+servercore::initSockets(int port) 
+{
     int reuseAllowed = 1; 
     this->maxConnectionsInQuery = 500; //set maximum connect to server simultaneously
     this->addr.sin_family = AF_INET; // PF_INET;

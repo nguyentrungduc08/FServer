@@ -76,19 +76,15 @@ private:
     SSL*                        ssl;
     filehandle*                 fo; // For browsing, writing and reading
     Session * session;
-    
     std::vector<std::string>    directories;
     std::vector<std::string>    files;
     unsigned int                connectionId;
     std::string                 dir;
     std::string                 hostAddress;
     std::string                 parameter;
-    
     struct timeval              timeout;
-    
     unsigned short              commandOffset;
     unsigned long               receivedPart;
-    
     bool                        isMainSocket;
     bool                        isFileSocket;
     bool                        closureRequested;

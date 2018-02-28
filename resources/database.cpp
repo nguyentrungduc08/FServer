@@ -78,10 +78,10 @@ database::getListUser(){
         //printf("\n"); 
         //std::cout <<"Id: " << row[0] << " username: " << row[1] <<" password: " << row[2] << " status: " << row[7] << std::endl;    
         USER user;
-        user.id = atoi(row[0]);
-        user.username = row[1];
-        user.password = row[2];
-        user.status = atoi(row[7]);
+        user.id         = atoi(row[0]);
+        user.username   = row[1];
+        user.password   = row[2];
+        user.status     = atoi(row[7]);
         listuser.pb(user);
     }
     //std::cout << "finish get list user!!!" << std::endl;

@@ -24,9 +24,9 @@ Session::~Session() {
 
 void 
 Session::setCurrentTime(){
-    time_t rawtime;
-    struct tm * timeinfo;
-    char buffer[80];
+    time_t      rawtime;
+    struct tm*  timeinfo;
+    char        buffer[80];
 
     time (&rawtime);
     timeinfo = localtime(&rawtime);

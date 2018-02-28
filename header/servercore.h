@@ -65,17 +65,13 @@ private:
      * Accepts new connections and stores the connection object with fd in a vector 
      */
     int             handleNewConnection();
-    
     /*
      * free all memories 
      */
     void            freeAllConnections();
-    
     void            handleMainConnection(serverconnection* & conn);
-    
     void            handleFileConnection(serverconnection* & conn);
     
-
     unsigned int            maxConnectionsInQuery; // number of connections in query
     int                     Mainsocket; // The main listening socket file descriptor
     int                     highSock;
@@ -89,14 +85,13 @@ private:
     unsigned short          commandOffset;
     fd_set                  working_set; // set of socket file descriptors we want to wake up for, using select()
     std::string             dir; //path of directory working 
-
+    fssl*                   sslConn;
+    database*               DataBase;
+    
     std::vector<serverconnection*>  connections;// Manage the connected sockets / connections in a list with an iterator
     std::vector<USER>               listUser;
     std::vector<serverconnection*>  mainConnections;
     std::vector<serverconnection*>  fileConnections;
-     
-    fssl*                   sslConn;
-    database*               DataBase;
 };
 
 #endif /* SERVERCORE_H */
