@@ -97,10 +97,13 @@ servercore::freeAllConnections()
 int 
 servercore::handleNewConnection() 
 {
-    int fd; // Socket file descriptor for incoming connections
-    int reuseAllowed        = 1;
-    this->cli_size          = sizeof(this->cli);
-    fd                      = accept(this->Mainsocket, (struct sockaddr*) &this->cli, &this->cli_size);
+    int         fd; // Socket file descriptor for incoming connections
+    char        ipstr[INET6_ADDRSTRLEN];
+    int         port;
+    std::string hostId          = "";
+    int         reuseAllowed    = 1;
+    this->cli_size              = sizeof(this->cli);
+    fd                          = accept(this->Mainsocket, (struct sockaddr*) &this->cli, &this->cli_size);
     
     if (fd < 0) {
         std::cerr << "@log servercore: Error while accepting client" << std::endl;
@@ -128,9 +131,6 @@ servercore::handleNewConnection()
     }
 
     // Get the client IP address
-    char        ipstr[INET6_ADDRSTRLEN];
-    int         port;
-    std::string hostId = "";
     this->addrLength = sizeof this->addrStorage;
     getpeername(fd, (struct sockaddr*) &this->addrStorage, &(this->addrLength));
     
@@ -188,8 +188,8 @@ void
 servercore::handleFileConnection(serverconnection* & conn)
 {
     std::cout << "@log servercore: handle file connection!!!" << std::endl;
-    
-    conn->respondToQuery();
+    conn->handle_uploadRequest();
+    //conn->respondToQuery();
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 // Something is happening (=data ready to read) at a socket, either accept a new connection or handle the incoming data over an already opened socket
@@ -241,6 +241,10 @@ servercore::readSockets()
     }
 }
 
+    
+/*
+ * Server entry point and main loop accepting and handling connections
+ */ 
 int 
 servercore::start() 
 { 
@@ -268,6 +272,10 @@ servercore::start()
     return (EXIT_SUCCESS);
 }
 
+/* 
+ * Sets the given socket to non-blocking mode
+ * @sock parameter reference to set socket non-blocking
+ */
 void 
 servercore::setNonBlocking(int &sock) 
 {
@@ -283,14 +291,18 @@ servercore::setNonBlocking(int &sock)
     }
 }
 
+/* 
+ * Initialization of sockets / socket list with options and error checking
+ * @port create socket to listening 
+ */ 
 int 
 servercore::initSockets(int port) 
 {
-    int reuseAllowed = 1; 
+    int reuseAllowed            = 1; 
     this->maxConnectionsInQuery = 500; //set maximum connect to server simultaneously
-    this->addr.sin_family = AF_INET; // PF_INET;
-    this->addr.sin_port = htons(port); 
-    this->addr.sin_addr.s_addr = INADDR_ANY; // Server can be connected to from any host
+    this->addr.sin_family       = AF_INET; // PF_INET;
+    this->addr.sin_port         = htons(port); 
+    this->addr.sin_addr.s_addr  = INADDR_ANY; // Server can be connected to from any host
     // PF_INET: domain, Internet; SOCK_STREAM: datastream, TCP / SOCK_DGRAM = UDP => WARNING, this can change the byte order!; for 3rd parameter==0: TCP preferred
     
     this->Mainsocket = socket(PF_INET, SOCK_STREAM, 0); 

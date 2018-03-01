@@ -33,41 +33,12 @@ public:
     ~servercore();
 
 private:
-    
-    /*
-     * Server entry point and main loop accepting and handling connections
-     */ 
     int             start();
-    
-    /* 
-     * Initialization of sockets / socket list with options and error checking
-     * @port create socket to listening 
-     */ 
     int             initSockets(int port);
-    
-    /* 
-     * Sets the given socket to non-blocking mode
-     * @sock parameter reference to set socket non-blocking
-     */
-    void            setNonBlocking(int &sock);
-    
-    /*
-     * build list socket to handle new connection or data from clients
-     */
-    void            buildSelectList();
-    
-    /*
-     * read data from socket
-     */
-    void            readSockets();
-    
-    /*
-     * Accepts new connections and stores the connection object with fd in a vector 
-     */
     int             handleNewConnection();
-    /*
-     * free all memories 
-     */
+    void            setNonBlocking(int &sock);
+    void            buildSelectList();
+    void            readSockets();
     void            freeAllConnections();
     void            handleMainConnection(serverconnection* & conn);
     void            handleFileConnection(serverconnection* & conn);

@@ -331,19 +331,78 @@ serverconnection::TLS_handshark() {
         //SSL_set_accept_state(this->ssl);
 }
 
+void                         
+serverconnection::handle_uploadRequest()
+{
+    std::cout << "#log conn: handle upload request" << std::endl;
+    
+    char            buffer[BUFFER_SIZE];
+    int             bytes = -1;
+    struct timeval  time = this->timeout;
+    fd_set          fdset;
+    int             rc;
+    int             cmd;
+    Packet*         pk;
+    std::string     token;
+    std::string     filename;
+
+    bzero(buffer, sizeof(buffer));
+    FD_ZERO(&fdset);
+    FD_SET(this->fd, &fdset);
+
+    rc = select(this->fd + 1, &fdset, NULL, NULL, &time);
+
+    if (rc == 0){
+        std::cout << "#log conn: timeout request upload" << std::endl;
+        return;
+    }
+
+    bytes   = SSL_read(this->ssl, buffer, sizeof(buffer));
+    pk      = new Packet(std::string(buffer, bytes));
+    cmd     = pk->getCMDHeader();
+
+    if (cmd == CMD_UPLOAD_FILE) {
+        //@handle check token is valid???
+        token       = pk->getContent();
+        filename    = pk->getContent(); 
+        std::cout << "#log conn: token: " << token << "\nfilename: " << filename << std::endl;
+        this->response_uploadRequest();
+    } else {
+        this->closureRequested = true;
+        return;
+    }
+}
+
+void                        
+serverconnection::response_uploadRequest()
+{
+    std::cout << "#log conn: response upload request" << std::endl;
+    Packet*         pk;
+
+    pk = new Packet();
+    pk->appendData(CMD_UPLOAD_READY);
+    pk->appendData("url_file");
+
+    SSL_write(this->ssl,  &pk->getData()[0], pk->getData().size());
+
+    delete pk;
+}
+
 bool 
 serverconnection::authConnection(const  std::vector<USER> & listUser) {
     
     std::cout << "#log conn: authen connection!!!!" << std::endl;
     
-    char buffer[BUFFER_SIZE];
-    int bytes = -1;
-    std::string status;
+    char            buffer[BUFFER_SIZE];
+    int             bytes = -1;
+    int             cmd;
+    int             Sta = -1;
+    std::string     status;
+    fd_set          writeFdSet;
+    fd_set          readFdSet;
+
     bzero(buffer, sizeof buffer);
-   
-    fd_set writeFdSet;
-    fd_set readFdSet;
-    int Sta = -1;
+    
     if (isSSL){ 
         bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
         
@@ -386,7 +445,7 @@ serverconnection::authConnection(const  std::vector<USER> & listUser) {
     if (bytes > 0){
         Packet *pk = new Packet(std::string(buffer,bytes));
         
-        int cmd = pk->getCMDHeader();
+        cmd = pk->getCMDHeader();
         std::string username, password;
         
         if (cmd == CMD_AUTHEN_LOGIN && !this->ConfirmedState){
@@ -450,14 +509,15 @@ serverconnection::respondClassifyConnectionDone(bool state){
 void 
 serverconnection::classify_connection(){
     std::cout << "#log conn: Classify connection." << std::endl;
-    char buffer[BUFFER_SIZE];
-    int bytes = -1;
+    char        buffer[BUFFER_SIZE];
+    int         bytes = -1;
+    Packet*     pk;
     bzero(buffer, sizeof(buffer));
     
     bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
     
     if (bytes > 0){
-        Packet *pk = new Packet(std::string(buffer,bytes));
+        pk = new Packet(std::string(buffer,bytes));
         
         int cmd = pk->getCMDHeader();
         
@@ -476,7 +536,7 @@ serverconnection::classify_connection(){
             this->respondClassifyConnectionDone(true);
             return;
         }
-        
+        delete pk;
     } 
     std::cout << "#log conn: " << bytes << std::endl;
     this->closureRequested  = true;

@@ -47,22 +47,22 @@ public:
     int                         beginWriteFile(std::string fileName);
     int                         writeFileBlock(std::string content);
     int                         closeWriteFile();
-    bool                        changeDir(std::string newPath, bool strict = true);
     std::string                 getCurrentWorkingDir(bool showRootPath = true);
+    std::string                 getParentDir();
+    bool                        changeDir(std::string newPath, bool strict = true);
     bool                        createFile(std::string &fileName, bool strict = true);
     bool                        createDirectory(std::string &dirName, bool strict = true);
     bool                        deleteDirectory(std::string dirName, bool cancel = false, std::string pathToDir = "");
     bool                        deleteFile(std::string fileName, bool strict = true);
-    void                        browse(std::string dir, std::vector<std::string> &directories, std::vector<std::string> &files, bool strict = true);
+    bool                        dirIsBelowServerRoot(std::string dirName);
     bool                        dirCanBeOpenend(std::string dir); //check this folder can be opened.
-    std::string                 getParentDir();
+    void                        browse(std::string dir, std::vector<std::string> &directories, std::vector<std::string> &files, bool strict = true);    
     unsigned long               getDirSize(std::string dirName);
     std::vector<std::string>    getStats(std::string fileName, struct stat Status);
     void                        clearListOfDeletedFiles();
     void                        clearListOfDeletedDirectories();
     std::vector<std::string>    getListOfDeletedFiles();
     std::vector<std::string>    getListOfDeletedDirectories();
-    bool                        dirIsBelowServerRoot(std::string dirName);
 
 private:
     std::vector<std::string>    deletedDirectories;

@@ -58,6 +58,9 @@ public:
     void                        respondAuthen();
     void                        TLS_handshark();
     unsigned int                getConnectionId();
+    void                        handle_uploadRequest();
+    void                        response_uploadRequest();
+    
     int                         getFD();
     
     bool                        getCloseRequestStatus();
