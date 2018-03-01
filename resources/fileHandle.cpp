@@ -7,19 +7,19 @@
 #include "../header/fileHandle.h"
 
 // Constructor, gets the current server root dir as a parameter
-filehandle::filehandle(std::string dir) {
+FileHandle::FileHandle(std::string dir) {
     this->completePath.push_front(dir); // Insert the root dir at the beginning
 }
 
 // Destructor, let the cleaner rage
-filehandle::~filehandle() {
+FileHandle::~FileHandle() {
     this->closeWriteFile(); // Close the file (if any is open)
     this->completePath.clear();
 }
 
 // Relative directories only, strict
 bool 
-filehandle::changeDir(std::string newPath, bool strict) {
+FileHandle::changeDir(std::string newPath, bool strict) {
     if (strict) // When using strict mode, the function only allows one subdirectory and not several subdirectories, e.g. like sub/subsub/dir/ ...
         getValidDir(newPath); // check error cases, e.g. newPath = '..//' , '/home/user/' , 'subdir' (without trailing slash), etc...
     // If change to a higher directory is requested
@@ -50,7 +50,7 @@ filehandle::changeDir(std::string newPath, bool strict) {
 
 // check error cases, e.g. newPath = '..//' , '/home/user/' , 'subdir' (without trailing slash), etc... and return a clean, valid string in the form 'subdir/'
 void 
-filehandle::getValidDir(std::string &dirName) {
+FileHandle::getValidDir(std::string &dirName) {
     std::string slash = "/";
     size_t foundSlash = 0;
     while ( (foundSlash = dirName.find_first_of(slash),(foundSlash)) != std::string::npos) {
@@ -62,7 +62,7 @@ filehandle::getValidDir(std::string &dirName) {
 
 //filename ../../e.txt -> e.txt , prohibit deletion out of valid environment
 void 
-filehandle::getValidFile(std::string &fileName) {
+FileHandle::getValidFile(std::string &fileName) {
     std::string slash = "/";
     size_t foundSlash = 0;
     while ( (foundSlash = fileName.find_first_of(slash),(foundSlash)) != std::string::npos) {
@@ -73,7 +73,7 @@ filehandle::getValidFile(std::string &fileName) {
 
 // Strips out the string for the server root, e.g. <root>/data/file -> data/file
 void 
-filehandle::stripServerRootString(std::string &dirOrFileName) {
+FileHandle::stripServerRootString(std::string &dirOrFileName) {
     size_t foundRootString = 0;
     if ((dirOrFileName.find_first_of(SERVERROOTPATHSTRING) ) == foundRootString ) {
         int rootStringLength = ((std::string)SERVERROOTPATHSTRING).length();
@@ -83,7 +83,7 @@ filehandle::stripServerRootString(std::string &dirOrFileName) {
 
 // Creates a directory with the specified name in the current working directory
 bool 
-filehandle::createDirectory(std::string &dirName, bool strict) {
+FileHandle::createDirectory(std::string &dirName, bool strict) {
     if (strict) // When using strict mode, the function only allows one subdirectory and not several subdirectories, e.g. like sub/subsub/dir/ ...
         getValidDir(dirName); // check error cases, e.g. newPath = '..//' , '/home/user/' , 'subdir' (without trailing slash), etc...
     // Prohibit deletion of dir ../ beyond server root
@@ -99,7 +99,7 @@ filehandle::createDirectory(std::string &dirName, bool strict) {
 
 // Read a block from the open file
 char* 
-filehandle::readFileBlock(unsigned long &sizeInBytes) {
+FileHandle::readFileBlock(unsigned long &sizeInBytes) {
     // get length of file
     this->currentOpenReadFile.seekg(0, std::ios::end);
     std::ifstream::pos_type size = this->currentOpenReadFile.tellg();
@@ -119,7 +119,7 @@ filehandle::readFileBlock(unsigned long &sizeInBytes) {
 
 /// @WARNING: Concurrent file access not catched
 int 
-filehandle::readFile(std::string fileName) {
+FileHandle::readFile(std::string fileName) {
     stripServerRootString(fileName);
     this->currentOpenReadFile.open(fileName.c_str(), std::ios::in|std::ios::binary); // modes for binary file  |std::ios::ate
     if (this->currentOpenReadFile.fail()) {
@@ -134,45 +134,45 @@ filehandle::readFile(std::string fileName) {
 }
 
 int 
-filehandle::beginWriteFile(std::string fileName) {
+FileHandle::beginWriteFile(std::string fileName) {
     stripServerRootString(fileName);
     //this->currentOpenFile.open(fileName.c_str(), std::ios::out|std::ios::binary|std::ios::app); // output file
     this->currentOpenFile.open(fileName.c_str(), std::ios::out|std::ios::binary); // output file
     if(!this->currentOpenFile) {
-        std::cerr << "$Log filehandle: Cannot open output file '" << fileName << "'" << std::endl;
+        std::cerr << "$Log FileHandle: Cannot open output file '" << fileName << "'" << std::endl;
         return (EXIT_FAILURE);
     }
-    std::cout << "$Log filehandle: Beginning writing to file '" << fileName << "'" << std::endl;
+    std::cout << "$Log FileHandle: Beginning writing to file '" << fileName << "'" << std::endl;
     return (EXIT_SUCCESS);
 }
 
 /// @WARNING: Concurrent file access not catched
 int 
-filehandle::writeFileBlock(std::string content) {
+FileHandle::writeFileBlock(std::string content) {
     if(!this->currentOpenFile) {
         std::cerr << "Cannot write to output file" << std::endl;
         return (EXIT_FAILURE);
     }
-    std::cout << "$Log filehandle: Appending to file" << std::endl;
+    std::cout << "$Log FileHandle: Appending to file" << std::endl;
     (this->currentOpenFile) << content;
     return (EXIT_SUCCESS);
 }
 
 // File is closed when disconnecting
 int 
-filehandle::closeWriteFile() {
+FileHandle::closeWriteFile() {
     if (this->currentOpenFile.is_open()) {
-        std::cout << "$Log filehandle: Closing open file" << std::endl;
+        std::cout << "$Log FileHandle: Closing open file" << std::endl;
         this->currentOpenFile.close();
     }
 }
 
 int 
-filehandle::writeFileAtOnce(std::string fileName, char* content) {
+FileHandle::writeFileAtOnce(std::string fileName, char* content) {
     stripServerRootString(fileName);
     std::ofstream myFile(fileName.c_str(), std::ios::out|std::ios::binary); // output file |std::ios::app
     if(!myFile) {
-        std::cerr << "$Log filehandle: Cannot open output file '" << fileName << "'" << std::endl;
+        std::cerr << "$Log FileHandle: Cannot open output file '" << fileName << "'" << std::endl;
         return (EXIT_FAILURE);
     }
     myFile << content;
@@ -183,7 +183,7 @@ filehandle::writeFileAtOnce(std::string fileName, char* content) {
 // Same as unix touch command
 // Avoid touch ../file beyond server root!
 bool 
-filehandle::createFile(std::string &fileName, bool strict) {
+FileHandle::createFile(std::string &fileName, bool strict) {
     if (strict)
         this->getValidFile(fileName); // Avoid touch ../file beyond server root!
     try {
@@ -205,7 +205,7 @@ filehandle::createFile(std::string &fileName, bool strict) {
  */
 // Avoid rm ../file beyond server root!
 bool 
-filehandle::deleteFile(std::string fileName, bool strict) {
+FileHandle::deleteFile(std::string fileName, bool strict) {
     if (strict)
         this->getValidFile(fileName); // Avoid rm ../file beyond server root!
     if (remove(this->getCurrentWorkingDir().append(fileName).c_str()) != 0 ) {
@@ -227,7 +227,7 @@ filehandle::deleteFile(std::string fileName, bool strict) {
  * @return if error occurred (error = true, success = false)
  */
 bool 
-filehandle::deleteDirectory(std::string dirName, bool cancel, std::string pathToDir) {
+FileHandle::deleteDirectory(std::string dirName, bool cancel, std::string pathToDir) {
     // If error was encountered in a previous recursion abort deletion process
     if (cancel) {
         return true;
@@ -306,7 +306,7 @@ filehandle::deleteDirectory(std::string dirName, bool cancel, std::string pathTo
  * @returns vector<string> result(0) = AccessRights, (1) = Group, (2) = Owner, (3) = LastModificationTime, (4) = Size
  */
 std::vector<std::string> 
-filehandle::getStats(std::string fileName, struct stat Status) {
+FileHandle::getStats(std::string fileName, struct stat Status) {
     std::vector<std::string> result;
     // Check if existent, accessible
     if (stat(this->getCurrentWorkingDir().append(fileName).c_str(), &Status) != 0) {
@@ -380,7 +380,7 @@ S_IXOTH	00001	others have execute permission
  * @res reference parameter string  
  */
 void
-filehandle::IntToString(int i, std::string& res) {
+FileHandle::IntToString(int i, std::string& res) {
     std::ostringstream temp;
     temp << i;
     res = temp.str();
@@ -390,7 +390,7 @@ filehandle::IntToString(int i, std::string& res) {
  * Returns the directory the given file resides in (only directory and no full path, required?)
  */
 std::string 
-filehandle::getParentDir() {
+FileHandle::getParentDir() {
     std::list<std::string>::reverse_iterator lastDirs;
     unsigned int i = 0;
     // Walk to second-last entry for parent dir (from end of list on)
@@ -409,7 +409,7 @@ filehandle::getParentDir() {
  * @param dirName the directory
  */
 unsigned long 
-filehandle::getDirSize(std::string dirName) {
+FileHandle::getDirSize(std::string dirName) {
     getValidDir(dirName);
     std::vector<std::string> directories;
     std::vector<std::string> files;
@@ -420,7 +420,7 @@ filehandle::getDirSize(std::string dirName) {
 
 // Returns the path to the current working dir starting from the server root dir
 std::string 
-filehandle::getCurrentWorkingDir(bool showRootPath) {
+FileHandle::getCurrentWorkingDir(bool showRootPath) {
     std::string fullpath = "";
     std::list<std::string>::iterator singleDir;
     for (singleDir = this->completePath.begin(); singleDir != this->completePath.end(); ++singleDir) {
@@ -444,7 +444,7 @@ filehandle::getCurrentWorkingDir(bool showRootPath) {
 
 // Lists all files and directories in the specified directory and returns them in a string vector
 void 
-filehandle::browse(std::string dir, std::vector<std::string> &directories, std::vector<std::string> &files, bool strict) {
+FileHandle::browse(std::string dir, std::vector<std::string> &directories, std::vector<std::string> &files, bool strict) {
     if (strict) {// When using strict mode, the function only allows one subdirectory and not several subdirectories, e.g. like sub/subsub/dir/ ...
         getValidDir(dir);
         if ((dir.compare("../") == 0) && (this->completePath.size() < 2)) { // Prohibit ../ beyond server root
@@ -486,7 +486,7 @@ filehandle::browse(std::string dir, std::vector<std::string> &directories, std::
 
 // Returns true if dir can be opened
 bool 
-filehandle::dirCanBeOpenend(std::string dir) {
+FileHandle::dirCanBeOpenend(std::string dir) {
     DIR *dp;
     bool canBeOpened = false;
     canBeOpened = ((dp = opendir(dir.c_str())) != NULL); // Anything else than NULL is good
@@ -496,31 +496,31 @@ filehandle::dirCanBeOpenend(std::string dir) {
 
 // Clears out the list of deleted files
 void 
-filehandle::clearListOfDeletedFiles() {
+FileHandle::clearListOfDeletedFiles() {
     this->deletedFiles.clear();
 }
 
 // Clears out the list of deleted directories
 void 
-filehandle::clearListOfDeletedDirectories() {
+FileHandle::clearListOfDeletedDirectories() {
     this->deletedDirectories.clear();
 }
 
 // Returns the list of successfully deleted files
 std::vector<std::string> 
-filehandle::getListOfDeletedFiles() {
+FileHandle::getListOfDeletedFiles() {
     return this->deletedFiles;
 }
 
 // Returns the list of successfully deleted directories
 std::vector<std::string> 
-filehandle::getListOfDeletedDirectories() {
+FileHandle::getListOfDeletedDirectories() {
     return this->deletedDirectories;
 }
 
 // Check if the specified directory is below the server root directory and return true if so
 bool 
-filehandle::dirIsBelowServerRoot(std::string dirName) {
+FileHandle::dirIsBelowServerRoot(std::string dirName) {
     this->getValidDir(dirName);
     return ((dirName.compare("../") == 0) && (this->completePath.size() < 2));
 }

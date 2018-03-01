@@ -33,12 +33,12 @@
  *  References over several directories like ../../filename are allowed as parameters,
  *  only used at server side
  */
-class filehandle {
+class FileHandle {
     
 public:
     
-    filehandle(std::string dir);
-    virtual ~filehandle();
+    FileHandle(std::string dir);
+    virtual ~FileHandle();
     
     int                         readFile(std::string fileName);
     char*                       readFileBlock(unsigned long &sizeInBytes);

@@ -5,7 +5,7 @@
  */
 
 /* 
- * File:   database.h
+ * File:   Database.h
  * Author: hydra
  *
  * Created on February 5, 2018, 11:26 AM
@@ -21,13 +21,13 @@
 
 
 
-class database {
+class Database {
 public:
-    database();
-    database(const database& orig);
-    virtual ~database();
+    Database();
+    Database(const Database& orig);
+    virtual ~Database();
     
-    bool                doConnection(std::string username, std::string password, std::string database);
+    bool                doConnection(std::string username, std::string password, std::string Database);
     std::vector<USER>   getListUser();
     
     
@@ -37,5 +37,5 @@ private:
     void                finish_with_error();
 };
 
-#endif /* DATABASE_H */
+#endif /* Database_H */
 

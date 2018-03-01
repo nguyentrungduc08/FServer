@@ -34,19 +34,11 @@
  * 
  */
 
-class serverconnection {
+class Connection {
 public:
     
-    /*
-     * constructor to handle connection from client.
-     * @filedescriptor fd of socket to get data from client
-     * @connid id of connection
-     * @defaulDir direction working 
-     * @hostId id of host
-     * @commandOffset 
-     */
-    serverconnection(int filedescriptor, fssl * sslcon, unsigned int connId, std::string defaultDir, std::string hostId, bool iSSL, unsigned short commandOffset = 1);
-    virtual ~serverconnection();    
+    Connection(int filedescriptor, fssl * sslcon, unsigned int connId, std::string defaultDir, std::string hostId, bool iSSL, unsigned short commandOffset = 1);
+    virtual ~Connection();    
     
     std::string                 commandParser(std::string command);
     std::vector<std::string>    extractParameters(std::string command);
@@ -77,7 +69,7 @@ public:
 private:
     int                         fd; // Filedescriptor per each threaded object
     SSL*                        ssl;
-    filehandle*                 fo; // For browsing, writing and reading
+    FileHandle*                 fo; // For browsing, writing and reading
     Session * session;
     std::vector<std::string>    directories;
     std::vector<std::string>    files;

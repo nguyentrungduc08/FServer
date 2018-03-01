@@ -5,7 +5,7 @@
  */
 
 /* 
- * File:   database.cpp
+ * File:   Database.cpp
  * Author: hydra
  * 
  * Created on February 5, 2018, 11:26 AM
@@ -14,12 +14,12 @@
 #include "../header/database.h"
 
 
-database::database() {
+Database::Database() {
     std::cout << "Create SQL object, MySQL version: " << mysql_get_client_info() << std::endl;
 }
 
 bool 
-database::doConnection(std::string username, std::string password, std::string database){
+Database::doConnection(std::string username, std::string password, std::string Database){
     this->ServerDatabase = mysql_init(NULL);
     
     if (this->ServerDatabase == NULL){
@@ -28,33 +28,33 @@ database::doConnection(std::string username, std::string password, std::string d
     }
     
     //if (mysql_real_connect(this->ServerDatabase, "localhost", "testuser", "testuser", "FILE", 0, NULL, 0) == NULL ){
-    if (mysql_real_connect(this->ServerDatabase, "localhost", username.c_str() , password.c_str() , database.c_str(), 0, NULL, 0) == NULL ){
+    if (mysql_real_connect(this->ServerDatabase, "localhost", username.c_str() , password.c_str() , Database.c_str(), 0, NULL, 0) == NULL ){
         this->finish_with_error();
         mysql_close(this->ServerDatabase);
         return false;
     } else {
-        std::cout << "Conection success  to database " << database << std::endl;
+        std::cout << "Conection success  to Database " << Database << std::endl;
     }
     return true;
 }
 
-database::database(const database& orig) {
+Database::Database(const Database& orig) {
 }
 
-database::~database() {
+Database::~Database() {
     mysql_close(this->ServerDatabase);
 }
 
 void 
-database::finish_with_error()
+Database::finish_with_error()
 {
-    std::cerr << "ERROR server database: " << mysql_error(this->ServerDatabase) << std::endl;
+    std::cerr << "ERROR server Database: " << mysql_error(this->ServerDatabase) << std::endl;
     mysql_close(this->ServerDatabase);
     exit(EXIT_FAILURE);        
 }
 
 std::vector<USER> 
-database::getListUser(){
+Database::getListUser(){
     std::vector<USER> listuser;
     if ( mysql_query(this->ServerDatabase, "SELECT * FROM USERS") ) {
         this->finish_with_error();
