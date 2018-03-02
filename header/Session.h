@@ -26,7 +26,7 @@ public:
     void        buildSession(int conid, std::string ipAddr);
     std::string getSession();
     std::string getCurrentTime();
-    bool        is_SessionValib();
+    bool        is_Session_Valid();
    
 private:
     std::string sessionCode;

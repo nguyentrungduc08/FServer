@@ -55,3 +55,8 @@ std::string
 Session::getCurrentTime(){
     return this->currentTime;
 }
+
+bool        
+Session::is_Session_Valid(){
+    return true;
+}

@@ -35,14 +35,16 @@ Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId,
                                     receivedPart(0), parameter("") 
 {
 //    this->files = std::vector<std::string>();
-    this->session           = new Session();
-    this->fo                = new FileHandle(this->dir); // File and directory browser
-    this->TLSHandsharkState = false;
-    this->ConfirmedState    = false;
-    this->isMainSocket      = false;
-    this->isFileSocket      = false;
-    this->timeout.tv_sec    = 5;
-    this->timeout.tv_usec   = 0;
+    this->session                   = new Session();
+    this->fo                        = new FileHandle(this->dir); // File and directory browser
+    this->TLSHandsharkState         = false;
+    this->ConfirmedState            = false;
+    this->isMainSocket              = false;
+    this->isFileSocket              = false;
+    this->_isDownloadConnection     = false;
+    this->_isUploadConnection       = false;
+    this->timeout.tv_sec            = 5;
+    this->timeout.tv_usec           = 0;
     
     if (iSSL){
         this->ssl           = SSL_new(sslcon->get_ctx());
@@ -272,11 +274,11 @@ Connection::extractParameters(std::string command) {
 void 
 Connection::TLS_handshark() {
     //handle ssl_handshake non-blocking modle
-    int status = -1;
     struct timeval tv, tvRestore;
-    tv.tv_sec = 2;
-    tv.tv_usec = 0;
-    tvRestore = tv;
+    int status  = -1;
+    tv.tv_sec   = 2;
+    tv.tv_usec  = 0;
+    tvRestore   = tv;
        
     fd_set writeFdSet;
     fd_set readFdSet;
@@ -352,7 +354,7 @@ Connection::handle_uploadRequest()
     Packet*         pk;
     std::string     token;
     std::string     filename;
-
+    std::string     res;
     bzero(buffer, sizeof(buffer));
     FD_ZERO(&fdset);
     FD_SET(this->fd, &fdset);
@@ -361,6 +363,7 @@ Connection::handle_uploadRequest()
 
     if (rc == 0){
         std::cout << "#log conn: timeout request upload" << std::endl;
+        this->closureRequested = true;
         return;
     }
 
@@ -374,6 +377,12 @@ Connection::handle_uploadRequest()
         filename    = pk->getContent(); 
         std::cout << "#log conn: token: " << token << "\nfilename: " << filename << std::endl;
         this->response_uploadRequest();
+        this->_isUploadConnection = true; // upload hit!
+        this->receivedPart = 0;
+        this->parameter = filename;
+        std::cout << "Preparing upload of file '" << this->parameter << "'" << std::endl;
+        res = (this->fo->beginWriteFile(this->parameter) ? "Preparing for upload failed" : "Preparing for upload successful");
+        std::cout <<"#log conn: " << res << std::endl; 
     } else {
         this->closureRequested = true;
         return;
@@ -600,6 +609,19 @@ Connection::respondToQuery() {
     }
 }
 
+void                        
+Connection::wirte_Data(){
+    char buffer[BUFFER_SIZE];
+    int             bytes;
+    std::string     data;
+    bytes   = SSL_read(this->ssl, buffer, sizeof(buffer));
+    data    = std::string(buffer, bytes);
+    std::cout << "#log conn: Write block" << std::endl;
+    // Previous (upload) command continuation, store incoming data to the file
+    std::cout << "#log conn: Part" << ++(this->receivedPart) << ": ";
+    this->fo->writeFileBlock(data);
+}
+
 // Sends the given string to the client using the current connection
 void 
 Connection::sendToClient(char* response, unsigned long length) {
@@ -705,4 +727,14 @@ Connection::getAllData(){
     SSL_read(this->ssl, buf, sizeof(buf));
     std::cout <<"#log conn: " << buf << std::endl;
     return;
+}
+
+bool
+Connection::get_isUploadConnection(){
+    return this->_isUploadConnection;
+}
+    
+bool
+Connection::get_isDownloadConnection(){
+    return this->_isDownloadConnection;
 }

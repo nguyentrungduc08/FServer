@@ -34,14 +34,14 @@ public:
 
 private:
     int             start();
-    int             initSockets(int port);
-    int             handleNewConnection();
-    void            setNonBlocking(int &sock);
-    void            buildSelectList();
-    void            readSockets();
-    void            freeAllConnections();
-    void            handleMainConnection(serverconnection* & conn);
-    void            handleFileConnection(serverconnection* & conn);
+    int             init_Sockets(int port);
+    int             handle_New_Connection();
+    void            set_NonBlocking(int &sock);
+    void            build_Select_List();
+    void            read_Sockets();
+    void            free_All_Connections();
+    void            handle_Main_Connection(Connection* & conn);
+    void            handle_File_Connection(Connection* & conn);
     
     unsigned int            maxConnectionsInQuery; // number of connections in query
     int                     Mainsocket; // The main listening socket file descriptor
@@ -57,12 +57,12 @@ private:
     fd_set                  working_set; // set of socket file descriptors we want to wake up for, using select()
     std::string             dir; //path of directory working 
     fssl*                   sslConn;
-    database*               DataBase;
+    Database*               database;
     
-    std::vector<serverconnection*>  connections;// Manage the connected sockets / connections in a list with an iterator
-    std::vector<USER>               listUser;
-    std::vector<serverconnection*>  mainConnections;
-    std::vector<serverconnection*>  fileConnections;
+    std::vector<Connection*>  connections;// Manage the connected sockets / connections in a list with an iterator
+    std::vector<USER>         listUser;
+    std::vector<Connection*>  mainConnections;
+    std::vector<Connection*>  fileConnections;
 };
 
 #endif /* SERVERCORE_H */

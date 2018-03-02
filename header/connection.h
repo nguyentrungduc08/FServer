@@ -52,6 +52,7 @@ public:
     unsigned int                getConnectionId();
     void                        handle_uploadRequest();
     void                        response_uploadRequest();
+    void                        wirte_Data();
     
     int                         getFD();
     
@@ -65,12 +66,13 @@ public:
     bool                        get_isMainConnection();
     void                        set_isFileConnection(bool state);
     bool                        get_isFileConnection();
-    
+    bool                        get_isUploadConnection();
+    bool                        get_isDownloadConnection();
 private:
     int                         fd; // Filedescriptor per each threaded object
     SSL*                        ssl;
     FileHandle*                 fo; // For browsing, writing and reading
-    Session * session;
+    Session *                   session;
     std::vector<std::string>    directories;
     std::vector<std::string>    files;
     unsigned int                connectionId;
@@ -88,7 +90,8 @@ private:
     bool                        isSSL;
     bool                        ConfirmedState;
     bool                        TLSHandsharkState;
-    
+    bool                        _isUploadConnection;
+    bool                        _isDownloadConnection;
     /*
      * @response  data response to client
      * @length size of data

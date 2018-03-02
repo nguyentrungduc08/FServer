@@ -14,12 +14,9 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-
 #include "fileserver.h"
 #include <mysql/mysql.h>
 #include <mysql/my_command.h>
-
-
 
 class Database {
 public:
@@ -29,7 +26,6 @@ public:
     
     bool                doConnection(std::string username, std::string password, std::string Database);
     std::vector<USER>   getListUser();
-    
     
 private:
     MYSQL*              ServerDatabase;
