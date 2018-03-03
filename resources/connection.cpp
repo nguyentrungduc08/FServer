@@ -13,7 +13,7 @@ Connection::~Connection() {
     std::cout << "#log conn: Connection terminated to client (connection id " << this->connectionId << ")" << std::endl;
     delete this->fo;
     close(this->fd);
-    SSL_free(this->ssl);
+    SSL_free(this->ssl);    
     this->directories.clear();
     this->files.clear();
 }
@@ -521,7 +521,6 @@ Connection::respondClassifyConnectionDone(bool state){
     }
 }
 
-
 void 
 Connection::classify_connection(){
     std::cout << "#log conn: Classify connection." << std::endl;
@@ -611,15 +610,19 @@ Connection::respondToQuery() {
 
 void                        
 Connection::wirte_Data(){
-    char buffer[BUFFER_SIZE];
+    char            buffer[BUFFER_SIZE];
     int             bytes;
     std::string     data;
     bytes   = SSL_read(this->ssl, buffer, sizeof(buffer));
-    data    = std::string(buffer, bytes);
-    std::cout << "#log conn: Write block" << std::endl;
-    // Previous (upload) command continuation, store incoming data to the file
-    std::cout << "#log conn: Part" << ++(this->receivedPart) << ": ";
-    this->fo->writeFileBlock(data);
+    if (bytes > 0){
+        data = std::string(buffer, bytes);
+        std::cout << "#log conn: Write block" << std::endl;
+        // Previous (upload) command continuation, store incoming data to the file
+        std::cout << "#log conn: Part" << ++(this->receivedPart) << ": ";
+        this->fo->writeFileBlock(data);
+    } else {
+        this->closureRequested = true;
+    }
 }
 
 // Sends the given string to the client using the current connection

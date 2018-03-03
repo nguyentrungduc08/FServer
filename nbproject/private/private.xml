@@ -7,10 +7,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/media/veracrypt1/projects/fileServer/resources/fileHandle.cpp</file>
-            <file>file:/media/veracrypt1/projects/fileServer/header/fileHandle.h</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/ssl.cpp</file>
             <file>file:/media/veracrypt1/projects/fileServer/header/connection.h</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/Session.cpp</file>
             <file>file:/media/veracrypt1/projects/fileServer/header/servercore.h</file>
+            <file>file:/media/veracrypt1/projects/fileServer/header/Session.h</file>
             <file>file:/media/veracrypt1/projects/fileServer/resources/servercore.cpp</file>
             <file>file:/media/veracrypt1/projects/fileServer/resources/connection.cpp</file>
         </group>
