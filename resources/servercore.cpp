@@ -176,10 +176,11 @@ servercore::handle_Main_Connection(Connection* & conn)
             conn->setCloseRequestStatus(true);
         }   
         conn->respondAuthen();
+        conn->setCloseRequestStatus(true); //close connection after response success login
     } else {
         //if this connection authenticated -> handle data commining
         std::cout << "@log servercore: main connection establish $$$$$" << std::endl;
-        conn->getAllData();
+        //conn->getAllData();
         //this->connections.at(index)->respondToQuery();
     }
 }

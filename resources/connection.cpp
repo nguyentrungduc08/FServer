@@ -383,7 +383,7 @@ Connection::handle_uploadRequest()
         std::cout << "Preparing upload of file '" << this->parameter << "'" << std::endl;
         res = (this->fo->beginWriteFile(this->parameter) ? "Preparing for upload failed" : "Preparing for upload successful");
         std::cout <<"#log conn: " << res << std::endl; 
-    } else {
+    } else {    
         this->closureRequested = true;
         return;
     }
@@ -618,7 +618,7 @@ Connection::wirte_Data(){
         data = std::string(buffer, bytes);
         std::cout << "#log conn: Write block" << std::endl;
         // Previous (upload) command continuation, store incoming data to the file
-        std::cout << "#log conn: Part" << ++(this->receivedPart) << ": ";
+        std::cout << "#log conn: Part" << ++(this->receivedPart) << ": " << bytes << std::endl;
         this->fo->writeFileBlock(data);
     } else {
         this->closureRequested = true;
