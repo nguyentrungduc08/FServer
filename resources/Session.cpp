@@ -60,3 +60,13 @@ bool
 Session::is_Session_Valid(){
     return true;
 }
+
+bool        
+Session::compare(Session* s){
+    return this->sessionCode.compare(s->getSession()) == 0 ? true:false;
+}
+
+bool        
+Session::compare(std::string s){
+    return this->sessionCode.compare(s) == 0 ? true:false; 
+}

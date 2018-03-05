@@ -80,6 +80,7 @@
 #define	BUFFSIZE                8192	/* buffer size for reads and writes */
 
 #define PACKET                  std::vector<char>
+#define TOKEN                   std::pair<int,Session*>                  
 
 #define rep(i,n)                for(int i = 0; i < (int)n; ++i)
 #define Ford(i,a,b)             for(int i = (int)a; i >= (int)b; --i)
@@ -90,10 +91,20 @@
 
 
 struct USER{
-    int id;
-    std::string username;
-    std::string password;
-    int status;
+    int             id;
+    std::string     username;
+    std::string     password;
+    int             status;
+};
+
+struct FILE_TRANSACTION {
+    int             _senderID;
+    int             _receiverID;
+    std::string     _sender;
+    std::string     _receiver;
+    std::string     _url;
+    std::string     _checksum;
+    unsigned int    _filesize;
 };
 
 

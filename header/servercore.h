@@ -59,10 +59,12 @@ private:
     fssl*                   sslConn;
     Database*               database;
     
-    std::vector<Connection*>  connections;// Manage the connected sockets / connections in a list with an iterator
-    std::vector<USER>         listUser;
-    std::vector<Connection*>  mainConnections;
-    std::vector<Connection*>  fileConnections;
+    std::vector<Connection*>                connections;// Manage the connected sockets / connections in a list with an iterator
+    std::vector<USER>                       listUser;
+    std::vector<Connection*>                mainConnections;
+    std::vector<Connection*>                fileConnections;
+    std::vector<FILE_TRANSACTION*>          _listFileTranssacion;
+    std::vector<TOKEN>                      _listSession;
 };
 
 #endif /* SERVERCORE_H */

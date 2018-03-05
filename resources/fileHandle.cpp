@@ -524,3 +524,19 @@ FileHandle::dirIsBelowServerRoot(std::string dirName) {
     this->getValidDir(dirName);
     return ((dirName.compare("../") == 0) && (this->completePath.size() < 2));
 }
+
+std::string                 
+FileHandle::get_Checksum(){ 
+    return this->_checkSum;
+}
+
+int                         
+FileHandle::get_File_Size(){
+    return this->_fileSize;
+}
+    
+std::string
+FileHandle::get_File_Url(){
+    return this->_fileURL;
+}
+

@@ -68,17 +68,24 @@ public:
     bool                        get_isFileConnection();
     bool                        get_isUploadConnection();
     bool                        get_isDownloadConnection();
+    std::string                 get_Username_Of_Connection();
+    int                         get_Usser_Id_Of_Connection();
+    unsigned int                get_Connection_Id();
+    Session*                    get_Session();
+    
 private:
     int                         fd; // Filedescriptor per each threaded object
     SSL*                        ssl;
     FileHandle*                 fo; // For browsing, writing and reading
-    Session *                   session;
+    Session*                    session;
     std::vector<std::string>    directories;
     std::vector<std::string>    files;
     unsigned int                connectionId;
     std::string                 dir;
     std::string                 hostAddress;
     std::string                 parameter;
+    std::string                 _username;
+    int                         _userID;
     struct timeval              timeout;
     unsigned short              commandOffset;
     unsigned long               receivedPart;
@@ -92,24 +99,12 @@ private:
     bool                        TLSHandsharkState;
     bool                        _isUploadConnection;
     bool                        _isDownloadConnection;
-    /*
-     * @response  data response to client
-     * @length size of data
-     * @return void
-     */
-    void                        sendToClient(char* response, unsigned long length);
-    
-    /*
-     * @response 
-     */
+
+    void                        sendToClient(char* response, unsigned long length);   
     void                        sendToClient(std::string response);
-    
-    bool                        commandEquals(std::string a, std::string b);
-    
-    std::string                 filterOutBlanks(std::string inString);
-    
-    static void                 getAllParametersAfter(std::vector<std::string> parameterVector, unsigned int currentParameter, std::string& theRest);
-    
+    bool                        commandEquals(std::string a, std::string b);    
+    std::string                 filterOutBlanks(std::string inString);  
+    static void                 getAllParametersAfter(std::vector<std::string> parameterVector, unsigned int currentParameter, std::string& theRest); 
     void                        respondClassifyConnectionDone(bool state);
 };
 

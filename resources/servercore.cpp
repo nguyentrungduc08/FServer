@@ -97,13 +97,13 @@ servercore::free_All_Connections()
 int 
 servercore::handle_New_Connection() 
 {
-    int         fd; // Socket file descriptor for incoming connections
-    char        ipstr[INET6_ADDRSTRLEN];
-    int         port;
-    std::string hostId          = "";
-    int         reuseAllowed    = 1;
-    this->cli_size              = sizeof(this->cli);
-    fd                          = accept(this->Mainsocket, (struct sockaddr*) &this->cli, &this->cli_size);
+    int             fd; // Socket file descriptor for incoming connections
+    char            ipstr[INET6_ADDRSTRLEN];
+    int             port;
+    std::string     hostId          = "";
+    int             reuseAllowed    = 1;
+    this->cli_size                  = sizeof(this->cli);
+    fd                              = accept(this->Mainsocket, (struct sockaddr*) &this->cli, &this->cli_size);
     
     if (fd < 0) {
         std::cerr << "@log servercore: Error while accepting client" << std::endl;
@@ -166,11 +166,18 @@ servercore::handle_New_Connection()
 void 
 servercore::handle_Main_Connection(Connection* & conn)
 {
+    Session*        ses;
+    unsigned int    id;
+    TOKEN           token;
     if ( !conn->get_authen_state() ) {
         //if not authen connection 
         if ( conn->authConnection(this->listUser) ) {
             //if check auth success
             conn->set_authen_state(true);
+            id      = conn->get_Connection_Id();
+            ses     = conn->get_Session();
+            token   = std::make_pair(id,ses);
+            this->_listSession.pb(token);
         } else {
             //if check auth fail
             conn->setCloseRequestStatus(true);

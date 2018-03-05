@@ -625,7 +625,11 @@ Connection::wirte_Data(){
     }
 }
 
-// Sends the given string to the client using the current connection
+/*
+ * @response  data response to client
+ * @length size of data
+ * @return void
+ */
 void 
 Connection::sendToClient(char* response, unsigned long length) {
     // Now we're sending the response
@@ -741,3 +745,24 @@ bool
 Connection::get_isDownloadConnection(){
     return this->_isDownloadConnection;
 }
+
+std::string                 
+Connection::get_Username_Of_Connection(){
+    return this->_username;
+}
+    
+int
+Connection::get_Usser_Id_Of_Connection(){
+    return this->_userID;
+}
+
+unsigned int                         
+Connection::get_Connection_Id(){
+    return this->connectionId;
+}
+
+Session*
+Connection::get_Session(){
+    return this->session;
+}       
+   
