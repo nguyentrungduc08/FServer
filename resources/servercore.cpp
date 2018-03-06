@@ -91,6 +91,7 @@ servercore::free_All_Connections()
         delete (*(iter++)); // Clean up, issue destructor implicitly
     }
     this->connections.clear(); // Delete all deleted connections also from our vector
+    
 }
 
 // Accepts new connections and stores the connection object with fd in a vector
@@ -197,7 +198,7 @@ servercore::handle_File_Connection(Connection* & conn)
 {
     std::cout << "@log servercore: handle file connection!!!" << std::endl;
     if (!conn->get_isUploadConnection())
-        conn->handle_uploadRequest();
+        conn->handle_uploadRequest(this->_listSession);
     else {
         //conn->respondToQuery();
         conn->wirte_Data();
@@ -211,7 +212,6 @@ servercore::read_Sockets()
     // accept connection. <TCP handshark + TLS handshark>
     if (FD_ISSET(this->Mainsocket,&(this->working_set))) {
         std::cout << "@log servercore: new connection " << std::endl;
-        // Always check for errors
         if (this->handle_New_Connection() == EXIT_FAILURE ){
             std::cerr << "@log servercore: error handle new connection!!!!" << std::endl;
             return;

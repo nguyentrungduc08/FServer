@@ -60,8 +60,8 @@
 #define CMD_UPLOAD_FILE         5
 #define CMD_UPLOAD_READY        6
 #define CMD_MSG_FILE            7
-#define CMD_DOWNLOAD_FILE       7
-#define CMD_DOWNLOAD_FINISH     8
+#define CMD_DOWNLOAD_FILE       8
+#define CMD_DOWNLOAD_FINISH     9
 
 #define CMD_SHARE_FILE          10
 #define CMD_SHARE_WAITING       11

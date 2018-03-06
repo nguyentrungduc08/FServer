@@ -54,7 +54,6 @@ Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId,
     std::cout << "#log conn: Connection to client '" << this->hostAddress << "' established" << std::endl;
 }
 
-
 // Check for matching (commands/strings) with compare method
 bool 
 Connection::commandEquals(std::string a, std::string b) {
@@ -341,7 +340,7 @@ Connection::TLS_handshark() {
 }
 
 void                         
-Connection::handle_uploadRequest()
+Connection::handle_uploadRequest(std::vector<TOKEN> _listToken)
 {
     std::cout << "#log conn: handle upload request" << std::endl;
     
@@ -352,8 +351,7 @@ Connection::handle_uploadRequest()
     int             rc;
     int             cmd;
     Packet*         pk;
-    std::string     token;
-    std::string     filename;
+    std::string     token, _sender, _receiver, _urlFile, _fileName;
     std::string     res;
     bzero(buffer, sizeof(buffer));
     FD_ZERO(&fdset);
@@ -367,23 +365,40 @@ Connection::handle_uploadRequest()
         return;
     }
 
-    bytes   = SSL_read(this->ssl, buffer, sizeof(buffer));
-    pk      = new Packet(std::string(buffer, bytes));
-    cmd     = pk->getCMDHeader();
-
-    if (cmd == CMD_UPLOAD_FILE) {
-        //@handle check token is valid???
-        token       = pk->getContent();
-        filename    = pk->getContent(); 
-        std::cout << "#log conn: token: " << token << "\nfilename: " << filename << std::endl;
-        this->response_uploadRequest();
-        this->_isUploadConnection = true; // upload hit!
-        this->receivedPart = 0;
-        this->parameter = filename;
-        std::cout << "Preparing upload of file '" << this->parameter << "'" << std::endl;
-        res = (this->fo->beginWriteFile(this->parameter) ? "Preparing for upload failed" : "Preparing for upload successful");
-        std::cout <<"#log conn: " << res << std::endl; 
-    } else {    
+    bytes        = SSL_read(this->ssl, buffer, sizeof(buffer));
+    pk           = new Packet(std::string(buffer, bytes));
+    if (pk->IsAvailableData())
+        cmd      = pk->getCMDHeader();
+    if (pk->IsAvailableData())
+        token    = pk->getContent();
+    bool _checkToken = false;
+    rep(i,_listToken.size()){
+        if (_listToken.at(i).second->compare(token))
+            _checkToken = true;
+    }
+    if (_checkToken){
+        std::cout << "#log conn: check token ok: " << _listToken.size() << std::endl;
+        if (cmd == CMD_UPLOAD_FILE) {
+            if (pk->IsAvailableData())
+                _fileName = pk->getContent();
+            std::cout << "#log conn: token: " << token << "\nfilename: " << _fileName << std::endl;
+            this->response_uploadRequest();
+            this->_isUploadConnection   = true; // upload hit!
+            this->receivedPart          = 0;
+            this->parameter             = _fileName;
+            std::cout << "Preparing upload of file '" << this->parameter << "'" << std::endl;
+            res = (this->fo->beginWriteFile(this->parameter) ? "Preparing for upload failed" : "Preparing for upload successful");
+            std::cout <<"#log conn: " << res << std::endl; 
+            return;
+           
+        } if (cmd == CMD_MSG_FILE) {
+            if (pk->IsAvailableData())
+                _sender     = pk->getContent();
+            if (pk->IsAvailableData())
+                _receiver   = pk->getContent();
+            
+        } 
+    }else {    
         this->closureRequested = true;
         return;
     }

@@ -50,7 +50,7 @@ public:
     void                        respondAuthen();
     void                        TLS_handshark();
     unsigned int                getConnectionId();
-    void                        handle_uploadRequest();
+    void                        handle_uploadRequest(std::vector<TOKEN> _listToken);
     void                        response_uploadRequest();
     void                        wirte_Data();
     
