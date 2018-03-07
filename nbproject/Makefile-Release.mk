@@ -38,6 +38,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/lib/Werror.o \
 	${OBJECTDIR}/lib/Wsock.o \
 	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/resources/File.o \
 	${OBJECTDIR}/resources/Packet.o \
 	${OBJECTDIR}/resources/Session.o \
 	${OBJECTDIR}/resources/connection.o \
@@ -86,6 +87,11 @@ ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+
+${OBJECTDIR}/resources/File.o: resources/File.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/File.o resources/File.cpp
 
 ${OBJECTDIR}/resources/Packet.o: resources/Packet.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources

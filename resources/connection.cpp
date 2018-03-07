@@ -382,13 +382,13 @@ Connection::handle_uploadRequest(std::vector<TOKEN> _listToken)
             if (pk->IsAvailableData())
                 _fileName = pk->getContent();
             std::cout << "#log conn: token: " << token << "\nfilename: " << _fileName << std::endl;
-            this->response_uploadRequest();
             this->_isUploadConnection   = true; // upload hit!
             this->receivedPart          = 0;
             this->parameter             = _fileName;
             std::cout << "Preparing upload of file '" << this->parameter << "'" << std::endl;
             res = (this->fo->beginWriteFile(this->parameter) ? "Preparing for upload failed" : "Preparing for upload successful");
             std::cout <<"#log conn: " << res << std::endl; 
+            this->response_uploadRequest();
             return;
            
         } if (cmd == CMD_MSG_FILE) {
@@ -412,7 +412,7 @@ Connection::response_uploadRequest()
 
     pk = new Packet();
     pk->appendData(CMD_UPLOAD_READY);
-    pk->appendData("url_file");
+    pk->appendData(this->parameter);
 
     SSL_write(this->ssl,  &pk->getData()[0], pk->getData().size());
 

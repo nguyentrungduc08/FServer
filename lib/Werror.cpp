@@ -90,7 +90,7 @@ static void
 err_doit(int errnoflag, int level, const char *fmt, va_list ap)
 {
 	int		errno_save, n;
-	char	buf[MAXLINE + 1];
+	char	buf[BUFFSIZE + 1];
 
 	errno_save = errno;		/* value caller might want printed */
 #ifdef	HAVE_VSNPRINTF
@@ -100,7 +100,7 @@ err_doit(int errnoflag, int level, const char *fmt, va_list ap)
 #endif
 	n = strlen(buf);
 	if (errnoflag)
-		snprintf(buf + n, MAXLINE - n, ": %s", strerror(errno_save));
+		snprintf(buf + n, BUFFSIZE - n, ": %s", strerror(errno_save));
 	strcat(buf, "\n");
 
 	if (daemon_proc) {

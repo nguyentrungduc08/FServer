@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>header/File.h</itemPath>
       <itemPath>header/Packet.h</itemPath>
       <itemPath>header/Session.h</itemPath>
       <itemPath>header/connection.h</itemPath>
@@ -32,6 +33,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>resources/File.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -65,6 +67,8 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="header/File.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="header/Packet.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="header/Session.h" ex="false" tool="3" flavor2="0">
@@ -90,6 +94,8 @@
       <item path="lib/Wsock.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/File.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/Packet.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -128,6 +134,8 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="header/File.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="header/Packet.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="header/Session.h" ex="false" tool="3" flavor2="0">
@@ -153,6 +161,8 @@
       <item path="lib/Wsock.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/File.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/Packet.cpp" ex="false" tool="1" flavor2="0">
       </item>

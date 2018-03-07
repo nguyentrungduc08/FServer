@@ -76,8 +76,7 @@
 #define CMD_CLASSIFY_FAIL       98
     
 #define MAXCONN                 1000
-#define	MAXLINE                 4096	/* max text line length */
-#define	BUFFSIZE                8192	/* buffer size for reads and writes */
+#define	BUFFSIZE                4096	/* buffer size for reads and writes */
 
 #define PACKET                  std::vector<char>
 #define TOKEN                   std::pair<int,Session*>                  
@@ -98,6 +97,7 @@ struct USER{
 };
 
 struct FILE_TRANSACTION {
+    unsigned int    _transsactionId;
     int             _senderID;
     int             _receiverID;
     std::string     _sender;

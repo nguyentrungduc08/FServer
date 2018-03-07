@@ -53,9 +53,7 @@ public:
     void                        handle_uploadRequest(std::vector<TOKEN> _listToken);
     void                        response_uploadRequest();
     void                        wirte_Data();
-    
     int                         getFD();
-    
     bool                        getCloseRequestStatus();
     void                        setCloseRequestStatus(bool status);
     bool                        get_TLShandshark_state();
