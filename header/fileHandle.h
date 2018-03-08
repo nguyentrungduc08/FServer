@@ -64,9 +64,12 @@ public:
     std::vector<std::string>    getListOfDeletedFiles();
     std::vector<std::string>    getListOfDeletedDirectories();
     std::string                 get_Checksum();
-    int                         get_File_Size();
+    long long                   get_File_Size();
     std::string                 get_File_Url();
-
+    void                        set_File_Size(long long _fileSize);
+    void                        set_File_Size(std::string _fileSize);
+    long long                   get_Data_Received();
+   
 private:
     std::vector<std::string>    deletedDirectories;
     std::vector<std::string>    deletedFiles;
@@ -74,7 +77,8 @@ private:
     std::ifstream               currentOpenReadFile; //stream to send data to socket
     std::list<std::string>      completePath; // The path from server root dir upwards to the current working dir, each list element containing one dir
     std::string                 _checkSum;
-    int                         _fileSize;
+    long long                   _fileSize;
+    long long                   _dataReceived;
     std::string                 _fileURL;
     void                        getValidDir(std::string &dirName);
     void                        getValidFile(std::string &fileName);

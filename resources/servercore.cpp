@@ -63,7 +63,7 @@ servercore::build_Select_List()
     
     while( iter != this->connections.end() ) {
         // This connection was closed, flag is set -> remove its corresponding object and free the memory
-        if ( (*iter)->getCloseRequestStatus() ) { 
+        if ( (*iter)->get_Close_Request_Status() ) { 
             std::cout << "@log servercore: Connection with Id " << (*iter)->getConnectionId() << " closed! " << std::endl;
             delete (*iter); // Clean up
             this->connections.erase(iter); // Delete it from our vector
@@ -181,10 +181,10 @@ servercore::handle_Main_Connection(Connection* & conn)
             this->_listSession.pb(token);
         } else {
             //if check auth fail
-            conn->setCloseRequestStatus(true);
+            conn->set_Close_Request_Status(true);
         }   
         conn->respondAuthen();
-        conn->setCloseRequestStatus(true); //close connection after response success login
+        conn->set_Close_Request_Status(true); //close connection after response success login
     } else {
         //if this connection authenticated -> handle data commining
         std::cout << "@log servercore: main connection establish $$$$$" << std::endl;
@@ -202,6 +202,9 @@ servercore::handle_File_Connection(Connection* & conn)
     else {
         //conn->respondToQuery();
         conn->wirte_Data();
+        if (conn->get_Data_Write_Done()){
+            conn->handle_CMD_MSG_FILE();
+        }
     }
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     

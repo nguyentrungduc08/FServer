@@ -54,8 +54,8 @@ public:
     void                        response_uploadRequest();
     void                        wirte_Data();
     int                         getFD();
-    bool                        getCloseRequestStatus();
-    void                        setCloseRequestStatus(bool status);
+    bool                        get_Close_Request_Status();
+    void                        set_Close_Request_Status(bool status);
     bool                        get_TLShandshark_state();
     void                        set_TLShandshark_state(bool state);
     bool                        get_authen_state();
@@ -66,10 +66,12 @@ public:
     bool                        get_isFileConnection();
     bool                        get_isUploadConnection();
     bool                        get_isDownloadConnection();
+    bool                        get_Data_Write_Done();
     std::string                 get_Username_Of_Connection();
     int                         get_Usser_Id_Of_Connection();
     unsigned int                get_Connection_Id();
     Session*                    get_Session();
+    FILE_TRANSACTION*           handle_CMD_MSG_FILE(); 
     
 private:
     int                         fd; // Filedescriptor per each threaded object
@@ -97,7 +99,7 @@ private:
     bool                        TLSHandsharkState;
     bool                        _isUploadConnection;
     bool                        _isDownloadConnection;
-
+    bool                        _dataWriteDone;
     void                        sendToClient(char* response, unsigned long length);   
     void                        sendToClient(std::string response);
     bool                        commandEquals(std::string a, std::string b);    

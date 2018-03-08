@@ -45,7 +45,7 @@ Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId,
     this->_isUploadConnection       = false;
     this->timeout.tv_sec            = 5;
     this->timeout.tv_usec           = 0;
-    
+    this->_dataWriteDone            = false;
     if (iSSL){
         this->ssl           = SSL_new(sslcon->get_ctx());
         SSL_set_fd(this->ssl, this->fd);
@@ -351,7 +351,7 @@ Connection::handle_uploadRequest(std::vector<TOKEN> _listToken)
     int             rc;
     int             cmd;
     Packet*         pk;
-    std::string     token, _sender, _receiver, _urlFile, _fileName;
+    std::string     token, _sender, _receiver, _urlFile, _fileName, _fileSize;
     std::string     res;
     bzero(buffer, sizeof(buffer));
     FD_ZERO(&fdset);
@@ -381,7 +381,10 @@ Connection::handle_uploadRequest(std::vector<TOKEN> _listToken)
         if (cmd == CMD_UPLOAD_FILE) {
             if (pk->IsAvailableData())
                 _fileName = pk->getContent();
-            std::cout << "#log conn: token: " << token << "\nfilename: " << _fileName << std::endl;
+            if (pk->IsAvailableData())
+                _fileSize = pk->getContent();
+            this->fo->set_File_Size(_fileSize);
+            std::cout << "#log conn: token: " << token << "\nfilename: " << _fileName  << "\nfileSize: " << _fileSize << " " << this->fo->get_File_Size() << std::endl;
             this->_isUploadConnection   = true; // upload hit!
             this->receivedPart          = 0;
             this->parameter             = _fileName;
@@ -515,7 +518,7 @@ Connection::respondAuthen(){
         std::cout << "#log conn: " << ses << std::endl;
         SSL_write(this->ssl, &pk->getData()[0], pk->getData().size() );
         delete pk;
-    } else{
+    } else {
         Packet *pk = new Packet();
         pk->appendData(CMD_AUTHEN_FAIL);
         SSL_write(this->ssl, &pk->getData()[0], pk->getData().size() );
@@ -623,21 +626,91 @@ Connection::respondToQuery() {
     }
 }
 
+bool
+Connection::get_Data_Write_Done(){
+    return this->_dataWriteDone;
+}
+
 void                        
 Connection::wirte_Data(){
     char            buffer[BUFFER_SIZE];
     int             bytes;
     std::string     data;
-    bytes   = SSL_read(this->ssl, buffer, sizeof(buffer));
-    if (bytes > 0){
-        data = std::string(buffer, bytes);
-        std::cout << "#log conn: Write block" << std::endl;
-        // Previous (upload) command continuation, store incoming data to the file
-        std::cout << "#log conn: Part" << ++(this->receivedPart) << ": " << bytes << std::endl;
-        this->fo->writeFileBlock(data);
-    } else {
-        this->closureRequested = true;
+    long long       _totalData      = this->fo->get_File_Size();
+    long long       _recievedData   = this->fo->get_Data_Received();
+    
+    if (_totalData == _recievedData){
+        _dataWriteDone = true;
+        return;
     }
+    else {
+        if (_recievedData + sizeof(buffer) <= _totalData)
+        {
+            bytes   = SSL_read(this->ssl, buffer, sizeof(buffer));
+            if (bytes > 0){
+                data = std::string(buffer, bytes);
+                std::cout << "#log conn: Write block" << std::endl;
+                // Previous (upload) command continuation, store incoming data to the file
+                std::cout << "#log conn: Part" << ++(this->receivedPart) << ": " << bytes << std::endl;
+                this->fo->writeFileBlock(data);
+            } else {
+                //this->closureRequested = true;
+                std::cerr << "#log conn: 1 read zero data" << std::endl;
+            }
+            return;
+        } else {
+            if ((_totalData - _recievedData < sizeof(buffer)) && (_totalData > _recievedData))  
+            {
+                bytes   = SSL_read(this->ssl, buffer, (_totalData - _recievedData));
+                if (bytes > 0){
+                    data = std::string(buffer, bytes);
+                    std::cout << "#log conn: Write block" << std::endl;
+                    // Previous (upload) command continuation, store incoming data to the file
+                    std::cout << "#log conn: Part" << ++(this->receivedPart) << ": " << bytes << std::endl;
+                    this->fo->writeFileBlock(data);
+                } else {
+                    //this->closureRequested = true;
+                    std::cerr << "#log conn: 2 read zero data" << std::endl;
+                }
+            }
+            return;
+        }
+    }
+}
+
+FILE_TRANSACTION*           
+Connection::handle_CMD_MSG_FILE(){
+    char                _buffer[BUFFER_SIZE];
+    int                 _bytes,_cmd;
+    Packet*             _pk;
+    std::string         _sender, _receiver, _urlFile,_filesize;
+    FILE_TRANSACTION*   _ft;
+    _bytes   = SSL_read(this->ssl, _buffer, sizeof(_buffer));
+    
+    if (_bytes > 0){
+        _pk = new Packet(std::string(_buffer,_bytes));
+        if (_pk->IsAvailableData())
+            _cmd        = _pk->getCMDHeader();
+        if (_pk->IsAvailableData())
+            _sender     = _pk->getContent();
+        if (_pk->IsAvailableData())
+            _receiver   = _pk->getContent();
+        if (_pk->IsAvailableData())
+            _urlFile    = _pk->getContent();
+        if (_pk->IsAvailableData())
+            _filesize   = _pk->getContent();
+        std::cout <<"#log conn: msg\ncmd: " << _cmd << "\nsender: " << _sender << "\nreceiver: " << _receiver << "\nurlfile: " << _urlFile <<"\nfile size: " << _filesize << std::endl; 
+        _ft = new FILE_TRANSACTION;
+        _ft->_sender    = _sender;
+        _ft->_receiver  = _receiver;
+        _ft->_url       = _urlFile;
+        _ft->_filesize  = this->fo->get_File_Size();
+        delete _pk;
+        this->closureRequested = true;
+        return _ft;
+    } 
+    this->closureRequested = true;
+    return NULL;
 }
 
 /*
@@ -688,12 +761,12 @@ Connection::getFD() {
 
 // Returns whether the connection was requested to be closed (by client)
 bool 
-Connection::getCloseRequestStatus() {
+Connection::get_Close_Request_Status() {
     return this->closureRequested;
 }
 
 void 
-Connection::setCloseRequestStatus(bool status){
+Connection::set_Close_Request_Status(bool status){
     this->closureRequested = status;
 }
 

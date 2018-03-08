@@ -9,6 +9,10 @@
 // Constructor, gets the current server root dir as a parameter
 FileHandle::FileHandle(std::string dir) {
     this->completePath.push_front(dir); // Insert the root dir at the beginning
+    this->_dataReceived     = 0;
+    this->_fileSize         = 0;
+    this->_checkSum         = "";
+    this->_fileURL          = "";
 }
 
 // Destructor, let the cleaner rage
@@ -46,6 +50,18 @@ FileHandle::changeDir(std::string newPath, bool strict) {
     } else {
         return (EXIT_FAILURE); // 1
     }
+}
+
+void                        
+FileHandle::set_File_Size(long long _fileSize)
+{
+    this->_fileSize = _fileSize;
+}
+void
+FileHandle::set_File_Size(std::string _fileSize)
+{
+    std::istringstream buffer(_fileSize);
+    buffer >> this->_fileSize;
 }
 
 // check error cases, e.g. newPath = '..//' , '/home/user/' , 'subdir' (without trailing slash), etc... and return a clean, valid string in the form 'subdir/'
@@ -146,6 +162,11 @@ FileHandle::beginWriteFile(std::string fileName) {
     return (EXIT_SUCCESS);
 }
 
+long long                   
+FileHandle::get_Data_Received(){
+    return this->_dataReceived;
+}
+
 /// @WARNING: Concurrent file access not catched
 int 
 FileHandle::writeFileBlock(std::string content) {
@@ -154,6 +175,7 @@ FileHandle::writeFileBlock(std::string content) {
         return (EXIT_FAILURE);
     }
     std::cout << "$Log FileHandle: Appending to file" << std::endl;
+    this->_dataReceived += content.length();
     (this->currentOpenFile) << content;
     return (EXIT_SUCCESS);
 }
@@ -530,7 +552,7 @@ FileHandle::get_Checksum(){
     return this->_checkSum;
 }
 
-int                         
+long long                         
 FileHandle::get_File_Size(){
     return this->_fileSize;
 }

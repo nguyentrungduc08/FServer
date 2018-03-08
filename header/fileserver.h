@@ -104,9 +104,8 @@ struct FILE_TRANSACTION {
     std::string     _receiver;
     std::string     _url;
     std::string     _checksum;
-    unsigned int    _filesize;
+    long long       _filesize;
 };
-
 
 
 #endif /* FILESERVER_H */

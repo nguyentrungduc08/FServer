@@ -11,7 +11,6 @@
             <file>file:/media/veracrypt1/projects/fileServer/header/fileHandle.h</file>
             <file>file:/media/veracrypt1/projects/fileServer/header/fileserver.h</file>
             <file>file:/media/veracrypt1/projects/fileServer/header/connection.h</file>
-            <file>file:/media/veracrypt1/projects/fileServer/header/servercore.h</file>
             <file>file:/media/veracrypt1/projects/fileServer/resources/servercore.cpp</file>
             <file>file:/media/veracrypt1/projects/fileServer/resources/connection.cpp</file>
         </group>
