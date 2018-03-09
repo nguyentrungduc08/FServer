@@ -167,18 +167,20 @@ servercore::handle_New_Connection()
 void 
 servercore::handle_Main_Connection(Connection* & conn)
 {
-    Session*        ses;
-    unsigned int    id;
-    TOKEN           token;
+    Session*        _ses;
+    unsigned int    _id;
+    TOKEN           _token;
+    std::string     _usernameOfConnection;
     if ( !conn->get_authen_state() ) {
         //if not authen connection 
         if ( conn->authConnection(this->listUser) ) {
             //if check auth success
             conn->set_authen_state(true);
-            id      = conn->get_Connection_Id();
-            ses     = conn->get_Session();
-            token   = std::make_pair(id,ses);
-            this->_listSession.pb(token);
+            _id                     = conn->get_Connection_Id();
+            _ses                     = conn->get_Session();
+            _usernameOfConnection   = conn->get_Username_Of_Connection();
+            _token   = std::make_pair(_id,_ses);
+            this->_listSession.pb(_token);
         } else {
             //if check auth fail
             conn->set_Close_Request_Status(true);
@@ -203,7 +205,12 @@ servercore::handle_File_Connection(Connection* & conn)
         //conn->respondToQuery();
         conn->wirte_Data();
         if (conn->get_Data_Write_Done()){
-            conn->handle_CMD_MSG_FILE();
+            FILE_TRANSACTION * _ft;
+            _ft = conn->handle_CMD_MSG_FILE();
+            if (_ft != NULL){
+                std::cout << "@log servercore: add file transsaction completed" << std::endl;
+                this->_listFileTranssacion.emplace_back(_ft);
+            }
         }
     }
 }
@@ -255,10 +262,23 @@ servercore::read_Sockets()
         }
     }
 }
+
+void            
+servercore::thread_Main_Connecion_Handle()
+{
+    return;
+}   
+    
+void            
+servercore::thread_File_Connecion_Handle()
+{
+    return;
+}
   
 /*
  * Server entry point and main loop accepting and handling connections
  */ 
+
 int 
 servercore::start() 
 { 

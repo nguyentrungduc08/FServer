@@ -497,6 +497,7 @@ Connection::authConnection(const  std::vector<USER> & listUser) {
         rep(i,listUser.size()){
             if ( listUser.at(i).username == username && listUser.at(i).password == password ){
                 std::cout << "#log conn: debug status login ok" << std::endl;
+                this->_username = username;
                 return true;
             } 
         }
@@ -706,7 +707,6 @@ Connection::handle_CMD_MSG_FILE(){
         _ft->_url       = _urlFile;
         _ft->_filesize  = this->fo->get_File_Size();
         delete _pk;
-        this->closureRequested = true;
         return _ft;
     } 
     this->closureRequested = true;

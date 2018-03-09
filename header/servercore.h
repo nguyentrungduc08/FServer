@@ -34,6 +34,8 @@ public:
 
 private:
     int             start();
+    void            thread_Main_Connecion_Handle();
+    void            thread_File_Connecion_Handle();
     int             init_Sockets(int port);
     int             handle_New_Connection();
     void            set_NonBlocking(int &sock);
