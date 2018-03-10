@@ -45,7 +45,18 @@ private:
     void            handle_Main_Connection(Connection* & conn);
     void            handle_File_Connection(Connection* & conn);
     int             check_File_Transaction(std::string _receiver);
+
+    void            build_Select_List_For_Connections();
+    void            build_Select_list_For_Main_Connection();
+    void            build_Select_list_For_File_Connection();
     
+    fd_set          _connectionsSet;
+    fd_set          _mainConnSet;
+    fd_set          _fileConnSet;
+    int             _highestFdConnSet;
+    int             _highestFdMainSet;
+    int             _highestFdFileSet;
+
     unsigned int            _maxConnectionsInQuery; // number of connections in query
     int                     _mainSocket; // The main listening socket file descriptor
     int                     highSock;

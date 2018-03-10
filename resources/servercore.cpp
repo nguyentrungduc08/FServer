@@ -51,6 +51,89 @@ servercore::~servercore()
     delete this->_database;
 }
 
+
+void            
+servercore::build_Select_list_For_Main_Connection()
+{
+    FD_ZERO(&(this->_mainConnSet));
+    this->_highestFdMainSet = this->_mainSocket;
+    std::vector<Connection*>::iterator _iter = this->_mainConnections.begin();
+
+    while (_iter != this->_mainConnections.end()){
+        if ( (*_iter)->get_Close_Request_Status() ){
+            std::cout << "@log servercore: Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
+            delete (*_iter);
+            this->_mainConnections.erase(_iter);
+            if ( this->_mainConnections.empty() || _iter == this->_mainConnections.end()){
+                return;
+            }
+        } else {
+            int _currentFD = (*_iter)->getFD();
+            if (_currentFD != 0) {
+                FD_SET(_currentFD, &(this->_mainConnSet)); 
+                if (_currentFD > this->_highestFdMainSet)
+                    this->_highestFdMainSet = _currentFD; 
+            }
+            ++_iter;
+        }
+    }
+}
+
+void            
+servercore::build_Select_list_For_File_Connection()
+{
+    FD_ZERO(&(this->_fileConnSet));
+    this->_highestFdFileSet = this->_mainSocket;
+    std::vector<Connection*>::iterator _iter = this->_fileConnections.begin();
+
+    while (_iter != this->_fileConnections.end()){
+        if ( (*_iter)->get_Close_Request_Status() ){
+            std::cout << "@log servercore: Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
+            delete (*_iter);
+            this->_fileConnections.erase(_iter);
+            if ( this->_fileConnections.empty() || _iter == this->_fileConnections.end()){
+                return;
+            }
+        } else {
+            int _currentFD = (*_iter)->getFD();
+            if (_currentFD != 0) {
+                FD_SET(_currentFD, &(this->_fileConnSet));
+                if (_currentFD > this->_highestFdFileSet)
+                    this->_highestFdFileSet = _currentFD;
+            }
+            ++_iter;
+        }
+    }
+}
+
+void 
+servercore::build_Select_List_For_Connections()
+{
+    FD_ZERO(&(this->_connectionsSet));
+    FD_SET(this->_mainSocket, &(this->_connectionsSet));
+    this->_highestFdConnSet = this->_mainSocket;
+    std::vector<Connection*>::iterator _iter = this->_connections.begin();
+
+    while (_iter != this->_connections.end()){
+        if ( (*_iter)->get_Close_Request_Status() ){
+            std::cout << "@log servercore: Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
+            delete (*_iter);
+            this->_connections.erase(_iter);
+            if ( this->_connections.empty() || _iter == this->_connections.end()){
+                return;
+            }
+        } else {
+            int _currentFD = (*_iter)->getFD();
+            if (_currentFD != 0) {
+                FD_SET(_currentFD, &(this->_connectionsSet)); // Adds the socket file descriptor to the monitoring for select
+                if (_currentFD > this->_highestFdConnSet)
+                    this->_highestFdConnSet = _currentFD; // We need the highest socket for select
+            }
+            ++_iter;
+        }
+    }
+}
+
 // Builds the list of sockets to keep track on and removes the closed ones
 // @TODO: Crash if data is incoming over a closed socket connection???
 void 
