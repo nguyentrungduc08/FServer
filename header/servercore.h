@@ -46,19 +46,23 @@ private:
     void            handle_File_Connection(Connection* & conn);
     int             check_File_Transaction(std::string _receiver);
 
+    int             start_Server();
     void            build_Select_List_For_Connections();
     void            build_Select_list_For_Main_Connection();
     void            build_Select_list_For_File_Connection();
-    
-    fd_set          _connectionsSet;
-    fd_set          _mainConnSet;
-    fd_set          _fileConnSet;
-    int             _highestFdConnSet;
-    int             _highestFdMainSet;
-    int             _highestFdFileSet;
+    void            read_Data_Main_Socket();
+
+    fd_set                  _connectionsSet;
+    fd_set                  _mainConnSet;
+    fd_set                  _fileConnSet;
+    int                     _mainSocket; // The main listening socket file descriptor
+    int                     _highestFdConnSet;
+    int                     _highestFdMainSet;
+    int                     _highestFdFileSet;
+    struct timeval          _serverTimeout;
+    bool                    _shutdown; //to set server on/off
 
     unsigned int            _maxConnectionsInQuery; // number of connections in query
-    int                     _mainSocket; // The main listening socket file descriptor
     int                     highSock;
     unsigned int            connId; 
     bool                    shutdown; //to set server on/off

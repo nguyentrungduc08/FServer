@@ -20,10 +20,10 @@ Connection::~Connection() {
 
 /*
  * constructor to handle connection from client.
- * @filedescriptor fd of socket to get data from client
- * @connid id of connection
- * @defaulDir direction working 
- * @hostId id of host
+ * @filedescriptor  fd of socket to get data from client
+ * @connid          id of connection
+ * @defaulDir       direction working 
+ * @hostId          id of host
  * @commandOffset 
  */
 Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId, 
@@ -43,7 +43,7 @@ Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId,
     this->isFileSocket              = false;
     this->_isDownloadConnection     = false;
     this->_isUploadConnection       = false;
-    this->timeout.tv_sec            = 5;
+    this->timeout.tv_sec            = 3;
     this->timeout.tv_usec           = 0;
     this->_dataWriteDone            = false;
     if (iSSL){
@@ -403,6 +403,7 @@ Connection::handle_uploadRequest(std::vector<TOKEN> _listToken)
         } 
     }else {    
         this->closureRequested = true;
+        delete  pk;
         return;
     }
 }
@@ -538,6 +539,7 @@ Connection::respondClassifyConnectionDone(bool state){
         pk->appendData(CMD_CLASSIFY_FAIL);
         SSL_write(this->ssl, &pk->getData()[0], pk->getData().size());
     }
+    delete pk;
 }
 
 void 
@@ -559,21 +561,24 @@ Connection::classify_connection(){
         
         if (_cmd == CMD_IS_MAIN_CONNECTION) {    
             std::cout << "#log conn: This is main connection." << std::endl;
-            this->isMainSocket = true;
+            this->isMainSocket  = true;
+            this->_isClassified = true;
             this->respondClassifyConnectionDone(true);
             return;
         }
         
         if (_cmd == CMD_IS_FILE_CONNECTION) {    
             std::cout << "#log conn: This is file connection." << std::endl;
-            this->isFileSocket = true;
+            this->isFileSocket  = true;
+            this->_isClassified = true;
             this->respondClassifyConnectionDone(true);
             return;
         }
         delete _pk;
     } 
     std::cout << "#log conn: " << _bytes << std::endl;
-    this->closureRequested  = true;
+    if (!this->_isClassified)
+        this->closureRequested  = true;
     this->respondClassifyConnectionDone(false);
     return;
 }
@@ -854,3 +859,14 @@ Connection::get_Session(){
     return this->session;
 }       
    
+bool                        
+Connection::get_Is_Classified()
+{
+    return this->_isClassified;
+};
+    
+void                        
+Connection::set_Is_Classified_State(bool _state)
+{
+    this->_isClassified = _state;
+} 

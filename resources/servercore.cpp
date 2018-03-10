@@ -7,8 +7,11 @@
 #include "../header/servercore.h"
 
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) 
-                        : dir(dir), commandOffset(commandOffset), shutdown(false), connId(0) 
+                        : dir(dir), commandOffset(commandOffset), _shutdown(false), connId(0) 
 {
+    this->_serverTimeout.tv_sec     = 3;
+    this->_serverTimeout.tv_usec    = 0;
+
     this->_connections.clear();
     this->_listUser.clear();
     this->_database = new Database();
@@ -56,7 +59,7 @@ void
 servercore::build_Select_list_For_Main_Connection()
 {
     FD_ZERO(&(this->_mainConnSet));
-    this->_highestFdMainSet = this->_mainSocket;
+    this->_highestFdMainSet = 0;
     std::vector<Connection*>::iterator _iter = this->_mainConnections.begin();
 
     while (_iter != this->_mainConnections.end()){
@@ -83,7 +86,7 @@ void
 servercore::build_Select_list_For_File_Connection()
 {
     FD_ZERO(&(this->_fileConnSet));
-    this->_highestFdFileSet = this->_mainSocket;
+    this->_highestFdFileSet = 0;
     std::vector<Connection*>::iterator _iter = this->_fileConnections.begin();
 
     while (_iter != this->_fileConnections.end()){
@@ -106,6 +109,9 @@ servercore::build_Select_list_For_File_Connection()
     }
 }
 
+
+// @NOTE: donot delete memory of connection push to list main or file connecions.
+// connnection add state is classified
 void 
 servercore::build_Select_List_For_Connections()
 {
@@ -118,6 +124,12 @@ servercore::build_Select_List_For_Connections()
         if ( (*_iter)->get_Close_Request_Status() ){
             std::cout << "@log servercore: Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
             delete (*_iter);
+            this->_connections.erase(_iter);
+            if ( this->_connections.empty() || _iter == this->_connections.end()){
+                return;
+            }
+        } else if ((*_iter)->get_Is_Classified()){
+            std::cout << "@log servercore: Connection with Id " << (*_iter)->getConnectionId() << " classified and move to another list" << std::endl;
             this->_connections.erase(_iter);
             if ( this->_connections.empty() || _iter == this->_connections.end()){
                 return;
@@ -359,6 +371,44 @@ servercore::read_Sockets()
 }
 
 void            
+servercore::read_Data_Main_Socket()
+{
+    //accept new connection and push this connecion to list connection pending to handle
+    //this connection not yet classify 
+    if (FD_ISSET(this->_mainSocket, &(this->_connectionsSet))){
+        std::cout << "@log servercore: new connection comming" << std::endl;
+        if (this->handle_New_Connection() == EXIT_FAILURE ){
+            std::cerr << "@log servercore: error handle new connection!!!!" << std::endl;
+            return;
+        } 
+    }
+    //classify connections in _connecions list.
+    //remove and push it to list main connecion or file connection
+    for (unsigned int _index = 0; _index < this->_connections.size(); ++_index) {
+        if (FD_ISSET(this->_connections.at(_index)->getFD(), &(this->_workingSet))) {
+            std::cout << "@log servercore: handle comming data to exist socket " << this->_connections.at(_index)->getFD() << std::endl;
+            
+            if ( !this->_connections.at(_index)->get_isMainConnection() && !this->_connections.at(_index)->get_isFileConnection())
+            {
+                std::cout << "@log servercore: handle new connection" << std::endl;
+                this->_connections.at(_index)->classify_connection();
+            }
+            
+            if ( this->_connections.at(_index)->get_isMainConnection() ){
+                std::cout << "@log servercore: push this connecion to MAIN connections list" << std::endl;
+                this->_mainConnections.emplace_back(this->_connections.at(_index));
+            }
+            
+            if ( this->_connections.at(_index)->get_isFileConnection() ){
+                std::cout << "@log servercore: push this connecion to FILE connections list" << std::endl;
+                this->_fileConnections.emplace_back(this->_connections.at(_index));
+            }
+
+        }
+    }
+}
+
+void            
 servercore::thread_Main_Connecion_Handle()
 {
     return;
@@ -382,7 +432,7 @@ servercore::start()
     _timeout.tv_sec     = 3; // Timeout = 3 sec
     _timeout.tv_usec    = 0;
 
-    while (!this->shutdown) {
+    while (!this->_shutdown) {
         std::cout << "@log servercore: waiting connection form client....." << std::endl;
 
         this->build_Select_List(); // Clear out data handled in the previous iteration, clear closed sockets
@@ -399,6 +449,36 @@ servercore::start()
         this->read_Sockets(); // Handle the sockets (accept new connections or handle incoming data or do nothing [if no data])
     }
     return (EXIT_SUCCESS);
+}
+
+
+int             
+servercore::start_Server()
+{
+    int                 _rc;
+    struct timeval      _time;
+
+
+
+    while (!this->_shutdown) {
+        std::cout << "@log servercore: waiting connections form client....." << std::endl;
+
+        this->build_Select_List_For_Connections();
+
+        _time   = this->_serverTimeout;
+
+        _rc     = select(this->_highestFdConnSet+1, &(this->_connectionsSet), NULL, NULL, &_time);
+
+        if (_rc < 0){
+            std::cerr << "@log servercore: Error calling select()" << std::endl;
+            return (EXIT_FAILURE);
+        }
+
+        //this->handle_Connection();    
+    }
+
+    return (EXIT_SUCCESS);
+
 }
 
 /* 
