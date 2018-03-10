@@ -544,35 +544,35 @@ void
 Connection::classify_connection(){
     std::cout << "#log conn: Classify connection." << std::endl;
     char        buffer[BUFFER_SIZE];
-    int         bytes = -1;
-    Packet*     pk;
+    int         _bytes = -1;
+    Packet*     _pk;
     bzero(buffer, sizeof(buffer));
     
-    bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
+    _bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
     
-    if (bytes > 0){
-        pk = new Packet(std::string(buffer,bytes));
+    if (_bytes > 0){
+        _pk = new Packet(std::string(buffer,_bytes));
         
-        int cmd = pk->getCMDHeader();
+        int _cmd = _pk->getCMDHeader();
         
-        std::cout << "#log conn: recieved data " << cmd << std::endl;
+        std::cout << "#log conn: recieved data " << _cmd << std::endl;
         
-        if (cmd == CMD_IS_MAIN_CONNECTION) {    
+        if (_cmd == CMD_IS_MAIN_CONNECTION) {    
             std::cout << "#log conn: This is main connection." << std::endl;
             this->isMainSocket = true;
             this->respondClassifyConnectionDone(true);
             return;
         }
         
-        if (cmd == CMD_IS_FILE_CONNECTION) {    
+        if (_cmd == CMD_IS_FILE_CONNECTION) {    
             std::cout << "#log conn: This is file connection." << std::endl;
             this->isFileSocket = true;
             this->respondClassifyConnectionDone(true);
             return;
         }
-        delete pk;
+        delete _pk;
     } 
-    std::cout << "#log conn: " << bytes << std::endl;
+    std::cout << "#log conn: " << _bytes << std::endl;
     this->closureRequested  = true;
     this->respondClassifyConnectionDone(false);
     return;

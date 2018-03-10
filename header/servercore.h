@@ -44,9 +44,10 @@ private:
     void            free_All_Connections();
     void            handle_Main_Connection(Connection* & conn);
     void            handle_File_Connection(Connection* & conn);
+    int             check_File_Transaction(std::string _receiver);
     
-    unsigned int            maxConnectionsInQuery; // number of connections in query
-    int                     Mainsocket; // The main listening socket file descriptor
+    unsigned int            _maxConnectionsInQuery; // number of connections in query
+    int                     _mainSocket; // The main listening socket file descriptor
     int                     highSock;
     unsigned int            connId; 
     bool                    shutdown; //to set server on/off
@@ -56,16 +57,16 @@ private:
     sockaddr_in             cli;
     socklen_t               cli_size;
     unsigned short          commandOffset;
-    fd_set                  working_set; // set of socket file descriptors we want to wake up for, using select()
+    fd_set                  _workingSet; // set of socket file descriptors we want to wake up for, using select()
     std::string             dir; //path of directory working 
     fssl*                   sslConn;
-    Database*               database;
+    Database*               _database;
     
-    std::vector<Connection*>                connections;// Manage the connected sockets / connections in a list with an iterator
-    std::vector<USER>                       listUser;
-    std::vector<Connection*>                mainConnections;
-    std::vector<Connection*>                fileConnections;
-    std::vector<FILE_TRANSACTION*>          _listFileTranssacion;
+    std::vector<Connection*>                _connections; // Manage the connected sockets / connections in a list with an iterator
+    std::vector<Connection*>                _mainConnections;
+    std::vector<Connection*>                _fileConnections;
+    std::vector<USER>                       _listUser;
+    std::vector<FILE_TRANSACTION*>          _listFileTransaction;
     std::vector<TOKEN>                      _listSession;
 };
 
