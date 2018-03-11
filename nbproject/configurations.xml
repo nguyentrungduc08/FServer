@@ -64,6 +64,7 @@
           <linkerLibItems>
             <linkerOptionItem>-L/usr/lib -lssl -lcrypto</linkerOptionItem>
             <linkerOptionItem> -lmysqlclient</linkerOptionItem>
+            <linkerOptionItem>-pthread </linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>

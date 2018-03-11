@@ -98,6 +98,7 @@ struct USER{
     std::string     username;
     std::string     password;
     int             status;
+    bool            _state = false;
 };
 
 struct FILE_TRANSACTION {
@@ -109,6 +110,7 @@ struct FILE_TRANSACTION {
     std::string     _url;
     std::string     _checksum;
     long long       _filesize;
+    bool            _status = false;
 };
 
 

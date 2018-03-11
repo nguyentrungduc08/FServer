@@ -53,6 +53,8 @@ private:
     void            free_All_File_Connections();
     void            free_All_Main_Connections();
     void            read_Data_Main_Socket();
+    void            read_Data_Main_Connections();
+    void            read_Data_File_Connections();
 
     fd_set                  _connectionsSet;
     fd_set                  _mainConnSet;

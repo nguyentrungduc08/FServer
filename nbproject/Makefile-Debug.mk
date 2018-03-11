@@ -63,7 +63,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L/usr/lib -lssl -lcrypto -lmysqlclient
+LDLIBSOPTIONS=-L/usr/lib -lssl -lcrypto -lmysqlclient -pthread
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
