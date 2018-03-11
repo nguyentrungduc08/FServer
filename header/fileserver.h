@@ -79,6 +79,9 @@
 #define MAXCONN                 1000
 #define	BUFFSIZE                4096	/* buffer size for reads and writes */
 
+#define PING                    111;
+#define PONG                    222;
+
 #define PACKET                  std::vector<char>
 #define TOKEN                   std::pair<int,Session*>                  
 

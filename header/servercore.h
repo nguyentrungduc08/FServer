@@ -34,22 +34,24 @@ public:
 
 private:
     int             start();
-    void            thread_Main_Connecion_Handle();
-    void            thread_File_Connecion_Handle();
     int             init_Sockets(int port);
     int             handle_New_Connection();
     void            set_NonBlocking(int &sock);
     void            build_Select_List();
     void            read_Sockets();
-    void            free_All_Connections();
     void            handle_Main_Connection(Connection* & conn);
     void            handle_File_Connection(Connection* & conn);
     int             check_File_Transaction(std::string _receiver);
 
     int             start_Server();
+    void            thread_Main_Connecion_Handle();
+    void            thread_File_Connecion_Handle();
     void            build_Select_List_For_Connections();
     void            build_Select_list_For_Main_Connection();
     void            build_Select_list_For_File_Connection();
+    void            free_All_Connections();
+    void            free_All_File_Connections();
+    void            free_All_Main_Connections();
     void            read_Data_Main_Socket();
 
     fd_set                  _connectionsSet;
@@ -61,11 +63,12 @@ private:
     int                     _highestFdFileSet;
     struct timeval          _serverTimeout;
     bool                    _shutdown; //to set server on/off
-
     unsigned int            _maxConnectionsInQuery; // number of connections in query
+    unsigned int            _connId;
+
     int                     highSock;
     unsigned int            connId; 
-    bool                    shutdown; //to set server on/off
+
     sockaddr_in             addr; // set server information
     struct sockaddr_storage addrStorage; //get info of connection
     socklen_t               addrLength;
