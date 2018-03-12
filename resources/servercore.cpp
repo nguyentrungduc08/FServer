@@ -11,11 +11,12 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
 {
     this->_serverTimeout.tv_sec     = 3;
     this->_serverTimeout.tv_usec    = 0;
-
+    this->_maxConnectionsInQuery    = 500; //set maximum connect to server simultaneously
+    
+    this->_listUser.clear();
     this->_connections.clear();
     this->_mainConnections.clear();
     this->_fileConnections.clear();
-    this->_listUser.clear();
     this->_database = new Database();
     
     if ( !this->_database->doConnection("testuser","testuser","FILE") ){
@@ -56,7 +57,8 @@ servercore::~servercore()
     this->free_All_Connections();
     this->free_All_File_Connections();
     this->free_All_Main_Connections();
-
+    this->free_All_File_Transaction();
+    
     delete this->sslConn;
     delete this->_database;
 }
@@ -115,7 +117,6 @@ servercore::build_Select_list_For_File_Connection()
     }
 }
 
-
 // @NOTE: do not delete memory of connection push to list main or file connecions.
 // connnection add state is classified
 void 
@@ -135,7 +136,7 @@ servercore::build_Select_List_For_Connections()
                 return;
             }
         } else if ((*_iter)->get_Is_Classified()){
-            std::cout << "@log servercore: For_Connections onnection with Id " << (*_iter)->getConnectionId() << " classified and move to another list" << std::endl;
+            std::cout << "@log servercore: For_Connections connection with Id " << (*_iter)->getConnectionId() << " classified and move to another list" << std::endl;
             this->_connections.erase(_iter);
             if ( this->_connections.empty() || _iter == this->_connections.end()){
                 return;
@@ -215,18 +216,26 @@ servercore::free_All_Main_Connections()
     this->_mainConnections.clear(); 
 }
 
-
+void            
+servercore::free_All_File_Transaction()
+{
+    std::vector<FILE_TRANSACTION*>::iterator _iter = this->_listFileTransaction.begin();
+    while (_iter != this->_listFileTransaction.end()){
+        delete (*(_iter++));
+    }
+    this->_listFileTransaction.clear();
+}
 // Accepts new connections and stores the connection object with fd in a vector
 int 
 servercore::handle_New_Connection()
 {
     int             _fd; // Socket file descriptor for incoming connections
-    char            ipstr[INET6_ADDRSTRLEN];
-    int             port;
-    std::string     hostId          = "";
-    int             _reuseAllowed   = 1;
-    this->cli_size                  = sizeof(this->cli);
-    _fd                             = accept(this->_mainSocket, (struct sockaddr*) &this->cli, &this->cli_size);
+    char            _ipstr[INET6_ADDRSTRLEN];
+    int             _port;
+    std::string     _hostId          = "";
+    int             _reuseAllowed    = 1;
+    this->cli_size                   = sizeof(this->cli);
+    _fd                              = accept(this->_mainSocket, (struct sockaddr*) &this->cli, &this->cli_size);
     
     if (_fd < 0) {
         std::cerr << "@log servercore: Error while accepting client" << std::endl;
@@ -259,12 +268,12 @@ servercore::handle_New_Connection()
     
     if (this->addr.sin_family == AF_INET) {
         struct sockaddr_in* _fds = (struct sockaddr_in*) &(this->addrStorage);
-        port = ntohs(_fds->sin_port);
-        inet_ntop(AF_INET, &_fds->sin_addr, ipstr, sizeof ipstr);
-        hostId = (std::string)ipstr;
+        _port = ntohs(_fds->sin_port);
+        inet_ntop(AF_INET, &_fds->sin_addr, _ipstr, sizeof _ipstr);
+        _hostId = (std::string)_ipstr;
     }
 
-    printf("@log servercore: Connection accepted: FD=%d - Port=%d - Slot=%d - Id=%d \n", _fd, port, (this->_connections.size()+1), ++(this->_connId));
+    printf("@log servercore: Connection accepted: FD=%d - Port=%d - Slot=%d - Id=%d \n", _fd, _port, (this->_connections.size()+1), ++(this->_connId));
     
     //update highSock 
     this->highSock = (_fd > this->highSock) ? _fd:this->highSock;
@@ -273,11 +282,11 @@ servercore::handle_New_Connection()
     Connection* conn;
     
     if (USE_SSL){
-        conn = new Connection(_fd, this->sslConn ,this->_connId, this->dir, hostId, true, this->commandOffset); 
+        conn = new Connection(_fd, this->sslConn ,this->_connId, this->dir, _hostId, true, this->commandOffset); 
         std::cout << "@log servercore: use SSL model " << std::endl;
     }
     else{ 
-        conn = new Connection(_fd, this->sslConn, this->_connId, this->dir, hostId, false, this->commandOffset); 
+        conn = new Connection(_fd, this->sslConn, this->_connId, this->dir, _hostId, false, this->commandOffset); 
         std::cout << "@log servercore: use non-SSL model " << std::endl;
     }    
     
@@ -295,6 +304,7 @@ servercore::handle_Main_Connection(Connection* & _conn)
     TOKEN           _token;
     std::string     _usernameOfConnection;
     int             _idFileTransaction;
+    
     if ( !_conn->get_authen_state() ) {
         //if not authen connection 
         if ( _conn->authConnection(this->_listUser) ) {
@@ -338,7 +348,7 @@ servercore::handle_File_Connection(Connection* & _conn)
     else {
         //conn->respondToQuery();
         _conn->wirte_Data();
-        if (_conn->get_Data_Write_Done()){
+        if (_conn->get_Data_Write_Done_State()) {
             FILE_TRANSACTION * _ft;
             _ft = _conn->handle_CMD_MSG_FILE();
             if (_ft != NULL){
@@ -415,8 +425,7 @@ servercore::read_Data_Main_Socket()
         if (FD_ISSET(this->_connections.at(_index)->getFD(), &(this->_connectionsSet))) {
             std::cout << "@log servercore: handle comming data to exist socket " << this->_connections.at(_index)->getFD() << std::endl;
             
-            if ( !this->_connections.at(_index)->get_isMainConnection() && !this->_connections.at(_index)->get_isFileConnection())
-            {
+            if ( !this->_connections.at(_index)->get_isMainConnection() && !this->_connections.at(_index)->get_isFileConnection()){
                 std::cout << "@log servercore: handle new connection" << std::endl;
                 this->_connections.at(_index)->classify_connection();
             }
@@ -430,11 +439,9 @@ servercore::read_Data_Main_Socket()
                 std::cout << "@log servercore: push this connecion to FILE connections list" << std::endl;
                 this->_fileConnections.emplace_back(this->_connections.at(_index));
             }
-
         }
     }
 }
-
 
 void            
 servercore::read_Data_Main_Connections()
@@ -454,7 +461,16 @@ servercore::read_Data_Main_Connections()
 void            
 servercore::read_Data_File_Connections()
 {
-
+    for (unsigned int _index = 0; _index < this->_fileConnections.size(); ++_index) {
+        if (FD_ISSET(this->_fileConnections.at(_index)->getFD(), &(this->_fileConnSet))) {
+            std::cout << "@log servercore: read_Data_File_Connections " << this->_fileConnections.at(_index)->getFD() << std::endl;
+            if ( this->_fileConnections.at(_index)->get_isFileConnection() ){
+                std::cout << "@log servercore: handle main connection" << std::endl;
+                this->handle_File_Connection(this->_fileConnections.at(_index));
+                continue;
+            }
+        }
+    }
 }
 
 void            
@@ -540,8 +556,8 @@ servercore::start_Server()
     int                 _num_Fd_Incomming;
     struct timeval      _time;
 
-    std::thread     thread_Main(&servercore::thread_Main_Connecion_Handle, this);
-    std::thread     thread_File(&servercore::thread_File_Connecion_Handle, this);
+    std::thread         _threadMain(&servercore::thread_Main_Connecion_Handle, this);
+    std::thread         _threadFile(&servercore::thread_File_Connecion_Handle, this);
 
     while (!this->_shutdown) {
         std::cout << "@log servercore: waiting connections form client....." << std::endl;
@@ -560,15 +576,14 @@ servercore::start_Server()
         this->read_Data_Main_Socket();    
     }
 
-    if (thread_Main.joinable()){
-        thread_Main.join();
+    if (_threadMain.joinable()){
+        _threadMain.join();
     }
 
-    if (thread_File.joinable()){
-        thread_File.join();
+    if (_threadFile.joinable()){
+        _threadFile.join();
     }
     return (EXIT_SUCCESS);
-
 }
 
 /* 
@@ -598,7 +613,6 @@ int
 servercore::init_Sockets(int port) 
 {
     int reuseAllowed            = 1; 
-    this->_maxConnectionsInQuery = 500; //set maximum connect to server simultaneously
     this->addr.sin_family       = AF_INET; // PF_INET;
     this->addr.sin_port         = htons(port); 
     this->addr.sin_addr.s_addr  = INADDR_ANY; // Server can be connected to from any host

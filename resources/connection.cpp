@@ -12,8 +12,10 @@
 Connection::~Connection() {
     std::cout << "#log conn: Connection terminated to client (connection id " << this->connectionId << ")" << std::endl;
     delete this->fo;
+    delete this->session;
     close(this->fd);
     SSL_free(this->ssl);    
+    delete this->ssl; 
     this->directories.clear();
     this->files.clear();
 }
@@ -45,7 +47,7 @@ Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId,
     this->_isUploadConnection       = false;
     this->timeout.tv_sec            = 3;
     this->timeout.tv_usec           = 0;
-    this->_dataWriteDone            = false;
+    this->_dataWriteDoneState       = false;
     if (iSSL){
         this->ssl           = SSL_new(sslcon->get_ctx());
         SSL_set_fd(this->ssl, this->fd);
@@ -440,38 +442,6 @@ Connection::authConnection(const  std::vector<USER> & listUser) {
     
     if (isSSL){ 
         bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
-        
-        if (bytes < 0){
-            switch (SSL_get_error(this->ssl, Sta)){
-                case SSL_ERROR_NONE:
-                    Sta = 0;
-                    std::cout << "#log conn: SSL_read SSL_ERROR_NONE" << std::endl;
-                    break;
-                case SSL_ERROR_WANT_WRITE:
-                    FD_SET(this->fd, &writeFdSet);
-                    Sta = 1;
-                    std::cout << "#log conn: SSL_read SSL_ERROR_WANT_WRITE" << std::endl;
-                    break;
-                case SSL_ERROR_WANT_READ:
-                    FD_SET(this->fd, &readFdSet);
-                    Sta = 1;
-                    std::cout << "#log conn: SSL_read SSL_ERROR_WANT_READ" << std::endl;
-                    break;
-                case SSL_ERROR_ZERO_RETURN:
-                    std::cout << "#log conn: SSL_ERROR_ZERO_RETURN" << std::endl;
-                    Sta = -1;
-                    break;
-                case SSL_ERROR_SYSCALL:     
-                    std::cout << "#log conn: SSL_read Peer closed connection during SSL handshake,status: " << status << std::endl;
-                    Sta = -1;
-                    break;
-                default:
-                    std::cout << "#log conn: SSL_read Unexpected error during SSL handshake,status: " << status << std::endl;
-                    Sta = -1;
-                    break;
-            }
-        }
-           
     } else {
         bytes = recv(this->fd, buffer, sizeof(buffer), 0);
     }
@@ -583,58 +553,9 @@ Connection::classify_connection(){
     return;
 }
 
-// Receives the incoming data and issues the apropraite commands and responds
-void 
-Connection::respondToQuery() {
-    char buffer[BUFFER_SIZE];
-    int bytes;
-
-    if (!isSSL){
-        bytes = recv(this->fd, buffer, sizeof(buffer), 0);
-        std::cout << "#log conn: read query TCP " << std::endl;
-    } else {
-        bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
-        std::cout << "#log conn: read query SSL " << std::endl;
-    }
-
-    // In non-blocking mode, bytes <= 0 does not mean a connection closure!
-    if (bytes > 0) {  
-        std::string clientCommand = std::string(buffer, bytes);
-        std::cout << "#log conn: ++client command: " << std::endl;
-        
-        if (this->uploadCommand) { // (Previous) upload command
-            std::cout << "#log conn: Write block" << std::endl;
-            // Previous (upload) command continuation, store incoming data to the file
-            std::cout << "#log conn: Part" << ++(this->receivedPart) << ": ";
-            this->fo->writeFileBlock(clientCommand);
-        } else {
-            // If not upload command issued, parse the incoming data for command and parameters
-            std::cout << "#log conn: ++client command: " << clientCommand << std::endl;
-            std::string res = this->commandParser(clientCommand);
-            
-            if (!this->uploadCommand){
-                this->closureRequested = true;
-            }
-            
-            //if (!this->downloadCommand) {
-            //    this->sendToClient(res); // Send response to client if no binary file
-            //    this->downloadCommand = false;
-            //}
-        }
-    } else { // no bytes incoming over this connection
-        if (this->uploadCommand) { // If upload command was issued previously and no data is left to receive, close the file and connection
-            //this->fo->closeWriteFile();
-            //this->uploadCommand = false;
-            //this->downloadCommand = false;
-            //this->closureRequested = true;
-            //this->receivedPart = 0;
-        }
-    }
-}
-
 bool
-Connection::get_Data_Write_Done(){
-    return this->_dataWriteDone;
+Connection::get_Data_Write_Done_State(){
+    return this->_dataWriteDoneState;
 }
 
 void                        
@@ -646,7 +567,7 @@ Connection::wirte_Data(){
     long long       _recievedData   = this->fo->get_Data_Received();
     
     if (_totalData == _recievedData){
-        _dataWriteDone = true;
+        this->_dataWriteDoneState = true;
         return;
     }
     else {
@@ -683,6 +604,42 @@ Connection::wirte_Data(){
         }
     }
 }
+
+int
+Connection::get_CMD_HEADER()
+{
+    Packet*         _pk;
+    int             _num_Fd_Incomming, _bytes, _cmd;
+    struct timeval  _time = this->timeout;
+    fd_set          _fdset;
+    char            buffer[20];
+    
+    FD_ZERO(&_fdset);
+    FD_SET(this->fd, &_fdset);
+
+    _num_Fd_Incomming = select(this->fd+1, &_fdset, NULL, NULL, &_time);
+
+    std::cerr << "log before select " << SSL_get_fd(this->ssl) << " " << _num_Fd_Incomming << std::endl;
+
+    if (_num_Fd_Incomming == 0){
+        std::cerr << "timeout login request connection!!!" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    bzero(buffer, sizeof(buffer));
+
+    _bytes   = SSL_read(this->ssl, buffer, 4);
+    _pk      = new Packet(std::string(buffer,_bytes));
+    
+    if (_pk->IsAvailableData())
+        _cmd = _pk->getCMDHeader();
+    
+    std::cout << "Log Connection: size read header " << _bytes  << " - value: " << _cmd << std::endl;
+    
+    delete _pk;
+    return _cmd;
+}
+
 
 FILE_TRANSACTION*           
 Connection::handle_CMD_MSG_FILE(){

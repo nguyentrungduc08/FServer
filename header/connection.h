@@ -46,7 +46,7 @@ public:
     void                        classify_connection();
     void                        getAllData();
     bool                        authConnection(const std::vector<USER> & listUser); 
-    void                        respondToQuery();
+    
     void                        respondAuthen();
     void                        TLS_handshark();
     unsigned int                getConnectionId();
@@ -66,7 +66,7 @@ public:
     bool                        get_isFileConnection();
     bool                        get_isUploadConnection();
     bool                        get_isDownloadConnection();
-    bool                        get_Data_Write_Done();
+    bool                        get_Data_Write_Done_State();
 
     bool                        get_Is_Classified();
     void                        set_Is_Classified_State(bool _state);
@@ -100,16 +100,22 @@ private:
     bool                        isSSL;
     bool                        ConfirmedState;
     bool                        TLSHandsharkState;
+    
     bool                        _isUploadConnection;
     bool                        _isDownloadConnection;
-    bool                        _dataWriteDone;
+    bool                        _dataWriteDoneState;
     bool                        _isClassified;
+    
+    int                         get_CMD_HEADER();
+    
     void                        sendToClient(char* response, unsigned long length);   
     void                        sendToClient(std::string response);
     bool                        commandEquals(std::string a, std::string b);    
     std::string                 filterOutBlanks(std::string inString);  
     static void                 getAllParametersAfter(std::vector<std::string> parameterVector, unsigned int currentParameter, std::string& theRest); 
     void                        respondClassifyConnectionDone(bool state);
+    
+    void                        Respond_CMD_SAVE_FILE_FINISH();
 };
 
 #endif /* CONNECTION_H */

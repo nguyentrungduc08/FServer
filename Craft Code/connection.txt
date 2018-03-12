@@ -1,0 +1,49 @@
+void                        respondToQuery();
+// Receives the incoming data and issues the apropraite commands and responds
+void 
+Connection::respondToQuery() {
+    char buffer[BUFFER_SIZE];
+    int bytes;
+
+    if (!isSSL){
+        bytes = recv(this->fd, buffer, sizeof(buffer), 0);
+        std::cout << "#log conn: read query TCP " << std::endl;
+    } else {
+        bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
+        std::cout << "#log conn: read query SSL " << std::endl;
+    }
+
+    // In non-blocking mode, bytes <= 0 does not mean a connection closure!
+    if (bytes > 0) {  
+        std::string clientCommand = std::string(buffer, bytes);
+        std::cout << "#log conn: ++client command: " << std::endl;
+        
+        if (this->uploadCommand) { // (Previous) upload command
+            std::cout << "#log conn: Write block" << std::endl;
+            // Previous (upload) command continuation, store incoming data to the file
+            std::cout << "#log conn: Part" << ++(this->receivedPart) << ": ";
+            this->fo->writeFileBlock(clientCommand);
+        } else {
+            // If not upload command issued, parse the incoming data for command and parameters
+            std::cout << "#log conn: ++client command: " << clientCommand << std::endl;
+            std::string res = this->commandParser(clientCommand);
+            
+            if (!this->uploadCommand){
+                this->closureRequested = true;
+            }
+            
+            //if (!this->downloadCommand) {
+            //    this->sendToClient(res); // Send response to client if no binary file
+            //    this->downloadCommand = false;
+            //}
+        }
+    } else { // no bytes incoming over this connection
+        if (this->uploadCommand) { // If upload command was issued previously and no data is left to receive, close the file and connection
+            //this->fo->closeWriteFile();
+            //this->uploadCommand = false;
+            //this->downloadCommand = false;
+            //this->closureRequested = true;
+            //this->receivedPart = 0;
+        }
+    }
+}

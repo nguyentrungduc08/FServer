@@ -52,6 +52,7 @@ private:
     void            free_All_Connections();
     void            free_All_File_Connections();
     void            free_All_Main_Connections();
+    void            free_All_File_Transaction();
     void            read_Data_Main_Socket();
     void            read_Data_Main_Connections();
     void            read_Data_File_Connections();

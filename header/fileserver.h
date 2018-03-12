@@ -60,6 +60,8 @@
 
 #define CMD_UPLOAD_FILE         5
 #define CMD_UPLOAD_READY        6
+#define CMD_UPLOAD_FINISH       65
+#define CMD_SAVE_FILE_FINISH    56
 #define CMD_MSG_FILE            7
 #define CMD_DOWNLOAD_FILE       8
 #define CMD_DOWNLOAD_FINISH     9
