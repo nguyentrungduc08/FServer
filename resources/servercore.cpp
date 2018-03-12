@@ -9,7 +9,7 @@
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) 
                         : dir(dir), commandOffset(commandOffset), _shutdown(false), _connId(0) 
 {
-    this->_serverTimeout.tv_sec     = 3;
+    this->_serverTimeout.tv_sec     = 2;
     this->_serverTimeout.tv_usec    = 0;
     this->_maxConnectionsInQuery    = 500; //set maximum connect to server simultaneously
     
@@ -220,7 +220,7 @@ servercore::check_File_Transaction(std::string _receiver)
         if (_listFileTransaction.at(index)->_receiver == _receiver)
             return index;
     }
-    return -1;
+    return (-1);
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 void            
@@ -241,7 +241,7 @@ servercore::read_Data_Main_Socket()
         if (FD_ISSET(this->_connections.at(_index)->getFD(), &(this->_connectionsSet))) {
             std::cout << "@log servercore: handle comming data to exist socket " << this->_connections.at(_index)->getFD() << std::endl;
             
-            if ( !this->_connections.at(_index)->get_isMainConnection() && !this->_connections.at(_index)->get_isFileConnection()){
+            if ( !this->_connections.at(_index)->get_Is_Classified()){
                 std::cout << "@log servercore: handle new connection" << std::endl;
                 this->_connections.at(_index)->classify_connection();
             }

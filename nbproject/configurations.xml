@@ -27,6 +27,7 @@
       <itemPath>resources/connection.cpp</itemPath>
       <itemPath>resources/connection_FileConn.cpp</itemPath>
       <itemPath>resources/connection_MainConn.cpp</itemPath>
+      <itemPath>resources/connection_Test.cpp</itemPath>
       <itemPath>resources/database.cpp</itemPath>
       <itemPath>resources/fileHandle.cpp</itemPath>
       <itemPath>resources/md5.cpp</itemPath>
@@ -113,6 +114,8 @@
       </item>
       <item path="resources/connection_MainConn.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="resources/connection_Test.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="resources/database.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/fileHandle.cpp" ex="false" tool="1" flavor2="0">
@@ -189,6 +192,8 @@
       <item path="resources/connection_FileConn.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/connection_MainConn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/connection_Test.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/database.cpp" ex="false" tool="1" flavor2="0">
       </item>

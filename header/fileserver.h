@@ -55,6 +55,8 @@
 #define CMD_AUTHEN_SUCCESS      2
 #define CMD_AUTHEN_FAIL         121
     
+#define CMD_ERROR               500
+
 #define CMD_ADD_CONTACT         3
 #define CMD_ADD_SUCCESS         4
 

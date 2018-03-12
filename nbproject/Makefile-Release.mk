@@ -44,6 +44,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/resources/connection.o \
 	${OBJECTDIR}/resources/connection_FileConn.o \
 	${OBJECTDIR}/resources/connection_MainConn.o \
+	${OBJECTDIR}/resources/connection_Test.o \
 	${OBJECTDIR}/resources/database.o \
 	${OBJECTDIR}/resources/fileHandle.o \
 	${OBJECTDIR}/resources/md5.o \
@@ -122,6 +123,11 @@ ${OBJECTDIR}/resources/connection_MainConn.o: resources/connection_MainConn.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection_MainConn.o resources/connection_MainConn.cpp
+
+${OBJECTDIR}/resources/connection_Test.o: resources/connection_Test.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection_Test.o resources/connection_Test.cpp
 
 ${OBJECTDIR}/resources/database.o: resources/database.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources

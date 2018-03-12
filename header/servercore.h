@@ -33,29 +33,37 @@ public:
     ~servercore();
 
 private:
-    int             start();
+    //global APIs
+    int             start_Server();
     int             init_Sockets(int port);
     int             handle_New_Connection();
     void            set_NonBlocking(int &sock);
-    void            build_Select_List();
-    void            read_Sockets();
-    void            handle_Main_Connection(Connection* & conn);
+    
+    //APIs handle file connection.
     void            handle_File_Connection(Connection* & conn);
     int             check_File_Transaction(std::string _receiver);
-
-    int             start_Server();
-    void            thread_Main_Connecion_Handle();
-    void            thread_File_Connecion_Handle();
-    void            build_Select_List_For_Connections();
-    void            build_Select_list_For_Main_Connection();
     void            build_Select_list_For_File_Connection();
+    void            thread_File_Connecion_Handle();
+    void            read_Data_File_Connections();
+    
+    //APIs handle main connection.
+    void            handle_Main_Connection(Connection* & conn);
+    void            thread_Main_Connecion_Handle();
+    void            build_Select_list_For_Main_Connection();
+    void            read_Data_Main_Connections();
+    
+    //APIs using in main thread.
+    void            build_Select_List_For_Connections();    
     void            free_All_Connections();
     void            free_All_File_Connections();
     void            free_All_Main_Connections();
     void            free_All_File_Transaction();
-    void            read_Data_Main_Socket();
-    void            read_Data_Main_Connections();
-    void            read_Data_File_Connections();
+    void            read_Data_Main_Socket();   
+    
+    //testing apis
+    int             start();
+    void            build_Select_List();
+    void            read_Sockets();
 
     fd_set                  _connectionsSet;
     fd_set                  _mainConnSet;

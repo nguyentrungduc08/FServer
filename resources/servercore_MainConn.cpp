@@ -31,6 +31,7 @@ servercore::build_Select_list_For_Main_Connection()
             ++_iter;
         }
     }
+    return;
 }
 
 void            
@@ -82,7 +83,7 @@ servercore::handle_Main_Connection(Connection* & _conn)
     
     if ( !_conn->get_authen_state() ) {
         //if not authen connection 
-        if ( _conn->authConnection(this->_listUser) ) {
+        if ( _conn->handle_CMD_AUTHEN_LOGIN(this->_listUser) ) {
             //if check auth success
             _conn->set_authen_state(true);
             _idOfConnection         = _conn->get_Connection_Id();
@@ -95,7 +96,7 @@ servercore::handle_Main_Connection(Connection* & _conn)
                 
             } 
         }    
-        _conn->respondAuthen();
+        _conn->respond_CMD_AUTHEN();
         _conn->set_Close_Request_Status(true); //close connection after response success login
     } else {
         //if this connection authenticated -> handle data commining

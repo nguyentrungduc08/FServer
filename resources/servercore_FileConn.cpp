@@ -77,7 +77,7 @@ servercore::handle_File_Connection(Connection* & _conn)
 {
     std::cout << "@log servercore: handle file connection!!!" << std::endl;
     if (!_conn->get_isUploadConnection())
-        _conn->handle_uploadRequest(this->_listSession);
+        _conn->handle_CMD_UPLOAD_FILE(this->_listSession);
     else {
         //conn->respondToQuery();
         _conn->wirte_Data();

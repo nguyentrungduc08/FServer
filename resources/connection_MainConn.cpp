@@ -9,10 +9,9 @@
 #include "../header/ssl.h"
 
 bool 
-Connection::authConnection(const  std::vector<USER> & listUser) {
+Connection::handle_CMD_AUTHEN_LOGIN(const  std::vector<USER> & listUser) {
     
     std::cout << "#log conn: authen connection!!!!" << std::endl;
-    
     char            buffer[BUFFER_SIZE];
     int             bytes = -1;
     int             cmd;
@@ -24,9 +23,9 @@ Connection::authConnection(const  std::vector<USER> & listUser) {
     bzero(buffer, sizeof buffer);
     
     if (isSSL){ 
-        bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
+        bytes = SSL_read(this->_ssl, buffer, sizeof(buffer));
     } else {
-        bytes = recv(this->fd, buffer, sizeof(buffer), 0);
+        bytes = recv(this->_socketFd, buffer, sizeof(buffer), 0);
     }
     
     std::cout << "#log conn: size of data ssl read " << bytes << std::endl;
@@ -36,11 +35,11 @@ Connection::authConnection(const  std::vector<USER> & listUser) {
         cmd = pk->getCMDHeader();
         std::string username, password;
         
-        if (cmd == CMD_AUTHEN_LOGIN && !this->ConfirmedState){
+        if (cmd == CMD_AUTHEN_LOGIN && !this->_ConfirmedState){
             username = pk->getContent();
             password = pk->getContent();
         } else {
-            this->ConfirmedState = false;
+            this->_ConfirmedState = false;
             return false;
         }
         
@@ -63,20 +62,20 @@ Connection::authConnection(const  std::vector<USER> & listUser) {
 } 
 
 void 
-Connection::respondAuthen(){
-    if (this->ConfirmedState && !this->closureRequested){
+Connection::respond_CMD_AUTHEN(){
+    if (this->_ConfirmedState && !this->closureRequested){
         this->session->buildSession(this->connectionId, this->hostAddress);
         std::string ses = this->session->getSession();
         Packet *pk = new Packet();
         pk->appendData(CMD_AUTHEN_SUCCESS);
         pk->appendData(ses);
         std::cout << "#log conn: " << ses << std::endl;
-        SSL_write(this->ssl, &pk->getData()[0], pk->getData().size() );
+        SSL_write(this->_ssl, &pk->getData()[0], pk->getData().size() );
         delete pk;
     } else {
         Packet *pk = new Packet();
         pk->appendData(CMD_AUTHEN_FAIL);
-        SSL_write(this->ssl, &pk->getData()[0], pk->getData().size() );
+        SSL_write(this->_ssl, &pk->getData()[0], pk->getData().size() );
         delete pk;
     } 
 }

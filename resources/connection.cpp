@@ -13,9 +13,9 @@ Connection::~Connection() {
     std::cout << "#log conn: Connection terminated to client (connection id " << this->connectionId << ")" << std::endl;
     delete this->fo;
     delete this->session;
-    close(this->fd);
-    SSL_free(this->ssl);    
-    delete this->ssl; 
+    close(this->_socketFd);
+    SSL_free(this->_ssl);    
+    //delete this->_ssl; 
     this->directories.clear();
     this->files.clear();
 }
@@ -31,7 +31,7 @@ Connection::~Connection() {
 Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId, 
                                     std::string defaultDir, std::string hostId, bool iSSL, 
                                     unsigned short commandOffset) 
-                                    : fd(filedescriptor), connectionId(connId), dir(defaultDir), 
+                                    : _socketFd(filedescriptor), connectionId(connId), dir(defaultDir), 
                                     hostAddress(hostId), isSSL(iSSL), commandOffset(commandOffset), 
                                     closureRequested(false), uploadCommand(false), downloadCommand(false),  
                                     receivedPart(0), parameter("") 
@@ -39,18 +39,20 @@ Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId,
 //    this->files = std::vector<std::string>();
     this->session                   = new Session();
     this->fo                        = new FileHandle(this->dir); // File and directory browser
-    this->TLSHandsharkState         = false;
-    this->ConfirmedState            = false;
+    this->_TLSHandsharkState        = false;
+    this->_ConfirmedState           = false;
     this->isMainSocket              = false;
     this->isFileSocket              = false;
     this->_isDownloadConnection     = false;
     this->_isUploadConnection       = false;
+    this->_isClassified             = false;
+   
     this->timeout.tv_sec            = 3;
     this->timeout.tv_usec           = 0;
     this->_dataWriteDoneState       = false;
     if (iSSL){
-        this->ssl           = SSL_new(sslcon->get_ctx());
-        SSL_set_fd(this->ssl, this->fd);
+        this->_ssl           = SSL_new(sslcon->get_ctx());
+        SSL_set_fd(this->_ssl, this->_socketFd);
     }
     
     std::cout << "#log conn: Connection to client '" << this->hostAddress << "' established" << std::endl;
@@ -81,19 +83,19 @@ Connection::TLS_handshark() {
         tv = tvRestore;
         FD_ZERO(&writeFdSet);
         FD_ZERO(&readFdSet);
-        status = SSL_accept(this->ssl);
-        switch (SSL_get_error(this->ssl, status)){
+        status = SSL_accept(this->_ssl);
+        switch (SSL_get_error(this->_ssl, status)){
             case SSL_ERROR_NONE:
                 status = 0;
                 std::cout << "#log conn: SSL_ERROR_NONE" << std::endl;
                 break;
             case SSL_ERROR_WANT_WRITE:
-                FD_SET(this->fd, &writeFdSet);
+                FD_SET(this->_socketFd, &writeFdSet);
                 status = 1;
                 std::cout << "#log conn: SSL_ERROR_WANT_WRITE" << std::endl;
                 break;
             case SSL_ERROR_WANT_READ:
-                FD_SET(this->fd, &readFdSet);
+                FD_SET(this->_socketFd, &readFdSet);
                 status = 1;
                 std::cout << "#log conn: SSL_ERROR_WANT_READ" << std::endl;
                 break;
@@ -112,7 +114,7 @@ Connection::TLS_handshark() {
         if (status == 1)
             {              
                 // Must have at least one handle to wait for at this point.
-                status = select(this->fd + 1, &readFdSet, &writeFdSet, NULL, &tv);
+                status = select(this->_socketFd + 1, &readFdSet, &writeFdSet, NULL, &tv);
 
                 // 0 is timeout, so we're done.
                 // -1 is error, so we're done.
@@ -129,21 +131,21 @@ Connection::TLS_handshark() {
                     }
             }
                     
-        } while (status == 1 && !SSL_is_init_finished(this->ssl));
+        } while (status == 1 && !SSL_is_init_finished(this->_ssl));
         std::cout << "#log conn: SSL handshark successed" << std::endl;
-        //SSL_set_accept_state(this->ssl);
+        //SSL_set_accept_state(this->_ssl);
 }
 
 void 
-Connection::respondClassifyConnectionDone(bool state){
+Connection::respond_Classify_Connection_Done(bool state){
     Packet *pk = new Packet();
     
     if (state){
         pk->appendData(CMD_CLASSIFY_DONE);
-        SSL_write(this->ssl, &pk->getData()[0], pk->getData().size());
+        SSL_write(this->_ssl, &pk->getData()[0], pk->getData().size());
     } else {
         pk->appendData(CMD_CLASSIFY_FAIL);
-        SSL_write(this->ssl, &pk->getData()[0], pk->getData().size());
+        SSL_write(this->_ssl, &pk->getData()[0], pk->getData().size());
     }
     delete pk;
 }
@@ -156,7 +158,7 @@ Connection::classify_connection(){
     Packet*     _pk;
     bzero(buffer, sizeof(buffer));
     
-    _bytes = SSL_read(this->ssl, buffer, sizeof(buffer));
+    _bytes = SSL_read(this->_ssl, buffer, sizeof(buffer));
     
     if (_bytes > 0){
         _pk = new Packet(std::string(buffer,_bytes));
@@ -169,7 +171,7 @@ Connection::classify_connection(){
             std::cout << "#log conn: This is main connection." << std::endl;
             this->isMainSocket  = true;
             this->_isClassified = true;
-            this->respondClassifyConnectionDone(true);
+            this->respond_Classify_Connection_Done(true);
             return;
         }
         
@@ -177,7 +179,7 @@ Connection::classify_connection(){
             std::cout << "#log conn: This is file connection." << std::endl;
             this->isFileSocket  = true;
             this->_isClassified = true;
-            this->respondClassifyConnectionDone(true);
+            this->respond_Classify_Connection_Done(true);
             return;
         }
         delete _pk;
@@ -185,7 +187,7 @@ Connection::classify_connection(){
     std::cout << "#log conn: " << _bytes << std::endl;
     if (!this->_isClassified)
         this->closureRequested  = true;
-    this->respondClassifyConnectionDone(false);
+    this->respond_Classify_Connection_Done(false);
     return;
 }
 
@@ -199,11 +201,11 @@ Connection::get_CMD_HEADER()
     char            buffer[20];
     
     FD_ZERO(&_fdset);
-    FD_SET(this->fd, &_fdset);
+    FD_SET(this->_socketFd, &_fdset);
 
-    _num_Fd_Incomming = select(this->fd+1, &_fdset, NULL, NULL, &_time);
+    _num_Fd_Incomming = select(this->_socketFd+1, &_fdset, NULL, NULL, &_time);
 
-    std::cerr << "log before select " << SSL_get_fd(this->ssl) << " " << _num_Fd_Incomming << std::endl;
+    std::cerr << "log before select " << SSL_get_fd(this->_ssl) << " " << _num_Fd_Incomming << std::endl;
 
     if (_num_Fd_Incomming == 0){
         std::cerr << "timeout login request connection!!!" << std::endl;
@@ -212,7 +214,7 @@ Connection::get_CMD_HEADER()
 
     bzero(buffer, sizeof(buffer));
 
-    _bytes   = SSL_read(this->ssl, buffer, 4);
+    _bytes   = SSL_read(this->_ssl, buffer, 4);
     _pk      = new Packet(std::string(buffer,_bytes));
     
     if (_pk->IsAvailableData())
@@ -232,7 +234,7 @@ Connection::handle_CMD_MSG_FILE(){
     Packet*             _pk;
     std::string         _sender, _receiver, _urlFile,_filesize;
     FILE_TRANSACTION*   _ft;
-    _bytes   = SSL_read(this->ssl, _buffer, sizeof(_buffer));
+    _bytes   = SSL_read(this->_ssl, _buffer, sizeof(_buffer));
     
     if (_bytes > 0){
         _pk = new Packet(std::string(_buffer,_bytes));
@@ -259,50 +261,24 @@ Connection::handle_CMD_MSG_FILE(){
     return NULL;
 }
 
-/*
- * @response  data response to client
- * @length size of data
- * @return void
- */
-void 
-Connection::sendToClient(char* response, unsigned long length) {
-    // Now we're sending the response
-    unsigned int bytesSend = 0;
-    while (bytesSend < length) {
-        int ret;
-        if (!this->isSSL)
-            ret = send(this->fd, response+bytesSend, length-bytesSend, 0);
-        else
-            ret = SSL_write(this->ssl, response + bytesSend, length-bytesSend);
-        if (ret <= 0) {
-            return;
-        }
-        bytesSend += ret;
-    }
-}
+void                        
+Connection::Respond_CMD_ERROR()
+{
+    //send CMD_ERROR
+    Packet*     _pk;
+    _pk = new Packet();
 
-// Sends the given string to the client using the current connection
-void 
-Connection::sendToClient(std::string response) {
-    // Now we're sending the response
-    unsigned int bytesSend = 0;
-    while (bytesSend < response.length()) {
-        int ret;
-        if (!this->isSSL)
-            ret = send(this->fd, response.c_str()+bytesSend, response.length()-bytesSend, 0);
-        else
-            ret = SSL_write(this->ssl, response.c_str()+bytesSend, response.length()-bytesSend);
-        if (ret <= 0) {
-            return;
-        }
-        bytesSend += ret;
-    }
+    _pk->appendData(CMD_ERROR);
+
+    SSL_write(this->_ssl,  &_pk->getData()[0], _pk->getData().size());
+    delete _pk;
+    return; 
 }
 
 // Returns the file descriptor of the current connection
 int 
 Connection::getFD() {
-    return this->fd;
+    return this->_socketFd;
 }
 
 // Returns whether the connection was requested to be closed (by client)
@@ -323,22 +299,22 @@ Connection::getConnectionId() {
 
 bool 
 Connection::get_TLShandshark_state(){
-    return this->TLSHandsharkState;
+    return this->_TLSHandsharkState;
 }
 
 void 
 Connection::set_TLShandshark_state(bool state){
-    this->TLSHandsharkState = state;
+    this->_TLSHandsharkState = state;
 }
 
 bool 
 Connection::get_authen_state(){
-    return this->ConfirmedState;
+    return this->_ConfirmedState;
 }
 
 void 
 Connection::set_authen_state(bool state){
-    this->ConfirmedState = state;
+    this->_ConfirmedState = state;
 }
 
 void 
@@ -365,7 +341,7 @@ Connection::get_isFileConnection(){
 void 
 Connection::getAllData(){
     char buf[BUFFSIZE];
-    SSL_read(this->ssl, buf, sizeof(buf));
+    SSL_read(this->_ssl, buf, sizeof(buf));
     std::cout <<"#log conn: " << buf << std::endl;
     return;
 }
