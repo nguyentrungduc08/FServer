@@ -63,59 +63,7 @@ servercore::~servercore()
     delete this->_database;
 }
 
-void            
-servercore::build_Select_list_For_Main_Connection()
-{
-    FD_ZERO(&(this->_mainConnSet));
-    this->_highestFdMainSet = 0;
-    std::vector<Connection*>::iterator _iter = this->_mainConnections.begin();
 
-    while (_iter != this->_mainConnections.end()){
-        if ( (*_iter)->get_Close_Request_Status() ){
-            std::cout << "@log servercore: For_Main_Connection Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
-            delete (*_iter);
-            this->_mainConnections.erase(_iter);
-            if ( this->_mainConnections.empty() || _iter == this->_mainConnections.end()){
-                return;
-            }
-        } else {
-            int _currentFD = (*_iter)->getFD();
-            if (_currentFD != 0) {
-                FD_SET(_currentFD, &(this->_mainConnSet)); 
-                if (_currentFD > this->_highestFdMainSet)
-                    this->_highestFdMainSet = _currentFD; 
-            }
-            ++_iter;
-        }
-    }
-}
-
-void            
-servercore::build_Select_list_For_File_Connection()
-{
-    FD_ZERO(&(this->_fileConnSet));
-    this->_highestFdFileSet = 0;
-    std::vector<Connection*>::iterator _iter = this->_fileConnections.begin();
-
-    while (_iter != this->_fileConnections.end()){
-        if ( (*_iter)->get_Close_Request_Status() ){
-            std::cout << "@log servercore: For_File_Connection Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
-            delete (*_iter);
-            this->_fileConnections.erase(_iter);
-            if ( this->_fileConnections.empty() || _iter == this->_fileConnections.end()){
-                return;
-            }
-        } else {
-            int _currentFD = (*_iter)->getFD();
-            if (_currentFD != 0) {
-                FD_SET(_currentFD, &(this->_fileConnSet));
-                if (_currentFD > this->_highestFdFileSet)
-                    this->_highestFdFileSet = _currentFD;
-            }
-            ++_iter;
-        }
-    }
-}
 
 // @NOTE: do not delete memory of connection push to list main or file connecions.
 // connnection add state is classified
@@ -150,37 +98,6 @@ servercore::build_Select_List_For_Connections()
             }
             ++_iter;
         }
-    }
-}
-
-// Builds the list of sockets to keep track on and removes the closed ones
-// @TODO: Crash if data is incoming over a closed socket connection???
-void 
-servercore::build_Select_List() 
-{
-    FD_ZERO(&(this->_workingSet));
-    FD_SET(this->_mainSocket, &(this->_workingSet));
-    
-    std::vector<Connection*>::iterator _iter = this->_connections.begin();
-    
-    while( _iter != this->_connections.end() ) {
-        // This connection was closed, flag is set -> remove its corresponding object and free the memory
-        if ( (*_iter)->get_Close_Request_Status() ) { 
-            std::cout << "@log servercore: Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
-            delete (*_iter); // Clean up
-            this->_connections.erase(_iter); // Delete it from our vector
-            if ( this->_connections.empty() || (_iter == this->_connections.end()) )
-                return; // Don't increment the iterator when there is nothing to iterate over - avoids crash
-        } else {
-            int currentFD = (*_iter)->getFD();
-            if (currentFD != 0) {
-                FD_SET(currentFD, &(this->_workingSet)); // Adds the socket file descriptor to the monitoring for select
-                if (currentFD > this->highSock)
-                    this->highSock = currentFD; // We need the highest socket for select
-            }
-            ++_iter; // Increment iterator
-        }
-        //++iter; // Increment iterator
     }
 }
 
@@ -296,39 +213,6 @@ servercore::handle_New_Connection()
     return (EXIT_SUCCESS);
 }
 
-void 
-servercore::handle_Main_Connection(Connection* & _conn)
-{
-    Session*        _sessionOfConnection;
-    unsigned int    _idOfConnection;
-    TOKEN           _token;
-    std::string     _usernameOfConnection;
-    int             _idFileTransaction;
-    
-    if ( !_conn->get_authen_state() ) {
-        //if not authen connection 
-        if ( _conn->authConnection(this->_listUser) ) {
-            //if check auth success
-            _conn->set_authen_state(true);
-            _idOfConnection         = _conn->get_Connection_Id();
-            _sessionOfConnection    = _conn->get_Session();
-            _usernameOfConnection   = _conn->get_Username_Of_Connection();
-            _token                  = std::make_pair(_idOfConnection,_sessionOfConnection);
-            this->_listSession.pb(_token);
-            _idFileTransaction      = this->check_File_Transaction(_usernameOfConnection);
-            if (_idFileTransaction < 0) {
-                
-            } 
-        }    
-        _conn->respondAuthen();
-        _conn->set_Close_Request_Status(true); //close connection after response success login
-    } else {
-        //if this connection authenticated -> handle data commining
-        std::cout << "@log servercore: main connection establish $$$$$" << std::endl;
-        
-    }
-}
-
 int
 servercore::check_File_Transaction(std::string _receiver)
 {
@@ -338,75 +222,7 @@ servercore::check_File_Transaction(std::string _receiver)
     }
     return -1;
 }
-
-void 
-servercore::handle_File_Connection(Connection* & _conn)
-{
-    std::cout << "@log servercore: handle file connection!!!" << std::endl;
-    if (!_conn->get_isUploadConnection())
-        _conn->handle_uploadRequest(this->_listSession);
-    else {
-        //conn->respondToQuery();
-        _conn->wirte_Data();
-        if (_conn->get_Data_Write_Done_State()) {
-            FILE_TRANSACTION * _ft;
-            _ft = _conn->handle_CMD_MSG_FILE();
-            if (_ft != NULL){
-                std::cout << "@log servercore: add file transsaction completed" << std::endl;
-                this->_listFileTransaction.emplace_back(_ft);
-            }
-        }
-    }
-}
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-// Something is happening (=data ready to read) at a socket, either accept a new connection or handle the incoming data over an already opened socket
-void 
-servercore::read_Sockets() 
-{
-    // accept connection. <TCP handshark + TLS handshark>
-    if (FD_ISSET(this->_mainSocket,&(this->_workingSet))) {
-        std::cout << "@log servercore: new connection " << std::endl;
-        if (this->handle_New_Connection() == EXIT_FAILURE ){
-            std::cerr << "@log servercore: error handle new connection!!!!" << std::endl;
-            return;
-        }  
-    }
-    
-    // Now check connectlist for available data
-    // Run through our sockets and check to see if anything happened with them
-    for (unsigned int index = 0; index < this->_connections.size(); ++index) {
-        if (FD_ISSET(this->_connections.at(index)->getFD(), &(this->_workingSet))) {
-            std::cout << "@log servercore: handle comming data to exist socket " << this->_connections.at(index)->getFD() << std::endl;
-            
-            //handle new connection to _mainSocket, maybe is mainconnection or fileconnection
-            //need to classify is mainconnection or fileconnection 
-            if ( !this->_connections.at(index)->get_isMainConnection() && !this->_connections.at(index)->get_isFileConnection())
-            {
-                std::cout << "@log servercore: handle new connection" << std::endl;
-                this->_connections.at(index)->classify_connection();
-                continue;
-            }
-            
-            //data comming to socket main connection
-            //handle cmd 
-            if ( this->_connections.at(index)->get_isMainConnection() ){
-                std::cout << "@log servercore: handle main connection" << std::endl;
-                this->handle_Main_Connection(this->_connections.at(index));
-                continue;
-            }
-            
-            //data comming to file socket.
-            //handle read/write file
-            if ( this->_connections.at(index)->get_isFileConnection() ){
-                std::cout << "@log servercore: handle file connection" << std::endl;
-                this->handle_File_Connection(this->_connections.at(index));
-                continue;
-            }
-
-        }
-    }
-}
-
 void            
 servercore::read_Data_Main_Socket()
 {
@@ -442,113 +258,6 @@ servercore::read_Data_Main_Socket()
         }
     }
 }
-
-void            
-servercore::read_Data_Main_Connections()
-{
-    for (unsigned int _index = 0; _index < this->_mainConnections.size(); ++_index) {
-        if (FD_ISSET(this->_mainConnections.at(_index)->getFD(), &(this->_mainConnSet))) {
-            std::cout << "@log servercore: read_Data_Main_Connections " << this->_mainConnections.at(_index)->getFD() << std::endl;
-            if ( this->_mainConnections.at(_index)->get_isMainConnection() ){
-                std::cout << "@log servercore: handle main connection" << std::endl;
-                this->handle_Main_Connection(this->_mainConnections.at(_index));
-                continue;
-            }
-        }
-    }
-}
-
-void            
-servercore::read_Data_File_Connections()
-{
-    for (unsigned int _index = 0; _index < this->_fileConnections.size(); ++_index) {
-        if (FD_ISSET(this->_fileConnections.at(_index)->getFD(), &(this->_fileConnSet))) {
-            std::cout << "@log servercore: read_Data_File_Connections " << this->_fileConnections.at(_index)->getFD() << std::endl;
-            if ( this->_fileConnections.at(_index)->get_isFileConnection() ){
-                std::cout << "@log servercore: handle main connection" << std::endl;
-                this->handle_File_Connection(this->_fileConnections.at(_index));
-                continue;
-            }
-        }
-    }
-}
-
-void            
-servercore::thread_Main_Connecion_Handle()
-{
-    int                 _num_Fd_Incomming;
-    struct timeval      _time;
-        
-    while (!this->_shutdown) {
-        std::cout << "@log servercore: Main thread waiting connections form client....." << std::endl;
-        this->build_Select_list_For_Main_Connection();
-
-        _time                 = this->_serverTimeout;
-        _num_Fd_Incomming     = select(this->_highestFdMainSet+1, &(this->_mainConnSet), NULL, NULL, &_time);
-
-        if (_num_Fd_Incomming < 0){
-            std::cerr << "@log servercore: Error calling select()" << std::endl;
-            return;
-        }
-
-        this->read_Data_Main_Connections();
-    }    
-    return;
-}   
-    
-void            
-servercore::thread_File_Connecion_Handle()
-{
-    int                 _num_Fd_Incomming;
-    struct timeval      _time;
-        
-    while (!this->_shutdown) {
-        std::cout << "@log servercore: File thread waiting connections form client....." << std::endl;
-        this->build_Select_list_For_File_Connection();
-
-        _time                 = this->_serverTimeout;
-        _num_Fd_Incomming     = select(this->_highestFdFileSet+1, &(this->_fileConnSet), NULL, NULL, &_time);
-
-        if (_num_Fd_Incomming < 0){
-            std::cerr << "@log servercore: Error calling select()" << std::endl;
-            return;
-        }
-
-        this->read_Data_File_Connections();
-    }    
-    return;
-}
-  
-/*
- * Server entry point and main loop accepting and handling connections
- */ 
-int 
-servercore::start() 
-{ 
-    int             _readWorkingSet = -1; // Number of sockets ready for reading
-    struct timeval  _timeout, _time;
-    _timeout.tv_sec     = 3; // Timeout = 3 sec
-    _timeout.tv_usec    = 0;
-
-    while (!this->_shutdown) {
-        std::cout << "@log servercore: waiting connection form client....." << std::endl;
-
-        this->build_Select_List(); // Clear out data handled in the previous iteration, clear closed sockets
-        // Multiplexes between the existing connections regarding to data waiting to be processed on that connection (that's actually what select does)
-        _time = _timeout;
-        
-        _readWorkingSet = select(this->highSock+1, &(this->_workingSet), NULL , NULL , &_time);
-
-        if (_readWorkingSet < 0) {
-            std::cerr << "@log servercore: Error calling select" << std::endl;
-            return (EXIT_FAILURE);
-        }
-            
-        this->read_Sockets(); // Handle the sockets (accept new connections or handle incoming data or do nothing [if no data])
-    }
-    return (EXIT_SUCCESS);
-}
-
 
 int             
 servercore::start_Server()

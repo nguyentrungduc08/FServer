@@ -40,15 +40,14 @@ public:
     Connection(int filedescriptor, fssl * sslcon, unsigned int connId, std::string defaultDir, std::string hostId, bool iSSL, unsigned short commandOffset = 1);
     virtual ~Connection();    
     
-    std::string                 commandParser(std::string command);
-    std::vector<std::string>    extractParameters(std::string command);
+    void                        TLS_handshark();
     
     void                        classify_connection();
     void                        getAllData();
     bool                        authConnection(const std::vector<USER> & listUser); 
-    
     void                        respondAuthen();
-    void                        TLS_handshark();
+    
+    
     unsigned int                getConnectionId();
     void                        handle_uploadRequest(std::vector<TOKEN> _listToken);
     void                        response_uploadRequest();

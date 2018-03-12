@@ -19,21 +19,26 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
+      <itemPath>resources/File.cpp</itemPath>
       <itemPath>resources/Packet.cpp</itemPath>
       <itemPath>resources/Session.cpp</itemPath>
       <itemPath>lib/Werror.cpp</itemPath>
       <itemPath>lib/Wsock.cpp</itemPath>
       <itemPath>resources/connection.cpp</itemPath>
+      <itemPath>resources/connection_FileConn.cpp</itemPath>
+      <itemPath>resources/connection_MainConn.cpp</itemPath>
       <itemPath>resources/database.cpp</itemPath>
       <itemPath>resources/fileHandle.cpp</itemPath>
       <itemPath>resources/md5.cpp</itemPath>
       <itemPath>resources/servercore.cpp</itemPath>
+      <itemPath>resources/servercore_FileConn.cpp</itemPath>
+      <itemPath>resources/servercore_MainConn.cpp</itemPath>
+      <itemPath>resources/servercore_Test.cpp</itemPath>
       <itemPath>resources/ssl.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>resources/File.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -104,6 +109,10 @@
       </item>
       <item path="resources/connection.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="resources/connection_FileConn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/connection_MainConn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="resources/database.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/fileHandle.cpp" ex="false" tool="1" flavor2="0">
@@ -111,6 +120,12 @@
       <item path="resources/md5.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/servercore.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/servercore_FileConn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/servercore_MainConn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/servercore_Test.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/ssl.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -171,6 +186,10 @@
       </item>
       <item path="resources/connection.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="resources/connection_FileConn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/connection_MainConn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="resources/database.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/fileHandle.cpp" ex="false" tool="1" flavor2="0">
@@ -178,6 +197,12 @@
       <item path="resources/md5.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/servercore.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/servercore_FileConn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/servercore_MainConn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="resources/servercore_Test.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/ssl.cpp" ex="false" tool="1" flavor2="0">
       </item>

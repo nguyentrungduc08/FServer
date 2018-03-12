@@ -42,10 +42,15 @@ OBJECTFILES= \
 	${OBJECTDIR}/resources/Packet.o \
 	${OBJECTDIR}/resources/Session.o \
 	${OBJECTDIR}/resources/connection.o \
+	${OBJECTDIR}/resources/connection_FileConn.o \
+	${OBJECTDIR}/resources/connection_MainConn.o \
 	${OBJECTDIR}/resources/database.o \
 	${OBJECTDIR}/resources/fileHandle.o \
 	${OBJECTDIR}/resources/md5.o \
 	${OBJECTDIR}/resources/servercore.o \
+	${OBJECTDIR}/resources/servercore_FileConn.o \
+	${OBJECTDIR}/resources/servercore_MainConn.o \
+	${OBJECTDIR}/resources/servercore_Test.o \
 	${OBJECTDIR}/resources/ssl.o
 
 
@@ -108,6 +113,16 @@ ${OBJECTDIR}/resources/connection.o: resources/connection.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection.o resources/connection.cpp
 
+${OBJECTDIR}/resources/connection_FileConn.o: resources/connection_FileConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection_FileConn.o resources/connection_FileConn.cpp
+
+${OBJECTDIR}/resources/connection_MainConn.o: resources/connection_MainConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection_MainConn.o resources/connection_MainConn.cpp
+
 ${OBJECTDIR}/resources/database.o: resources/database.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
@@ -127,6 +142,21 @@ ${OBJECTDIR}/resources/servercore.o: resources/servercore.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/servercore.o resources/servercore.cpp
+
+${OBJECTDIR}/resources/servercore_FileConn.o: resources/servercore_FileConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/servercore_FileConn.o resources/servercore_FileConn.cpp
+
+${OBJECTDIR}/resources/servercore_MainConn.o: resources/servercore_MainConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/servercore_MainConn.o resources/servercore_MainConn.cpp
+
+${OBJECTDIR}/resources/servercore_Test.o: resources/servercore_Test.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/servercore_Test.o resources/servercore_Test.cpp
 
 ${OBJECTDIR}/resources/ssl.o: resources/ssl.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
