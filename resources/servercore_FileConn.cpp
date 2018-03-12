@@ -41,7 +41,7 @@ servercore::read_Data_File_Connections()
         if (FD_ISSET(this->_fileConnections.at(_index)->getFD(), &(this->_fileConnSet))) {
             std::cout << "@log servercore: read_Data_File_Connections " << this->_fileConnections.at(_index)->getFD() << std::endl;
             if ( this->_fileConnections.at(_index)->get_isFileConnection() ){
-                std::cout << "@log servercore: handle main connection" << std::endl;
+                std::cout << "@log servercore: handle data file connection" << std::endl;
                 this->handle_File_Connection(this->_fileConnections.at(_index));
                 continue;
             }
@@ -76,8 +76,13 @@ void
 servercore::handle_File_Connection(Connection* & _conn)
 {
     std::cout << "@log servercore: handle file connection!!!" << std::endl;
-    if (!_conn->get_isUploadConnection())
+    int _cmd;
+
+    if (!_conn->get_isUploadConnection()){
+        _cmd = _conn->get_CMD_HEADER();
+        if (_cmd == CMD_UPLOAD_FILE)
         _conn->handle_CMD_UPLOAD_FILE(this->_listSession);
+    }
     else {
         //conn->respondToQuery();
         _conn->wirte_Data();
@@ -90,4 +95,5 @@ servercore::handle_File_Connection(Connection* & _conn)
             }
         }
     }
+    
 }

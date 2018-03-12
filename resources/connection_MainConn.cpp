@@ -64,6 +64,7 @@ Connection::handle_CMD_AUTHEN_LOGIN(const  std::vector<USER> & listUser) {
 void 
 Connection::respond_CMD_AUTHEN(){
     if (this->_ConfirmedState && !this->closureRequested){
+        
         this->session->buildSession(this->connectionId, this->hostAddress);
         std::string ses = this->session->getSession();
         Packet *pk = new Packet();

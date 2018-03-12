@@ -12,7 +12,7 @@
 Connection::~Connection() {
     std::cout << "#log conn: Connection terminated to client (connection id " << this->connectionId << ")" << std::endl;
     delete this->fo;
-    delete this->session;
+    //delete this->session;
     close(this->_socketFd);
     SSL_free(this->_ssl);    
     //delete this->_ssl; 
@@ -34,7 +34,7 @@ Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId,
                                     : _socketFd(filedescriptor), connectionId(connId), dir(defaultDir), 
                                     hostAddress(hostId), isSSL(iSSL), commandOffset(commandOffset), 
                                     closureRequested(false), uploadCommand(false), downloadCommand(false),  
-                                    receivedPart(0), parameter("") 
+                                    _receivedPart(0), _parameter("") 
 {
 //    this->files = std::vector<std::string>();
     this->session                   = new Session();
@@ -198,7 +198,7 @@ Connection::get_CMD_HEADER()
     int             _num_Fd_Incomming, _bytes, _cmd;
     struct timeval  _time = this->timeout;
     fd_set          _fdset;
-    char            buffer[20];
+    char            buffer[5];
     
     FD_ZERO(&_fdset);
     FD_SET(this->_socketFd, &_fdset);

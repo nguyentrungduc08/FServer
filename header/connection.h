@@ -99,12 +99,12 @@ private:
     unsigned int                connectionId;
     std::string                 dir;
     std::string                 hostAddress;
-    std::string                 parameter;
+    std::string                 _parameter;
     std::string                 _username;
     int                         _userID;
     struct timeval              timeout;
     unsigned short              commandOffset;
-    unsigned long               receivedPart;
+    unsigned long               _receivedPart;
     bool                        isMainSocket;
     bool                        isFileSocket;
     bool                        closureRequested;

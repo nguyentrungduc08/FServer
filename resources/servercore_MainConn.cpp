@@ -86,17 +86,15 @@ servercore::handle_Main_Connection(Connection* & _conn)
         if ( _conn->handle_CMD_AUTHEN_LOGIN(this->_listUser) ) {
             //if check auth success
             _conn->set_authen_state(true);
+            _conn->respond_CMD_AUTHEN();
             _idOfConnection         = _conn->get_Connection_Id();
             _sessionOfConnection    = _conn->get_Session();
             _usernameOfConnection   = _conn->get_Username_Of_Connection();
             _token                  = std::make_pair(_idOfConnection,_sessionOfConnection);
             this->_listSession.pb(_token);
-            _idFileTransaction      = this->check_File_Transaction(_usernameOfConnection);
-            if (_idFileTransaction < 0) {
-                
-            } 
+            std::cout << "@log servercore: add token " << this->_listSession.size() << " - " << _sessionOfConnection->getSession() << std::endl;
+            //_idFileTransaction      = this->check_File_Transaction(_usernameOfConnection);  
         }    
-        _conn->respond_CMD_AUTHEN();
         _conn->set_Close_Request_Status(true); //close connection after response success login
     } else {
         //if this connection authenticated -> handle data commining
