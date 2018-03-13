@@ -72,6 +72,28 @@ servercore::thread_Main_Connecion_Handle()
     return;
 }  
 
+void            
+servercore::update_List_Users_Active_Online(std::string _usernameOfConnection)
+{
+    rep(_index,this->_listUser.size()){
+        if (this->_listUser.at(_index).username == _usernameOfConnection ){
+            this->_listUser.at(_index)._state = true;
+            return;
+        }
+    }
+}
+
+void 
+servercore::update_List_Users_Active_Offline(std::string _usernameOfConnection)
+{
+    rep(_index,this->_listUser.size()){
+        if (this->_listUser.at(_index).username == _usernameOfConnection ){
+            this->_listUser.at(_index)._state = false;
+            return;
+        }
+    }
+}
+
 void 
 servercore::handle_Main_Connection(Connection* & _conn)
 {
@@ -80,9 +102,18 @@ servercore::handle_Main_Connection(Connection* & _conn)
     TOKEN           _token;
     std::string     _usernameOfConnection;
     int             _idFileTransaction;
-    
+    int             _cmd;
     if ( !_conn->get_authen_state() ) {
-        //if not authen connection 
+        /* if not authen connection 
+         * @TODO:
+         * 1. authen login this connection.
+         * 2. handle data comming
+         * -if success:
+         *      + update list user active
+         *      + update list token
+         * -if don't success:
+         *      + set connection close    
+         */
         if ( _conn->handle_CMD_AUTHEN_LOGIN(this->_listUser) ) {
             //if check auth success
             _conn->set_authen_state(true);
@@ -92,13 +123,31 @@ servercore::handle_Main_Connection(Connection* & _conn)
             _usernameOfConnection   = _conn->get_Username_Of_Connection();
             _token                  = std::make_pair(_idOfConnection,_sessionOfConnection);
             this->_listSession.pb(_token);
+            this->update_List_Users_Active_Offline(_usernameOfConnection);
             std::cout << "@log servercore: add token " << this->_listSession.size() << " - " << _sessionOfConnection->getSession() << std::endl;
-            //_idFileTransaction      = this->check_File_Transaction(_usernameOfConnection);  
-        }    
-        _conn->set_Close_Request_Status(true); //close connection after response success login
+        } else {  
+            _conn->set_Close_Request_Status(true); //close connection after response success login
+        }
     } else {
-        //if this connection authenticated -> handle data commining
-        std::cout << "@log servercore: main connection establish $$$$$" << std::endl;
+        /*if this connection authenticated -> handle data commining
+         * @TODO:
+         * - handle PING - PONG keep alive main connection
+         * - hanele send file transaction when exist file send to this user.
+         */
+        _usernameOfConnection   = _conn->get_Username_Of_Connection();
+        
+        std::cout << "@log servercore: main connection establish - num user active: " << this->get_Num_User_Active() << std::endl;
+        _cmd = _conn->get_CMD_HEADER();
+        
+        switch (_cmd){
+            case PING: 
+                std::cout <<"@log servercore: PING packet from user " << _usernameOfConnection << std::endl;
+                _conn->respond_PONG();
+                break;
+            case CMD_MSG_FILE:
+                std::cout <<"@log servercore: CMD_MSG_FILE packet from user " << _usernameOfConnection << std::endl;
+                break;
+        }
         
     }
 }

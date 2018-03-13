@@ -38,6 +38,7 @@ private:
     int             init_Sockets(int port);
     int             handle_New_Connection();
     void            set_NonBlocking(int &sock);
+    int             get_Num_User_Active();
     
     //APIs handle file connection.
     void            handle_File_Connection(Connection* & conn);
@@ -51,6 +52,8 @@ private:
     void            thread_Main_Connecion_Handle();
     void            build_Select_list_For_Main_Connection();
     void            read_Data_Main_Connections();
+    void            update_List_Users_Active_Online(std::string );
+    void            update_List_Users_Active_Offline(std::string );
     
     //APIs using in main thread.
     void            build_Select_List_For_Connections();    
@@ -77,9 +80,9 @@ private:
     unsigned int            _maxConnectionsInQuery; // number of connections in query
     unsigned int            _connId;
 
+    
     int                     highSock;
     unsigned int            connId; 
-
     sockaddr_in             addr; // set server information
     struct sockaddr_storage addrStorage; //get info of connection
     socklen_t               addrLength;

@@ -142,6 +142,19 @@ servercore::free_All_File_Transaction()
     }
     this->_listFileTransaction.clear();
 }
+
+int             
+servercore::get_Num_User_Active()
+{
+    int _numUserAcvite = 0;
+    rep(_index,this->_listUser.size()){
+        if (this->_listUser.at(_index)._state ){
+            ++_numUserAcvite;
+        }
+    }
+    return _numUserAcvite;
+}
+
 // Accepts new connections and stores the connection object with fd in a vector
 int 
 servercore::handle_New_Connection()

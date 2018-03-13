@@ -22,7 +22,7 @@ Connection::handle_CMD_AUTHEN_LOGIN(const  std::vector<USER> & listUser) {
 
     bzero(buffer, sizeof buffer);
     
-    if (isSSL){ 
+    if (this->_isSSL){ 
         bytes = SSL_read(this->_ssl, buffer, sizeof(buffer));
     } else {
         bytes = recv(this->_socketFd, buffer, sizeof(buffer), 0);
@@ -61,11 +61,21 @@ Connection::handle_CMD_AUTHEN_LOGIN(const  std::vector<USER> & listUser) {
     return false;
 } 
 
+void                        
+Connection::respond_PONG()
+{
+    Packet *_pk = new Packet();
+    _pk->appendData(PONG);
+    SSL_write(this->_ssl, &_pk->getData()[0], _pk->getData().size() );
+    delete _pk;
+    return;
+}
+
 void 
 Connection::respond_CMD_AUTHEN(){
-    if (this->_ConfirmedState && !this->closureRequested){
+    if (this->_ConfirmedState && !this->_closureRequested){
         
-        this->session->buildSession(this->connectionId, this->hostAddress);
+        this->session->buildSession(this->_connectionId, this->hostAddress);
         std::string ses = this->session->getSession();
         Packet *pk = new Packet();
         pk->appendData(CMD_AUTHEN_SUCCESS);

@@ -87,12 +87,20 @@ servercore::handle_File_Connection(Connection* & _conn)
         //conn->respondToQuery();
         _conn->wirte_Data();
         if (_conn->get_Data_Write_Done_State()) {
-            FILE_TRANSACTION * _ft;
-            _ft = _conn->handle_CMD_MSG_FILE();
-            if (_ft != NULL){
-                std::cout << "@log servercore: add file transsaction completed" << std::endl;
-                this->_listFileTransaction.emplace_back(_ft);
+            if (_conn->check_Respond_CMD_UPLOAD_FINISH()){
+                _conn->Respond_CMD_SAVE_FILE_FINISH();
+               
+//                FILE_TRANSACTION * _ft;
+//                _ft = _conn->handle_CMD_MSG_FILE();
+//                if (_ft != NULL){
+//                    std::cout << "@log servercore: add file transsaction completed" << std::endl;
+//                    this->_listFileTransaction.emplace_back(_ft);
+//                }
             }
+            else {
+                std::cerr << "@log servercore: client do not send CMD_UPLOAD_FINISH !!!!" << std::endl;
+            }
+            _conn->set_Close_Request_Status(true);      
         }
     }
     

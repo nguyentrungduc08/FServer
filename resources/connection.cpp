@@ -10,14 +10,13 @@
 
 // Destructor, clean up all the mess
 Connection::~Connection() {
-    std::cout << "#log conn: Connection terminated to client (connection id " << this->connectionId << ")" << std::endl;
+    std::cout << "#log conn: Connection terminated to client (connection id " << this->_connectionId << ")" << std::endl;
     delete this->fo;
     //delete this->session;
     close(this->_socketFd);
     SSL_free(this->_ssl);    
     //delete this->_ssl; 
-    this->directories.clear();
-    this->files.clear();
+
 }
 
 /*
@@ -26,30 +25,28 @@ Connection::~Connection() {
  * @connid          id of connection
  * @defaulDir       direction working 
  * @hostId          id of host
- * @commandOffset 
+ * @_commandOffset 
  */
 Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId, 
                                     std::string defaultDir, std::string hostId, bool iSSL, 
-                                    unsigned short commandOffset) 
-                                    : _socketFd(filedescriptor), connectionId(connId), dir(defaultDir), 
-                                    hostAddress(hostId), isSSL(iSSL), commandOffset(commandOffset), 
-                                    closureRequested(false), uploadCommand(false), downloadCommand(false),  
-                                    _receivedPart(0), _parameter("") 
+                                    unsigned short _commandOffset) 
+                                    : _socketFd(filedescriptor), _connectionId(connId), dir(defaultDir), 
+                                    hostAddress(hostId), _isSSL(iSSL), _commandOffset(_commandOffset), 
+                                    _closureRequested(false), _receivedPart(0), _parameter("") 
 {
-//    this->files = std::vector<std::string>();
     this->session                   = new Session();
     this->fo                        = new FileHandle(this->dir); // File and directory browser
     this->_TLSHandsharkState        = false;
     this->_ConfirmedState           = false;
-    this->isMainSocket              = false;
-    this->isFileSocket              = false;
+    this->_isMainSocket             = false;
+    this->_isFileSocket             = false;
     this->_isDownloadConnection     = false;
     this->_isUploadConnection       = false;
     this->_isClassified             = false;
-   
-    this->timeout.tv_sec            = 3;
-    this->timeout.tv_usec           = 0;
-    this->_dataWriteDoneState       = false;
+    this->_dataWriteDoneState       = false;   
+    this->_timeout.tv_sec            = 3;
+    this->_timeout.tv_usec           = 0;
+    
     if (iSSL){
         this->_ssl           = SSL_new(sslcon->get_ctx());
         SSL_set_fd(this->_ssl, this->_socketFd);
@@ -70,17 +67,14 @@ Connection::commandEquals(std::string a, std::string b) {
 void 
 Connection::TLS_handshark() {
     //handle ssl_handshake non-blocking modle
-    struct timeval tv, tvRestore;
-    int status  = -1;
-    tv.tv_sec   = 2;
-    tv.tv_usec  = 0;
-    tvRestore   = tv;
+    struct timeval tv;
+    int status      = -1;
        
     fd_set writeFdSet;
     fd_set readFdSet;
              
     do {
-        tv = tvRestore;
+        tv = this->_timeout;
         FD_ZERO(&writeFdSet);
         FD_ZERO(&readFdSet);
         status = SSL_accept(this->_ssl);
@@ -169,24 +163,24 @@ Connection::classify_connection(){
         
         if (_cmd == CMD_IS_MAIN_CONNECTION) {    
             std::cout << "#log conn: This is main connection." << std::endl;
-            this->isMainSocket  = true;
-            this->_isClassified = true;
+            this->_isMainSocket     = true;
+            this->_isClassified     = true;
             this->respond_Classify_Connection_Done(true);
             return;
         }
         
         if (_cmd == CMD_IS_FILE_CONNECTION) {    
             std::cout << "#log conn: This is file connection." << std::endl;
-            this->isFileSocket  = true;
-            this->_isClassified = true;
+            this->_isFileSocket     = true;
+            this->_isClassified     = true;
             this->respond_Classify_Connection_Done(true);
             return;
         }
         delete _pk;
     } 
-    std::cout << "#log conn: " << _bytes << std::endl;
+    //std::cout << "#log conn: " << _bytes << std::endl;
     if (!this->_isClassified)
-        this->closureRequested  = true;
+        this->_closureRequested  = true;
     this->respond_Classify_Connection_Done(false);
     return;
 }
@@ -196,7 +190,7 @@ Connection::get_CMD_HEADER()
 {
     Packet*         _pk;
     int             _num_Fd_Incomming, _bytes, _cmd;
-    struct timeval  _time = this->timeout;
+    struct timeval  _time = this->_timeout;
     fd_set          _fdset;
     char            buffer[5];
     
@@ -207,7 +201,7 @@ Connection::get_CMD_HEADER()
 
     std::cerr << "log before select " << SSL_get_fd(this->_ssl) << " " << _num_Fd_Incomming << std::endl;
 
-    if (_num_Fd_Incomming == 0){
+    if (_num_Fd_Incomming <= 0){
         std::cerr << "timeout login request connection!!!" << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -257,7 +251,7 @@ Connection::handle_CMD_MSG_FILE(){
         delete _pk;
         return _ft;
     } 
-    this->closureRequested = true;
+    this->_closureRequested = true;
     return NULL;
 }
 
@@ -284,17 +278,17 @@ Connection::getFD() {
 // Returns whether the connection was requested to be closed (by client)
 bool 
 Connection::get_Close_Request_Status() {
-    return this->closureRequested;
+    return this->_closureRequested;
 }
 
 void 
 Connection::set_Close_Request_Status(bool status){
-    this->closureRequested = status;
+    this->_closureRequested = status;
 }
 
 unsigned int 
 Connection::getConnectionId() {
-    return this->connectionId;
+    return this->_connectionId;
 }
 
 bool 
@@ -319,22 +313,22 @@ Connection::set_authen_state(bool state){
 
 void 
 Connection::set_isMainConnection(bool state){
-    this->isMainSocket = state;
+    this->_isMainSocket = state;
 }
 
 bool 
 Connection::get_isMainConnection(){
-    return this->isMainSocket;
+    return this->_isMainSocket;
 }
     
 void 
 Connection::set_isFileConnection(bool state){
-    this->isFileSocket = state;
+    this->_isFileSocket = state;
 }
 
 bool 
 Connection::get_isFileConnection(){
-    return this->isFileSocket;
+    return this->_isFileSocket;
 }
 
 
@@ -368,7 +362,7 @@ Connection::get_Usser_Id_Of_Connection(){
 
 unsigned int                         
 Connection::get_Connection_Id(){
-    return this->connectionId;
+    return this->_connectionId;
 }
 
 Session*

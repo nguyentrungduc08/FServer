@@ -14,26 +14,13 @@ Connection::handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken)
     std::cout << "#log conn: handle upload request handle_CMD_UPLOAD_FILE" << std::endl;
     
     char            _buffer[BUFFER_SIZE];
-    int             _bytes = -1;
-    struct timeval  _time = this->timeout;
+    int             _bytes = -1, _rc, _cmd;
+    struct timeval  _time = this->_timeout;
     fd_set          _fdset;
-    int             _rc;
-    int             _cmd;
     Packet*         _pk;
-    std::string     _tokenString, _sender, _receiver, _urlFile, _fileName, _fileSize;
-    std::string     _result;
+    std::string     _tokenString, _sender, _receiver, _urlFile, _fileName, _fileSize, _result;
 
     bzero(_buffer, sizeof(_buffer));
-    // FD_ZERO(&_fdset);
-    // FD_SET(this->_socketFd, &_fdset);
-
-    // _rc = select(this->_socketFd + 1, &_fdset, NULL, NULL, &_time);
-
-    // if (_rc == 0){
-    //     std::cout << "#log conn: timeout request upload" << std::endl;
-    //     this->closureRequested = true;
-    //     return;
-    // }
 
     _bytes        = SSL_read(this->_ssl, _buffer, sizeof(_buffer));
     std::cout << "#log conn: handle upload request read data " << _bytes <<  std::endl;
@@ -73,7 +60,7 @@ Connection::handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken)
         return;
     }else {    
         std::cout << "#log conn: token invalid!!!! " << _listToken.size() << std::endl;
-        this->closureRequested = true;
+        this->_closureRequested = true;
         delete  _pk;
         return;
     }
@@ -83,15 +70,12 @@ void
 Connection::respond_CMD_UPLOAD_READY()
 {
     std::cout << "#log conn: response upload request" << std::endl;
-    Packet*         pk;
-
-    pk = new Packet();
-    pk->appendData(CMD_UPLOAD_READY);
-    pk->appendData(this->_parameter);
-
-    SSL_write(this->_ssl,  &pk->getData()[0], pk->getData().size());
-
-    delete pk;
+    Packet*         _pk;
+    _pk = new Packet();
+    _pk->appendData(CMD_UPLOAD_READY);
+    _pk->appendData(this->_parameter);
+    SSL_write(this->_ssl,  &_pk->getData()[0], _pk->getData().size());
+    delete _pk;
 }
 
 bool
@@ -127,7 +111,7 @@ Connection::wirte_Data(){
                 std::cout << "#log conn: Part" << ++(this->_receivedPart) << ": " << _bytes << std::endl;
                 this->fo->writeFileBlock(_data);
             } else {
-                //this->closureRequested = true;
+                //this->_closureRequested = true;
                 std::cerr << "#log conn: 1 read zero data" << std::endl;
             }
             return;
@@ -142,7 +126,7 @@ Connection::wirte_Data(){
                     std::cout << "#log conn: Part" << ++(this->_receivedPart) << ": " << _bytes << std::endl;
                     this->fo->writeFileBlock(_data);
                 } else {
-                    //this->closureRequested = true;
+                    //this->_closureRequested = true;
                     std::cerr << "#log conn: 2 read zero data" << std::endl;
                 }
             }
@@ -151,17 +135,25 @@ Connection::wirte_Data(){
     }
 }
 
+bool
+Connection::check_Respond_CMD_UPLOAD_FINISH()
+{
+    std::cout << "Log Connection: check_Respond_CMD_UPLOAD_FINISH" << std::endl;
+    int _cmd = this->get_CMD_HEADER();
+    if (_cmd == CMD_UPLOAD_FINISH)
+        return true;
+    else
+        return false;
+}
+
 void                       
 Connection::Respond_CMD_SAVE_FILE_FINISH()
 {
     //send CMD_SAVE_FILE_FINISH
     Packet*     _pk;
-    
     _pk = new Packet();
-    _pk->appendData(CMD_UPLOAD_FINISH);
-    
+    _pk->appendData(CMD_SAVE_FILE_FINISH);
     SSL_write(this->_ssl,  &_pk->getData()[0], _pk->getData().size());
-    
     delete _pk;
     return;
 }

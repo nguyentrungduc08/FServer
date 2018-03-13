@@ -260,3 +260,15 @@ Connection::extractParameters(std::string command) {
     }
     return res;
 }
+
+
+    // FD_ZERO(&_fdset);
+    // FD_SET(this->_socketFd, &_fdset);
+
+    // _rc = select(this->_socketFd + 1, &_fdset, NULL, NULL, &_time);
+
+    // if (_rc == 0){
+    //     std::cout << "#log conn: timeout request upload" << std::endl;
+    //     this->closureRequested = true;
+    //     return;
+    // }

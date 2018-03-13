@@ -15,7 +15,7 @@ Connection::sendToClient(std::string response) {
     unsigned int bytesSend = 0;
     while (bytesSend < response.length()) {
         int ret;
-        if (!this->isSSL)
+        if (!this->_isSSL)
             ret = send(this->_socketFd, response.c_str()+bytesSend, response.length()-bytesSend, 0);
         else
             ret = SSL_write(this->_ssl, response.c_str()+bytesSend, response.length()-bytesSend);
@@ -37,7 +37,7 @@ Connection::sendToClient(char* response, unsigned long length) {
     unsigned int bytesSend = 0;
     while (bytesSend < length) {
         int ret;
-        if (!this->isSSL)
+        if (!this->_isSSL)
             ret = send(this->_socketFd, response+bytesSend, length-bytesSend, 0);
         else
             ret = SSL_write(this->_ssl, response + bytesSend, length-bytesSend);

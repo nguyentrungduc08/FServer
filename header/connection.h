@@ -37,7 +37,7 @@
 class Connection {
 public:
     
-    Connection(int filedescriptor, fssl * sslcon, unsigned int connId, std::string defaultDir, std::string hostId, bool iSSL, unsigned short commandOffset = 1);
+    Connection(int filedescriptor, fssl * sslcon, unsigned int connId, std::string defaultDir, std::string hostId, bool iSSL, unsigned short _commandOffset = 1);
     virtual ~Connection();    
     
     //global APIs
@@ -46,25 +46,7 @@ public:
     int                         get_CMD_HEADER();
     void                        classify_connection();
     void                        respond_Classify_Connection_Done(bool state);
-    
-    //APIs handle main connection.
-    bool                        handle_CMD_AUTHEN_LOGIN(const std::vector<USER> & listUser); 
-    void                        respond_CMD_AUTHEN();
-    
-    //APIs handle file connection.
-    void                        handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken);
-    void                        respond_CMD_UPLOAD_READY();
-    bool                        get_Data_Write_Done_State();
-    void                        set_Data_Write_Done_State(bool _state);
-    void                        wirte_Data();
-    void                        Respond_CMD_SAVE_FILE_FINISH();
-    
-    //testing apis
-    void                        getAllData();
-    
     unsigned int                getConnectionId();
-    
-    
     int                         getFD();
     bool                        get_Close_Request_Status();
     void                        set_Close_Request_Status(bool status);
@@ -78,7 +60,6 @@ public:
     bool                        get_isFileConnection();
     bool                        get_isUploadConnection();
     bool                        get_isDownloadConnection();
-    
     bool                        get_Is_Classified();
     void                        set_Is_Classified_State(bool _state);
     std::string                 get_Username_Of_Connection();
@@ -87,33 +68,44 @@ public:
     Session*                    get_Session();
     FILE_TRANSACTION*           handle_CMD_MSG_FILE(); 
     
-    //testing API
+    //APIs handle main connection.
+    bool                        handle_CMD_AUTHEN_LOGIN(const std::vector<USER> & listUser); 
+    void                        respond_CMD_AUTHEN();
+    void                        respond_PONG();
+    
+    //APIs handle file connection.
+    void                        handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken);
+    void                        respond_CMD_UPLOAD_READY();
+    bool                        get_Data_Write_Done_State();
+    void                        set_Data_Write_Done_State(bool _state);
+    void                        wirte_Data();
+    void                        Respond_CMD_SAVE_FILE_FINISH();
+    bool                        check_Respond_CMD_UPLOAD_FINISH();
+    
+    //testing apis
+    void                        getAllData();
     
 private:
     int                         _socketFd; // Filedescriptor per each threaded object
     SSL*                        _ssl;
     FileHandle*                 fo; // For browsing, writing and reading
     Session*                    session;
-    std::vector<std::string>    directories;
-    std::vector<std::string>    files;
-    unsigned int                connectionId;
     std::string                 dir;
     std::string                 hostAddress;
+    
     std::string                 _parameter;
     std::string                 _username;
     int                         _userID;
-    struct timeval              timeout;
-    unsigned short              commandOffset;
+    struct timeval              _timeout;
+    unsigned short              _commandOffset;
     unsigned long               _receivedPart;
-    bool                        isMainSocket;
-    bool                        isFileSocket;
-    bool                        closureRequested;
-    bool                        uploadCommand;
-    bool                        downloadCommand;
-    bool                        isSSL;
-    bool                        _ConfirmedState;
+    unsigned int                _connectionId;
+    bool                        _isMainSocket;
+    bool                        _isFileSocket;
+    bool                        _closureRequested;
+    bool                        _isSSL;
+    bool                        _ConfirmedState; //this is main connection and gained permission
     bool                        _TLSHandsharkState;
-    
     bool                        _isUploadConnection;
     bool                        _isDownloadConnection;
     bool                        _dataWriteDoneState;
@@ -125,8 +117,6 @@ private:
     bool                        commandEquals(std::string a, std::string b);    
     std::string                 filterOutBlanks(std::string inString);  
     static void                 getAllParametersAfter(std::vector<std::string> parameterVector, unsigned int currentParameter, std::string& theRest); 
-    
-    
 };
 
 #endif /* CONNECTION_H */
