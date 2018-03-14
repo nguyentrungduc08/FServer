@@ -6,6 +6,9 @@
 
 #include "../header/servercore.h"
 
+/*
+ *
+ */
 void            
 servercore::build_Select_list_For_Main_Connection()
 {
@@ -14,7 +17,7 @@ servercore::build_Select_list_For_Main_Connection()
     std::vector<Connection*>::iterator _iter = this->_mainConnections.begin();
 
     while (_iter != this->_mainConnections.end()){
-        if ( (*_iter)->get_Close_Request_Status() ){
+        if ( (*_iter)->get_Close_Request_Status() || (*_iter)->timeout_PING() ){
             std::cout << "@log servercore: For_Main_Connection Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
             delete (*_iter);
             this->_mainConnections.erase(_iter);
@@ -34,21 +37,29 @@ servercore::build_Select_list_For_Main_Connection()
     return;
 }
 
+/*
+ *
+ */
 void            
 servercore::read_Data_Main_Connections()
 {
     for (unsigned int _index = 0; _index < this->_mainConnections.size(); ++_index) {
         if (FD_ISSET(this->_mainConnections.at(_index)->getFD(), &(this->_mainConnSet))) {
             std::cout << "@log servercore: read_Data_Main_Connections " << this->_mainConnections.at(_index)->getFD() << std::endl;
-            if ( this->_mainConnections.at(_index)->get_isMainConnection() ){
+            if ( this->_mainConnections.at(_index)->get_isMainConnection() ){ 
                 std::cout << "@log servercore: handle main connection" << std::endl;
                 this->handle_Main_Connection(this->_mainConnections.at(_index));
                 continue;
+            } else {
+                this->_mainConnections.at(_index)->push_CounPING();
             }
         }
     }
 }
 
+/*
+ *
+ */
 void            
 servercore::thread_Main_Connecion_Handle()
 {
@@ -72,6 +83,9 @@ servercore::thread_Main_Connecion_Handle()
     return;
 }  
 
+/*
+ *
+ */
 void            
 servercore::update_List_Users_Active_Online(std::string _usernameOfConnection)
 {
@@ -83,6 +97,9 @@ servercore::update_List_Users_Active_Online(std::string _usernameOfConnection)
     }
 }
 
+/*
+ *
+ */
 void 
 servercore::update_List_Users_Active_Offline(std::string _usernameOfConnection)
 {
@@ -94,6 +111,9 @@ servercore::update_List_Users_Active_Offline(std::string _usernameOfConnection)
     }
 }
 
+/*
+ *
+ */
 void 
 servercore::handle_Main_Connection(Connection* & _conn)
 {
@@ -123,7 +143,7 @@ servercore::handle_Main_Connection(Connection* & _conn)
             _usernameOfConnection   = _conn->get_Username_Of_Connection();
             _token                  = std::make_pair(_idOfConnection,_sessionOfConnection);
             this->_listSession.pb(_token);
-            this->update_List_Users_Active_Offline(_usernameOfConnection);
+            this->update_List_Users_Active_Online(_usernameOfConnection);
             std::cout << "@log servercore: add token " << this->_listSession.size() << " - " << _sessionOfConnection->getSession() << std::endl;
         } else {  
             _conn->set_Close_Request_Status(true); //close connection after response success login
@@ -143,6 +163,7 @@ servercore::handle_Main_Connection(Connection* & _conn)
             case PING: 
                 std::cout <<"@log servercore: PING packet from user " << _usernameOfConnection << std::endl;
                 _conn->respond_PONG();
+                _conn->reset_CounPING();
                 break;
             case CMD_MSG_FILE:
                 std::cout <<"@log servercore: CMD_MSG_FILE packet from user " << _usernameOfConnection << std::endl;

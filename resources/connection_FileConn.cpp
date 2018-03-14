@@ -61,8 +61,8 @@ Connection::handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken)
 }
 
 /*
- *@TODO create thread to sent file data to client  
- * 
+ *@TODO  
+ * + get + check tocken from client is valid
  */
 void
 Connection::handle_CMD_DOWNLOAD_FILE(std::vector<TOKEN> _listToken)
@@ -98,7 +98,12 @@ Connection::handle_CMD_DOWNLOAD_FILE(std::vector<TOKEN> _listToken)
         _result = (this->fo->readFile(this->_parameter) ? "Preparing for download failed" : "Preparing for download successful");
         this->respond_CMD_HEADER(CMD_DOWNLOAD_READY_SEND);
         this->send_Data();
-    }
+        this->respond_CMD_HEADER(CMD_DOWNLOAD_FINISH);
+        this->set_Close_Request_Status(true);
+    } else {
+        std::cerr << "token is invalid" << std::endl;
+        this->set_Close_Request_Status(true);
+    }        
 }
 
 void 

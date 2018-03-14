@@ -68,6 +68,9 @@ public:
     Session*                    get_Session();
     FILE_TRANSACTION*           handle_CMD_MSG_FILE(); 
     void                        respond_CMD_HEADER(int _cmd);
+    void                        push_CounPING()     {++this->_countPING;}
+    void                        reset_CounPING()    {this->_countPING = 0;}
+    bool                        timeout_PING()      {return this->_countPING > 2 ? true:false;}
     
     //APIs handle main connection.
     bool                        handle_CMD_AUTHEN_LOGIN(const std::vector<USER> & listUser); 
@@ -95,7 +98,7 @@ private:
     Session*                    session;
     std::string                 dir;
     std::string                 hostAddress;
-    
+    int                         _countPING;
     std::string                 _parameter;
     std::string                 _username;
     int                         _userID;

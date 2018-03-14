@@ -79,7 +79,6 @@ private:
     bool                    _shutdown; //to set server on/off
     unsigned int            _maxConnectionsInQuery; // number of connections in query
     unsigned int            _connId;
-
     
     int                     highSock;
     unsigned int            connId; 

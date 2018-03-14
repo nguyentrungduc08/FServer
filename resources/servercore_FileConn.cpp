@@ -85,7 +85,7 @@ servercore::handle_File_Connection(Connection* & _conn)
                 _conn->handle_CMD_UPLOAD_FILE(this->_listSession);
                 break;
             case CMD_DOWNLOAD_FILE:
-                std::cout << "@log servercore: this connection send download request!! " << std::endl;
+                //std::cout << "@log servercore: this connection send download request!! " << std::endl;
                 _conn->handle_CMD_DOWNLOAD_FILE(this->_listSession);
                 break;
         }
@@ -97,7 +97,7 @@ servercore::handle_File_Connection(Connection* & _conn)
                 if (_conn->check_Respond_CMD_UPLOAD_FINISH()){
                     _conn->Respond_CMD_SAVE_FILE_FINISH();
                 } else {
-                std::cerr << "@log servercore: client do not send CMD_UPLOAD_FINISH !!!!" << std::endl;
+                    std::cerr << "@log servercore: client do not send CMD_UPLOAD_FINISH !!!!" << std::endl;
                 }
                 _conn->set_Close_Request_Status(true);      
             }

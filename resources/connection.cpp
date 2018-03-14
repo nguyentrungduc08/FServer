@@ -44,8 +44,9 @@ Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId,
     this->_isUploadConnection       = false;
     this->_isClassified             = false;
     this->_dataWriteDoneState       = false;   
-    this->_timeout.tv_sec            = 3;
-    this->_timeout.tv_usec           = 0;
+    this->_timeout.tv_sec           = 3;
+    this->_timeout.tv_usec          = 0;
+    this->_countPING                = 0;
     
     if (iSSL){
         this->_ssl           = SSL_new(sslcon->get_ctx());
