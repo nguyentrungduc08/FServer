@@ -75,6 +75,7 @@ public:
     
     //APIs handle file connection.
     void                        handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken);
+    void                        handle_CMD_DOWNLOAD_FILE(std::vector<TOKEN> _listToken);    
     void                        respond_CMD_UPLOAD_READY();
     bool                        get_Data_Write_Done_State();
     void                        set_Data_Write_Done_State(bool _state);

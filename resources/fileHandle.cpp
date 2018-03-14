@@ -133,6 +133,12 @@ FileHandle::readFileBlock(unsigned long &sizeInBytes) {
     return memblock;
 }
 
+void                        
+FileHandle::read_File_Block(char* _buffer, int _sizeblock)
+{
+     this->currentOpenReadFile.read(_buffer, _sizeblock);
+}
+
 /// @WARNING: Concurrent file access not catched
 int 
 FileHandle::readFile(std::string fileName) {
@@ -143,6 +149,7 @@ FileHandle::readFile(std::string fileName) {
         return (EXIT_FAILURE);
     }
     if (this->currentOpenReadFile.is_open()) {
+        this->currentOpenReadFile.seekg(0, this->currentOpenReadFile.beg); 
         return (EXIT_SUCCESS);
     }
     std::cerr << "Unable to open file '" << fileName << " '" << std::endl; // << strerror(errno)

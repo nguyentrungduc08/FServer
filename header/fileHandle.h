@@ -42,6 +42,7 @@ public:
     
     int                         readFile(std::string fileName);
     char*                       readFileBlock(unsigned long &sizeInBytes);
+    void                        read_File_Block(char* _buffer, int _sizeblock);
     
     int                         writeFileAtOnce(std::string fileName, char* content);
     int                         beginWriteFile(std::string fileName);
