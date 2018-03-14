@@ -67,6 +67,7 @@ public:
     unsigned int                get_Connection_Id();
     Session*                    get_Session();
     FILE_TRANSACTION*           handle_CMD_MSG_FILE(); 
+    void                        respond_CMD_HEADER(int _cmd);
     
     //APIs handle main connection.
     bool                        handle_CMD_AUTHEN_LOGIN(const std::vector<USER> & listUser); 
@@ -80,6 +81,7 @@ public:
     bool                        get_Data_Write_Done_State();
     void                        set_Data_Write_Done_State(bool _state);
     void                        wirte_Data();
+    void                        send_Data();
     void                        Respond_CMD_SAVE_FILE_FINISH();
     bool                        check_Respond_CMD_UPLOAD_FINISH();
     

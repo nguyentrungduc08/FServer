@@ -340,6 +340,16 @@ Connection::getAllData(){
     return;
 }
 
+void
+Connection::respond_CMD_HEADER(int _CMD)
+{
+    Packet *_pk = new Packet();
+    _pk->appendData(_CMD);
+    SSL_write(this->_ssl, &_pk->getData()[0], _pk->getData().size() );
+    delete _pk;
+    return;
+}
+
 bool
 Connection::get_isUploadConnection(){
     return this->_isUploadConnection;

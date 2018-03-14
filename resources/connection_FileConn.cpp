@@ -67,6 +67,7 @@ Connection::handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken)
 void
 Connection::handle_CMD_DOWNLOAD_FILE(std::vector<TOKEN> _listToken)
 {
+    std::cout << "#log conn: handle_CMD_DOWNLOAD_FILE" << std::endl;
     Packet*         _pk;
     char            _buffer[BUFFER_SIZE];
     struct timeval  _time = this->_timeout;
@@ -95,7 +96,46 @@ Connection::handle_CMD_DOWNLOAD_FILE(std::vector<TOKEN> _listToken)
         this->_parameter                = _fileName;
         std::cout << "Preparing download of file '" << this->_parameter << "'" << std::endl;
         _result = (this->fo->readFile(this->_parameter) ? "Preparing for download failed" : "Preparing for download successful");
+        this->respond_CMD_HEADER(CMD_DOWNLOAD_READY_SEND);
+        this->send_Data();
     }
+}
+
+void 
+Connection::send_Data()
+{   
+    long long   _size;
+    long long   _dataSend   = 0;
+    int         _count      = 1;
+    char        buffer[BUFFSIZE];
+    
+    _size = 7096901;
+
+    size_t _totalChunks     =   _size / BUFFSIZE;
+    size_t _sizeLastChunk   =   _size % BUFFSIZE;
+
+
+    rep(i,_totalChunks){
+        bzero(buffer, BUFFSIZE);
+        this->fo->read_File_Block(buffer, BUFFSIZE);
+        int si = SSL_write(this->_ssl, buffer, BUFFSIZE);
+        _dataSend += si;
+        std::cout << " ssl send ok " << _count  << ": " << si <<  " - " << sizeof(buffer) << std::endl;
+        ++_count;
+    }
+
+    if (_sizeLastChunk > 0){
+        bzero(buffer, BUFFSIZE);
+        this->fo->read_File_Block(buffer, _sizeLastChunk);
+        int si = SSL_write(this->_ssl, buffer, _sizeLastChunk);
+        _dataSend += si;
+        std::cout << " ssl send ok " << _count  << ": " << si <<  " - " << _sizeLastChunk << std::endl;
+        ++_count;
+    }
+
+    std::cout << "data sended: " << _dataSend  << " of  Datasize: " << _size << std::endl;
+
+    this->fo->close_Read_File();
 }
 
 void                        

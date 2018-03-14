@@ -139,6 +139,12 @@ FileHandle::read_File_Block(char* _buffer, int _sizeblock)
      this->currentOpenReadFile.read(_buffer, _sizeblock);
 }
 
+void                        
+FileHandle::close_Read_File()
+{
+    this->currentOpenReadFile.close();
+}
+
 /// @WARNING: Concurrent file access not catched
 int 
 FileHandle::readFile(std::string fileName) {
