@@ -12,45 +12,45 @@ bool
 Connection::handle_CMD_AUTHEN_LOGIN(const  std::vector<USER> & listUser) {
     
     std::cout << "#log conn: authen connection!!!!" << std::endl;
-    char            buffer[BUFFER_SIZE];
-    int             bytes = -1;
-    int             cmd;
-    int             Sta = -1;
-    std::string     status;
-    fd_set          writeFdSet;
-    fd_set          readFdSet;
+    char            _buffer[BUFFER_SIZE];
+    int             _bytes = -1;
+    int             _cmd;
+    int             _Sta = -1;
+    std::string     _status;
+    fd_set          _writeFdSet;
+    fd_set          _readFdSet;
 
-    bzero(buffer, sizeof buffer);
+    bzero(_buffer, sizeof _buffer);
     
     if (this->_isSSL){ 
-        bytes = SSL_read(this->_ssl, buffer, sizeof(buffer));
+        _bytes = SSL_read(this->_ssl, _buffer, sizeof(_buffer));
     } else {
-        bytes = recv(this->_socketFd, buffer, sizeof(buffer), 0);
+        _bytes = recv(this->_socketFd,_buffer, sizeof(_buffer), 0);
     }
     
-    std::cout << "#log conn: size of data ssl read " << bytes << std::endl;
-    if (bytes > 0){
-        Packet *pk = new Packet(std::string(buffer,bytes));
+    std::cout << "#log conn: size of data ssl read " << _bytes << std::endl;
+    if (_bytes > 0){
+        Packet *_pk = new Packet(std::string(_buffer,_bytes));
         
-        cmd = pk->getCMDHeader();
-        std::string username, password;
+        _cmd = _pk->getCMDHeader();
+        std::string _username, _password;
         
-        if (cmd == CMD_AUTHEN_LOGIN && !this->_ConfirmedState){
-            username = pk->getContent();
-            password = pk->getContent();
+        if (_cmd == CMD_AUTHEN_LOGIN && !this->_ConfirmedState){
+            _username = _pk->getContent();
+            _password = _pk->getContent();
         } else {
             this->_ConfirmedState = false;
             return false;
         }
         
-        std::cout << "#log conn: User request username: " <<username << " password: " << password << std::endl;
+        std::cout << "#log conn: User request username: " << _username << " password: " << _password << std::endl;
         
-        delete pk;
+        delete _pk;
         
         rep(i,listUser.size()){
-            if ( listUser.at(i).username == username && listUser.at(i).password == password ){
+            if ( listUser.at(i).username == _username && listUser.at(i).password == _password ){
                 std::cout << "#log conn: debug status login ok" << std::endl;
-                this->_username = username;
+                this->_username = _username;
                 return true;
             } 
         }
@@ -60,6 +60,69 @@ Connection::handle_CMD_AUTHEN_LOGIN(const  std::vector<USER> & listUser) {
     }
     return false;
 } 
+
+FILE_TRANSACTION* 
+Connection::handle_Upload_CMD_MSG_FILE()
+{
+    char                _buffer[BUFFER_SIZE];
+    int                 _bytes, _cmd;
+    Packet*             _pk;
+    std::string         _sender, _receiver, _urlFile, _filesize;
+    FILE_TRANSACTION*   _ft;
+    
+    _bytes   = SSL_read(this->_ssl, _buffer, sizeof(_buffer));
+    
+    if (_bytes > 0){
+        _pk = new Packet(std::string(_buffer,_bytes));
+        if (_pk->IsAvailableData())
+            _sender     = _pk->getContent();
+        if (_pk->IsAvailableData())
+            _receiver   = _pk->getContent();
+        if (_pk->IsAvailableData())
+            _urlFile    = _pk->getContent();
+        if (_pk->IsAvailableData())
+            _filesize   = _pk->getContent();
+        std::cout <<"#log conn: msg\ncmd: " << CMD_MSG_FILE << "\nsender: " << _sender << "\nreceiver: " << _receiver << "\nurlfile: " << _urlFile <<"\nfile size: " << _filesize << std::endl; 
+        _ft = new FILE_TRANSACTION;
+        
+        _ft->_sender    = _sender;
+        _ft->_receiver  = _receiver;
+        _ft->_url       = _urlFile;
+        _ft->_filesize  = std::stoi(_filesize);
+        delete _pk;
+        return _ft;
+    } 
+    
+    return NULL;
+}
+
+
+void                        
+Connection::send_Download_CMD_MSG_FILE(FILE_TRANSACTION *_fileTransaction)
+{
+    Packet      *_pk = new Packet();
+    fd_set      _FDSet;
+    
+    _pk->appendData(CMD_MSG_FILE);
+    _pk->appendData(_fileTransaction->_sender);
+    _pk->appendData(_fileTransaction->_receiver);
+    _pk->appendData(_fileTransaction->_url);
+    _pk->appendData(std::to_string(_fileTransaction->_filesize));
+    
+    FD_ZERO(&_FDSet);
+    FD_SET(this->_socketFd,&_FDSet);
+    
+    int _rc = select(_socketFd+1, NULL, &_FDSet, NULL, NULL); // wait until can sendable
+    
+    if (_rc > 0){
+        SSL_write(this->_ssl, &_pk->getData()[0], _pk->getData().size());
+        _fileTransaction->_status = 1;
+    }
+    
+    delete _pk;
+    return;
+}
+
 
 void                        
 Connection::respond_PONG()

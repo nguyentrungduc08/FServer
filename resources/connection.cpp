@@ -193,67 +193,37 @@ Connection::get_CMD_HEADER()
     int             _num_Fd_Incomming, _bytes, _cmd;
     struct timeval  _time = this->_timeout;
     fd_set          _fdset;
-    char            buffer[5];
+    char            buffer[10];
     
     FD_ZERO(&_fdset);
     FD_SET(this->_socketFd, &_fdset);
 
     _num_Fd_Incomming = select(this->_socketFd+1, &_fdset, NULL, NULL, &_time);
 
-    std::cerr << "log before select " << SSL_get_fd(this->_ssl) << " " << _num_Fd_Incomming << std::endl;
-
     if (_num_Fd_Incomming <= 0){
         std::cerr << "timeout login request connection!!!" << std::endl;
-        exit(EXIT_FAILURE);
+        //exit(EXIT_FAILURE);
+        return CMD_ERROR;
     }
 
     bzero(buffer, sizeof(buffer));
 
     _bytes   = SSL_read(this->_ssl, buffer, 4);
-    _pk      = new Packet(std::string(buffer,_bytes));
-    
-    if (_pk->IsAvailableData())
-        _cmd = _pk->getCMDHeader();
-    
-    std::cout << "Log Connection: size read header " << _bytes  << " - value: " << _cmd << std::endl;
-    
-    delete _pk;
-    return _cmd;
-}
-
-
-FILE_TRANSACTION*           
-Connection::handle_CMD_MSG_FILE(){
-    char                _buffer[BUFFER_SIZE];
-    int                 _bytes,_cmd;
-    Packet*             _pk;
-    std::string         _sender, _receiver, _urlFile,_filesize;
-    FILE_TRANSACTION*   _ft;
-    _bytes   = SSL_read(this->_ssl, _buffer, sizeof(_buffer));
     
     if (_bytes > 0){
-        _pk = new Packet(std::string(_buffer,_bytes));
+        _pk      = new Packet(std::string(buffer,_bytes));
+    
         if (_pk->IsAvailableData())
-            _cmd        = _pk->getCMDHeader();
-        if (_pk->IsAvailableData())
-            _sender     = _pk->getContent();
-        if (_pk->IsAvailableData())
-            _receiver   = _pk->getContent();
-        if (_pk->IsAvailableData())
-            _urlFile    = _pk->getContent();
-        if (_pk->IsAvailableData())
-            _filesize   = _pk->getContent();
-        std::cout <<"#log conn: msg\ncmd: " << _cmd << "\nsender: " << _sender << "\nreceiver: " << _receiver << "\nurlfile: " << _urlFile <<"\nfile size: " << _filesize << std::endl; 
-        _ft = new FILE_TRANSACTION;
-        _ft->_sender    = _sender;
-        _ft->_receiver  = _receiver;
-        _ft->_url       = _urlFile;
-        _ft->_filesize  = this->fo->get_File_Size();
+            _cmd = _pk->getCMDHeader();
+    
+        std::cout << "Log Connection: size read header " << _bytes  << " - value: " << _cmd << std::endl;
+    
         delete _pk;
-        return _ft;
-    } 
-    this->_closureRequested = true;
-    return NULL;
+        return _cmd;
+    } else {
+        std::cout << "Log Connection: size read header " << _bytes << std::endl;
+        return CMD_ERROR;
+    }
 }
 
 void                        

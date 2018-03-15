@@ -54,6 +54,7 @@ private:
     void            read_Data_Main_Connections();
     void            update_List_Users_Active_Online(std::string );
     void            update_List_Users_Active_Offline(std::string );
+    int             check_File_Transaction_History(std:: string);
     
     //APIs using in main thread.
     void            build_Select_List_For_Connections();    

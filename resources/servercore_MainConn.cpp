@@ -123,6 +123,7 @@ servercore::handle_Main_Connection(Connection* & _conn)
     std::string     _usernameOfConnection;
     int             _idFileTransaction;
     int             _cmd;
+    
     if ( !_conn->get_authen_state() ) {
         /* if not authen connection 
          * @TODO:
@@ -138,10 +139,12 @@ servercore::handle_Main_Connection(Connection* & _conn)
             //if check auth success
             _conn->set_authen_state(true);
             _conn->respond_CMD_AUTHEN();
+            
             _idOfConnection         = _conn->get_Connection_Id();
             _sessionOfConnection    = _conn->get_Session();
             _usernameOfConnection   = _conn->get_Username_Of_Connection();
-            _token                  = std::make_pair(_idOfConnection,_sessionOfConnection);
+            _token                  = std::make_pair(_idOfConnection, _sessionOfConnection);
+            
             this->_listSession.pb(_token);
             this->update_List_Users_Active_Online(_usernameOfConnection);
             std::cout << "@log servercore: add token " << this->_listSession.size() << " - " << _sessionOfConnection->getSession() << std::endl;
@@ -149,26 +152,56 @@ servercore::handle_Main_Connection(Connection* & _conn)
             _conn->set_Close_Request_Status(true); //close connection after response success login
         }
     } else {
-        /*if this connection authenticated -> handle data commining
+        /*if this connection authenticated -> handle data comming
          * @TODO:
          * - handle PING - PONG keep alive main connection
-         * - hanele send file transaction when exist file send to this user.
+         * - handle send file transaction when exist file send to this user.
+         * - send resonsd CMD_MSG_FILE to client if avalable file transactions of this user.
          */
-        _usernameOfConnection   = _conn->get_Username_Of_Connection();
+        _usernameOfConnection   =   _conn->get_Username_Of_Connection();
+        _cmd                    =   _conn->get_CMD_HEADER();
         
         std::cout << "@log servercore: main connection establish - num user active: " << this->get_Num_User_Active() << std::endl;
-        _cmd = _conn->get_CMD_HEADER();
         
         switch (_cmd){
             case PING: 
                 std::cout <<"@log servercore: PING packet from user " << _usernameOfConnection << std::endl;
-                _conn->respond_PONG();
-                _conn->reset_CounPING();
+                _idFileTransaction = this->check_File_Transaction_History(_usernameOfConnection);
+                if (_idFileTransaction != -1){
+                    std::cout << "@log servercore: respond Download_CMD_MSG_FILE@@@@ " << std::endl; 
+                    _conn->send_Download_CMD_MSG_FILE(this->_listFileTransaction.at(_idFileTransaction));
+                } else{
+                    std::cout << "@log servercore: respond PONG!!!!! " << std::endl;
+                    _conn->respond_PONG();
+                    _conn->reset_CounPING();
+                }
                 break;
             case CMD_MSG_FILE:
                 std::cout <<"@log servercore: CMD_MSG_FILE packet from user " << _usernameOfConnection << std::endl;
+                FILE_TRANSACTION *_fileTransaction;
+                _fileTransaction = _conn->handle_Upload_CMD_MSG_FILE();
+                if (_fileTransaction != NULL){
+                    std::cout <<"@log servercore: add CMD_MSG_FILE in to list file transaction of user : " << _usernameOfConnection << std::endl;
+                    this->_listFileTransaction.emplace_back(_fileTransaction);
+                }
+                break;
+            case CMD_ERROR:
+                _conn->set_Close_Request_Status(true);
+                std::cout <<"@log servercore: CMD_ERROR client is crash" << std::endl; 
                 break;
         }
         
     }
+}
+
+int             
+servercore::check_File_Transaction_History(std:: string _username)
+{
+    int _idFileTransaction = -1;
+    rep(_index, this->_listFileTransaction.size())
+        if (this->_listFileTransaction.at(_index)->_receiver == _username){
+            _idFileTransaction = _index;
+            break;
+        }
+    return _idFileTransaction;
 }

@@ -66,7 +66,7 @@ public:
     int                         get_Usser_Id_Of_Connection();
     unsigned int                get_Connection_Id();
     Session*                    get_Session();
-    FILE_TRANSACTION*           handle_CMD_MSG_FILE(); 
+    
     void                        respond_CMD_HEADER(int _cmd);
     void                        push_CounPING()     {++this->_countPING;}
     void                        reset_CounPING()    {this->_countPING = 0;}
@@ -76,6 +76,9 @@ public:
     bool                        handle_CMD_AUTHEN_LOGIN(const std::vector<USER> & listUser); 
     void                        respond_CMD_AUTHEN();
     void                        respond_PONG();
+    void                        send_Download_CMD_MSG_FILE(FILE_TRANSACTION*);
+    FILE_TRANSACTION*           handle_Upload_CMD_MSG_FILE();
+    
     
     //APIs handle file connection.
     void                        handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken);
