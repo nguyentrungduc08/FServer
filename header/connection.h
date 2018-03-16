@@ -87,7 +87,7 @@ public:
     bool                        get_Data_Write_Done_State();
     void                        set_Data_Write_Done_State(bool _state);
     void                        wirte_Data();
-    void                        send_Data();
+    void                        send_Data(long long _dataSize);
     void                        Respond_CMD_SAVE_FILE_FINISH();
     bool                        check_Respond_CMD_UPLOAD_FINISH();
     

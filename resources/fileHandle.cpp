@@ -149,6 +149,8 @@ FileHandle::close_Read_File()
 int 
 FileHandle::readFile(std::string fileName) {
     stripServerRootString(fileName);
+    this->compute_Size(fileName);
+    
     this->currentOpenReadFile.open(fileName.c_str(), std::ios::in|std::ios::binary); // modes for binary file  |std::ios::ate
     if (this->currentOpenReadFile.fail()) {
         std::cout << "Reading file '" << fileName << "' failed!" << std::endl; //  strerror(errno) <<
@@ -575,3 +577,14 @@ FileHandle::get_File_Url(){
     return this->_fileURL;
 }
 
+void
+FileHandle::compute_Size(std::string fileName)
+{
+    std::streampos  _begin, _end;
+    std::ifstream   _myfile(fileName.c_str(), std::ios::binary);
+    _begin  = _myfile.tellg();
+    _myfile.seekg (0, std::ios::end);
+    _end    = _myfile.tellg();
+    _myfile.close();
+    this->_fileSize = _end - _begin;
+}

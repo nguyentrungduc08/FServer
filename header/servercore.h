@@ -95,8 +95,8 @@ private:
     Database*               _database;
     
     std::vector<Connection*>                _connections; // Manage the connected sockets / connections in a list with an iterator
-    std::vector<Connection*>                _mainConnections;
-    std::vector<Connection*>                _fileConnections;
+    std::vector<Connection*>                _listMainConnections;
+    std::vector<Connection*>                _listFileConnections;
     std::vector<USER>                       _listUser;
     std::vector<FILE_TRANSACTION*>          _listFileTransaction;
     std::vector<TOKEN>                      _listSession;

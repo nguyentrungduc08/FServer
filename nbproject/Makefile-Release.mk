@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/lib/Werror.o \
+	${OBJECTDIR}/lib/WopenSSL.o \
 	${OBJECTDIR}/lib/Wsock.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/resources/File.o \
@@ -83,6 +84,11 @@ ${OBJECTDIR}/lib/Werror.o: lib/Werror.cpp
 	${MKDIR} -p ${OBJECTDIR}/lib
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/lib/Werror.o lib/Werror.cpp
+
+${OBJECTDIR}/lib/WopenSSL.o: lib/WopenSSL.cpp
+	${MKDIR} -p ${OBJECTDIR}/lib
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/lib/WopenSSL.o lib/WopenSSL.cpp
 
 ${OBJECTDIR}/lib/Wsock.o: lib/Wsock.cpp
 	${MKDIR} -p ${OBJECTDIR}/lib

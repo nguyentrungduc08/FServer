@@ -86,6 +86,8 @@ private:
     void                        getValidFile(std::string &fileName);
     void                        stripServerRootString(std::string &dirOrFileName);
     static void                 IntToString(int i, std::string &res);
+    
+    void                        compute_Size(std::string fileName);
 };
 
 

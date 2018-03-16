@@ -23,6 +23,7 @@
       <itemPath>resources/Packet.cpp</itemPath>
       <itemPath>resources/Session.cpp</itemPath>
       <itemPath>lib/Werror.cpp</itemPath>
+      <itemPath>lib/WopenSSL.cpp</itemPath>
       <itemPath>lib/Wsock.cpp</itemPath>
       <itemPath>resources/connection.cpp</itemPath>
       <itemPath>resources/connection_FileConn.cpp</itemPath>
@@ -97,6 +98,8 @@
       <item path="header/wrap.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="lib/Werror.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="lib/WopenSSL.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="lib/Wsock.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -176,6 +179,8 @@
       <item path="header/wrap.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="lib/Werror.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="lib/WopenSSL.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="lib/Wsock.cpp" ex="false" tool="1" flavor2="0">
       </item>

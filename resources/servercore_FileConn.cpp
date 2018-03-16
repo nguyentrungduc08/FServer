@@ -11,14 +11,14 @@ servercore::build_Select_list_For_File_Connection()
 {
     FD_ZERO(&(this->_fileConnSet));
     this->_highestFdFileSet = 0;
-    std::vector<Connection*>::iterator _iter = this->_fileConnections.begin();
+    std::vector<Connection*>::iterator _iter = this->_listFileConnections.begin();
 
-    while (_iter != this->_fileConnections.end()){
+    while (_iter != this->_listFileConnections.end()){
         if ( (*_iter)->get_Close_Request_Status() ){
             std::cout << "@log servercore: For_File_Connection Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
             delete (*_iter);
-            this->_fileConnections.erase(_iter);
-            if ( this->_fileConnections.empty() || _iter == this->_fileConnections.end()){
+            this->_listFileConnections.erase(_iter);
+            if ( this->_listFileConnections.empty() || _iter == this->_listFileConnections.end()){
                 return;
             }
         } else {
@@ -37,12 +37,12 @@ servercore::build_Select_list_For_File_Connection()
 void            
 servercore::read_Data_File_Connections()
 {
-    for (unsigned int _index = 0; _index < this->_fileConnections.size(); ++_index) {
-        if (FD_ISSET(this->_fileConnections.at(_index)->getFD(), &(this->_fileConnSet))) {
-            std::cout << "@log servercore: read_Data_File_Connections " << this->_fileConnections.at(_index)->getFD() << std::endl;
-            if ( this->_fileConnections.at(_index)->get_isFileConnection() ){
+    for (unsigned int _index = 0; _index < this->_listFileConnections.size(); ++_index) {
+        if (FD_ISSET(this->_listFileConnections.at(_index)->getFD(), &(this->_fileConnSet))) {
+            std::cout << "@log servercore: read_Data_File_Connections " << this->_listFileConnections.at(_index)->getFD() << std::endl;
+            if ( this->_listFileConnections.at(_index)->get_isFileConnection() ){
                 std::cout << "@log servercore: handle data file connection" << std::endl;
-                this->handle_File_Connection(this->_fileConnections.at(_index));
+                this->handle_File_Connection(this->_listFileConnections.at(_index));
                 continue;
             }
         }

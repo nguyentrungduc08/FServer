@@ -7,21 +7,23 @@
 #include "../header/servercore.h"
 
 /*
- *
+ * @TODO: update list filedescriptor for select handle data comming
+ * - build list FD
+ * - remove and drop connection set close_state or timeout
  */
 void            
 servercore::build_Select_list_For_Main_Connection()
 {
     FD_ZERO(&(this->_mainConnSet));
     this->_highestFdMainSet = 0;
-    std::vector<Connection*>::iterator _iter = this->_mainConnections.begin();
+    std::vector<Connection*>::iterator _iter = this->_listMainConnections.begin();
 
-    while (_iter != this->_mainConnections.end()){
+    while (_iter != this->_listMainConnections.end()){
         if ( (*_iter)->get_Close_Request_Status() || (*_iter)->timeout_PING() ){
             std::cout << "@log servercore: For_Main_Connection Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
             delete (*_iter);
-            this->_mainConnections.erase(_iter);
-            if ( this->_mainConnections.empty() || _iter == this->_mainConnections.end()){
+            this->_listMainConnections.erase(_iter);
+            if ( this->_listMainConnections.empty() || _iter == this->_listMainConnections.end()){
                 return;
             }
         } else {
@@ -38,27 +40,27 @@ servercore::build_Select_list_For_Main_Connection()
 }
 
 /*
- *
+ * @TODO: 
  */
 void            
 servercore::read_Data_Main_Connections()
 {
-    for (unsigned int _index = 0; _index < this->_mainConnections.size(); ++_index) {
-        if (FD_ISSET(this->_mainConnections.at(_index)->getFD(), &(this->_mainConnSet))) {
-            std::cout << "@log servercore: read_Data_Main_Connections " << this->_mainConnections.at(_index)->getFD() << std::endl;
-            if ( this->_mainConnections.at(_index)->get_isMainConnection() ){ 
+    for (unsigned int _index = 0; _index < this->_listMainConnections.size(); ++_index) {
+        if (FD_ISSET(this->_listMainConnections.at(_index)->getFD(), &(this->_mainConnSet))) {
+            std::cout << "@log servercore: read_Data_Main_Connections " << this->_listMainConnections.at(_index)->getFD() << std::endl;
+            if ( this->_listMainConnections.at(_index)->get_isMainConnection() ){ 
                 std::cout << "@log servercore: handle main connection" << std::endl;
-                this->handle_Main_Connection(this->_mainConnections.at(_index));
+                this->handle_Main_Connection(this->_listMainConnections.at(_index));
                 continue;
             } else {
-                this->_mainConnections.at(_index)->push_CounPING();
+                this->_listMainConnections.at(_index)->push_CounPING();
             }
         }
     }
 }
 
 /*
- *
+ * @TODO: 
  */
 void            
 servercore::thread_Main_Connecion_Handle()
@@ -84,7 +86,7 @@ servercore::thread_Main_Connecion_Handle()
 }  
 
 /*
- *
+ * @TODO: 
  */
 void            
 servercore::update_List_Users_Active_Online(std::string _usernameOfConnection)
@@ -98,7 +100,7 @@ servercore::update_List_Users_Active_Online(std::string _usernameOfConnection)
 }
 
 /*
- *
+ * @TODO: 
  */
 void 
 servercore::update_List_Users_Active_Offline(std::string _usernameOfConnection)
@@ -112,7 +114,7 @@ servercore::update_List_Users_Active_Offline(std::string _usernameOfConnection)
 }
 
 /*
- *
+ * @TODO: 
  */
 void 
 servercore::handle_Main_Connection(Connection* & _conn)
@@ -194,6 +196,9 @@ servercore::handle_Main_Connection(Connection* & _conn)
     }
 }
 
+/*
+ * @TODO: 
+ */
 int             
 servercore::check_File_Transaction_History(std:: string _username)
 {

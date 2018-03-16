@@ -15,8 +15,8 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
     
     this->_listUser.clear();
     this->_connections.clear();
-    this->_mainConnections.clear();
-    this->_fileConnections.clear();
+    this->_listMainConnections.clear();
+    this->_listFileConnections.clear();
     this->_database = new Database();
     
     if ( !this->_database->doConnection("testuser","testuser","FILE") ){
@@ -116,21 +116,21 @@ servercore::free_All_Connections()
 void            
 servercore::free_All_File_Connections()
 {
-    std::vector<Connection*>::iterator _iter = this->_fileConnections.begin();
-    while( _iter != this->_fileConnections.end() ) {
+    std::vector<Connection*>::iterator _iter = this->_listFileConnections.begin();
+    while( _iter != this->_listFileConnections.end() ) {
         delete (*(_iter++)); 
     }
-    this->_fileConnections.clear(); 
+    this->_listFileConnections.clear(); 
 }
     
 void            
 servercore::free_All_Main_Connections()
 {
-    std::vector<Connection*>::iterator _iter = this->_mainConnections.begin();
-    while( _iter != this->_mainConnections.end() ) {
+    std::vector<Connection*>::iterator _iter = this->_listMainConnections.begin();
+    while( _iter != this->_listMainConnections.end() ) {
         delete (*(_iter++));
     }
-    this->_mainConnections.clear(); 
+    this->_listMainConnections.clear(); 
 }
 
 void            
@@ -261,12 +261,12 @@ servercore::read_Data_Main_Socket()
             
             if ( this->_connections.at(_index)->get_isMainConnection() && this->_connections.at(_index)->get_Is_Classified() ){
                 std::cout << "@log servercore: push this connecion to MAIN connections list" << std::endl;
-                this->_mainConnections.emplace_back(this->_connections.at(_index));
+                this->_listMainConnections.emplace_back(this->_connections.at(_index));
             }
             
             if ( this->_connections.at(_index)->get_isFileConnection() && this->_connections.at(_index)->get_Is_Classified() ){
                 std::cout << "@log servercore: push this connecion to FILE connections list" << std::endl;
-                this->_fileConnections.emplace_back(this->_connections.at(_index));
+                this->_listFileConnections.emplace_back(this->_connections.at(_index));
             }
         }
     }
@@ -290,7 +290,7 @@ servercore::start_Server()
 
         _num_Fd_Incomming     = select(this->_highestFdConnSet+1, &(this->_connectionsSet), NULL, NULL, &_time);
 
-        if (_num_Fd_Incomming < 0){
+        if (_num_Fd_Incomming < 0) {
             std::cerr << "@log servercore: Error calling select()" << std::endl;
             return (EXIT_FAILURE);
         }
