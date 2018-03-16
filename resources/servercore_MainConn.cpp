@@ -172,6 +172,7 @@ servercore::handle_Main_Connection(Connection* & _conn)
                 if (_idFileTransaction != -1){
                     std::cout << "@log servercore: respond Download_CMD_MSG_FILE@@@@ " << std::endl; 
                     _conn->send_Download_CMD_MSG_FILE(this->_listFileTransaction.at(_idFileTransaction));
+                    this->_listFileTransaction.at(_idFileTransaction)->_status = true;
                 } else{
                     std::cout << "@log servercore: respond PONG!!!!! " << std::endl;
                     _conn->respond_PONG();
@@ -200,11 +201,13 @@ servercore::handle_Main_Connection(Connection* & _conn)
  * @TODO: 
  */
 int             
-servercore::check_File_Transaction_History(std:: string _username)
+servercore::check_File_Transaction_History(std::string _username)
 {
     int _idFileTransaction = -1;
     rep(_index, this->_listFileTransaction.size())
-        if (this->_listFileTransaction.at(_index)->_receiver == _username){
+        if (this->_listFileTransaction.at(_index)->_receiver == _username  && 
+            !this->_listFileTransaction.at(_index)->_status)
+        {
             _idFileTransaction = _index;
             break;
         }

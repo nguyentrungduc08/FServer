@@ -89,6 +89,7 @@ Connection::handle_Upload_CMD_MSG_FILE()
         _ft->_receiver  = _receiver;
         _ft->_url       = _urlFile;
         _ft->_filesize  = std::stoi(_filesize);
+        _ft->_filesize  = false;
         delete _pk;
         return _ft;
     } 
