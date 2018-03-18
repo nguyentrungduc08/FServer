@@ -91,7 +91,7 @@ servercore::handle_File_Connection(Connection* & _conn)
         }
     }
     else 
-        if (_conn->get_isUploadConnection()){
+        if (_conn->get_isUploadConnection()) {
             _conn->wirte_Data();
             if (_conn->get_Data_Write_Done_State()) {
                 if (_conn->check_Respond_CMD_UPLOAD_FINISH()){

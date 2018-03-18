@@ -173,7 +173,7 @@ servercore::handle_Main_Connection(Connection* & _conn)
                     std::cout << "@log servercore: respond Download_CMD_MSG_FILE@@@@ " << std::endl; 
                     _conn->send_Download_CMD_MSG_FILE(this->_listFileTransaction.at(_idFileTransaction));
                     this->_listFileTransaction.at(_idFileTransaction)->_status = true;
-                } else{
+                } else {
                     std::cout << "@log servercore: respond PONG!!!!! " << std::endl;
                     _conn->respond_PONG();
                     _conn->reset_CounPING();
