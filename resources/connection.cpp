@@ -10,7 +10,9 @@
 
 // Destructor, clean up all the mess
 Connection::~Connection() {
-    std::cout << "#log conn: Connection terminated to client (connection id " << this->_connectionId << ")" << std::endl;
+    std::cout   << "#log conn: Connection terminated to client (connection id "     << this->_connectionId 
+                << ")"                                                              << std::endl;
+    
     delete this->fo;
     //delete this->session;
     close(this->_socketFd);
@@ -53,7 +55,8 @@ Connection::Connection(int filedescriptor,fssl* sslcon, unsigned int connId,
         SSL_set_fd(this->_ssl, this->_socketFd);
     }
     
-    std::cout << "#log conn: Connection to client '" << this->hostAddress << "' established" << std::endl;
+    std::cout   << "#log conn: Connection to client '"  << this->hostAddress 
+                << "' established"                      << std::endl;
 }
 
 // Check for matching (commands/strings) with compare method
@@ -81,28 +84,40 @@ Connection::TLS_handshark() {
         status = SSL_accept(this->_ssl);
         switch (SSL_get_error(this->_ssl, status)){
             case SSL_ERROR_NONE:
+                std::cout   << "#log conn: SSL_ERROR_NONE" 
+                            << std::endl;
+                
                 status = 0;
-                std::cout << "#log conn: SSL_ERROR_NONE" << std::endl;
                 break;
             case SSL_ERROR_WANT_WRITE:
+                std::cout   << "#log conn: SSL_ERROR_WANT_WRITE" 
+                            << std::endl;
+                
                 FD_SET(this->_socketFd, &writeFdSet);
                 status = 1;
-                std::cout << "#log conn: SSL_ERROR_WANT_WRITE" << std::endl;
                 break;
             case SSL_ERROR_WANT_READ:
+                std::cout   << "#log conn: SSL_ERROR_WANT_READ" 
+                            << std::endl;
+                
                 FD_SET(this->_socketFd, &readFdSet);
                 status = 1;
-                std::cout << "#log conn: SSL_ERROR_WANT_READ" << std::endl;
                 break;
             case SSL_ERROR_ZERO_RETURN:
-                std::cerr << "#log conn: SSL_ERROR_ZERO_RETURN" << std::endl;
+                std::cerr   << "#log conn: SSL_ERROR_ZERO_RETURN" 
+                            << std::endl;
+                
                 break;
             case SSL_ERROR_SYSCALL:     
-                std::cout << "#log conn: Peer closed connection during SSL handshake,status: " << status << std::endl;
+                std::cout   << "#log conn: Peer closed connection during SSL handshake,status: "    << status 
+                            << std::endl;
+                
                 status = -1;
                 break;
             default:
-                std::cout << "#log conn: Unexpected error during SSL handshake,status: " << status << std::endl;
+                std::cout   << "#log conn: Unexpected error during SSL handshake,status: "          << status 
+                            << std::endl;
+                
                 status = -1;
                 break;
         }
@@ -121,13 +136,19 @@ Connection::TLS_handshark() {
                     }
                 else // Timeout or failure
                     {
-                        std::cout << "#log conn: SSL handshake - peer timeout or failure" << std::endl;
+                    
+                        std::cout   << "#log conn: SSL handshake - peer timeout or failure" 
+                                    << std::endl;
+                        
                         status = -1;
                     }
             }
                     
         } while (status == 1 && !SSL_is_init_finished(this->_ssl));
-        std::cout << "#log conn: SSL handshark successed" << std::endl;
+        
+        std::cout   << "#log conn: SSL handshark successed" 
+                    << std::endl;
+        
         //SSL_set_accept_state(this->_ssl);
 }
 
@@ -147,7 +168,9 @@ Connection::respond_Classify_Connection_Done(bool state){
 
 void 
 Connection::classify_connection(){
-    std::cout << "#log conn: Classify connection." << std::endl;
+    std::cout   << "#log conn: Classify connection." 
+                << std::endl;
+    
     char        buffer[BUFFER_SIZE];
     int         _bytes = -1;
     Packet*     _pk;
@@ -160,10 +183,14 @@ Connection::classify_connection(){
         
         int _cmd = _pk->getCMDHeader();
         
-        std::cout << "#log conn: recieved data " << _cmd << std::endl;
+        std::cout   << "#log conn: recieved data " << _cmd 
+                    << std::endl;
         
         if (_cmd == CMD_IS_MAIN_CONNECTION) {    
-            std::cout << "#log conn: This is main connection." << std::endl;
+            
+            std::cout   << "#log conn: This is main connection." 
+                        << std::endl;
+            
             this->_isMainSocket     = true;
             this->_isClassified     = true;
             this->respond_Classify_Connection_Done(true);
@@ -171,7 +198,10 @@ Connection::classify_connection(){
         }
         
         if (_cmd == CMD_IS_FILE_CONNECTION) {    
-            std::cout << "#log conn: This is file connection." << std::endl;
+            
+            std::cout   << "#log conn: This is file connection." 
+                        << std::endl;
+            
             this->_isFileSocket     = true;
             this->_isClassified     = true;
             this->respond_Classify_Connection_Done(true);
@@ -201,7 +231,10 @@ Connection::get_CMD_HEADER()
     _num_Fd_Incomming = select(this->_socketFd+1, &_fdset, NULL, NULL, &_time);
 
     if (_num_Fd_Incomming <= 0){
-        std::cerr << "timeout login request connection!!!" << std::endl;
+        
+        std::cerr   << "timeout login request connection!!!" 
+                    << std::endl;
+        
         //exit(EXIT_FAILURE);
         return CMD_ERROR;
     }
@@ -216,12 +249,17 @@ Connection::get_CMD_HEADER()
         if (_pk->IsAvailableData())
             _cmd = _pk->getCMDHeader();
     
-        std::cout << "Log Connection: size read header " << _bytes  << " - value: " << _cmd << std::endl;
+        std::cout   << "Log Connection: size read header "  << _bytes  
+                    << " - value: "                         << _cmd 
+                    << std::endl;
     
         delete _pk;
         return _cmd;
     } else {
-        std::cout << "Log Connection: size read header " << _bytes << std::endl;
+        
+        std::cout   << "Log Connection: size read header " << _bytes 
+                    << std::endl;
+        
         return CMD_ERROR;
     }
 }
@@ -307,7 +345,10 @@ void
 Connection::getAllData(){
     char buf[BUFFSIZE];
     SSL_read(this->_ssl, buf, sizeof(buf));
-    std::cout <<"#log conn: " << buf << std::endl;
+    
+    std::cout   << "#log conn: " << buf 
+                << std::endl;
+    
     return;
 }
 

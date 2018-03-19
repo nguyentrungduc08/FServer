@@ -20,7 +20,10 @@ servercore::build_Select_list_For_Main_Connection()
 
     while (_iter != this->_listMainConnections.end()){
         if ( (*_iter)->get_Close_Request_Status() || (*_iter)->timeout_PING() ){
-            std::cout << "@log servercore: For_Main_Connection Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
+            
+            std::cout   << "@log servercore: For_Main_Connection Connection with Id "   << (*_iter)->getConnectionId() 
+                        << " closed! "                                                  << std::endl;
+            
             delete (*_iter);
             this->_listMainConnections.erase(_iter);
             if ( this->_listMainConnections.empty() || _iter == this->_listMainConnections.end()){
@@ -47,9 +50,15 @@ servercore::read_Data_Main_Connections()
 {
     for (unsigned int _index = 0; _index < this->_listMainConnections.size(); ++_index) {
         if (FD_ISSET(this->_listMainConnections.at(_index)->getFD(), &(this->_mainConnSet))) {
-            std::cout << "@log servercore: read_Data_Main_Connections " << this->_listMainConnections.at(_index)->getFD() << std::endl;
+            
+            std::cout   << "@log servercore: read_Data_Main_Connections " << this->_listMainConnections.at(_index)->getFD() 
+                        << std::endl;
+            
             if ( this->_listMainConnections.at(_index)->get_isMainConnection() ){ 
-                std::cout << "@log servercore: handle main connection" << std::endl;
+                
+                std::cout   << "@log servercore: handle main connection" 
+                            << std::endl;
+                
                 this->handle_Main_Connection(this->_listMainConnections.at(_index));
                 continue;
             } else {
@@ -69,14 +78,20 @@ servercore::thread_Main_Connecion_Handle()
     struct timeval      _time;
         
     while (!this->_shutdown) {
-        std::cout << "@log servercore: Main thread waiting connections form client....." << std::endl;
+        
+        std::cout   << "@log servercore: Main thread waiting connections form client....." 
+                    << std::endl;
+        
         this->build_Select_list_For_Main_Connection();
 
         _time                 = this->_serverTimeout;
         _num_Fd_Incomming     = select(this->_highestFdMainSet+1, &(this->_mainConnSet), NULL, NULL, &_time);
 
         if (_num_Fd_Incomming < 0){
-            std::cerr << "@log servercore: Error calling select()" << std::endl;
+            
+            std::cerr   << "@log servercore: Error calling select()" 
+                        << std::endl;
+            
             return;
         }
 
@@ -149,7 +164,11 @@ servercore::handle_Main_Connection(Connection* & _conn)
             
             this->_listSession.pb(_token);
             this->update_List_Users_Active_Online(_usernameOfConnection);
-            std::cout << "@log servercore: add token " << this->_listSession.size() << " - " << _sessionOfConnection->getSession() << std::endl;
+            
+            std::cout   << "@log servercore: add token "    << this->_listSession.size() 
+                        << " - "                            << _sessionOfConnection->getSession() 
+                        << std::endl;
+            
         } else {  
             _conn->set_Close_Request_Status(true); //close connection after response success login
         }
@@ -163,34 +182,53 @@ servercore::handle_Main_Connection(Connection* & _conn)
         _usernameOfConnection   =   _conn->get_Username_Of_Connection();
         _cmd                    =   _conn->get_CMD_HEADER();
         
-        std::cout << "@log servercore: main connection establish - num user active: " << this->get_Num_User_Active() << std::endl;
+        std::cout   << "@log servercore: main connection establish - num user active: " << this->get_Num_User_Active() 
+                    << std::endl;
         
         switch (_cmd){
             case PING: 
-                std::cout <<"@log servercore: PING packet from user " << _usernameOfConnection << std::endl;
+                
+                std::cout   <<"@log servercore: PING packet from user " << _usernameOfConnection 
+                            << std::endl;
+                
                 _idFileTransaction = this->check_File_Transaction_History(_usernameOfConnection);
                 if (_idFileTransaction != -1){
-                    std::cout << "@log servercore: respond Download_CMD_MSG_FILE@@@@ " << std::endl; 
+                    
+                    std::cout   << "@log servercore: respond Download_CMD_MSG_FILE@@@@ " 
+                                << std::endl; 
+                    
                     _conn->send_Download_CMD_MSG_FILE(this->_listFileTransaction.at(_idFileTransaction));
                     this->_listFileTransaction.at(_idFileTransaction)->_status = true;
                 } else {
-                    std::cout << "@log servercore: respond PONG!!!!! " << std::endl;
+                    
+                    std::cout   << "@log servercore: respond PONG!!!!! " 
+                                << std::endl;
+                    
                     _conn->respond_PONG();
                     _conn->reset_CounPING();
                 }
                 break;
             case CMD_MSG_FILE:
-                std::cout <<"@log servercore: CMD_MSG_FILE packet from user " << _usernameOfConnection << std::endl;
+                
+                std::cout   << "@log servercore: CMD_MSG_FILE packet from user " << _usernameOfConnection 
+                            << std::endl;
+                
                 FILE_TRANSACTION *_fileTransaction;
                 _fileTransaction = _conn->handle_Upload_CMD_MSG_FILE();
                 if (_fileTransaction != NULL){
-                    std::cout <<"@log servercore: add CMD_MSG_FILE in to list file transaction of user : " << _usernameOfConnection << std::endl;
+                    
+                    std::cout   << "@log servercore: add CMD_MSG_FILE in to list file transaction of user : " << _usernameOfConnection
+                                << std::endl;
+                    
                     this->_listFileTransaction.emplace_back(_fileTransaction);
                 }
                 break;
             case CMD_ERROR:
                 _conn->set_Close_Request_Status(true);
-                std::cout <<"@log servercore: CMD_ERROR client is crash" << std::endl; 
+                
+                std::cout   << "@log servercore: CMD_ERROR client is crash" 
+                            << std::endl; 
+                
                 break;
         }
         

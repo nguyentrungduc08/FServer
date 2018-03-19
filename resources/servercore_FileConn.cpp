@@ -15,7 +15,10 @@ servercore::build_Select_list_For_File_Connection()
 
     while (_iter != this->_listFileConnections.end()){
         if ( (*_iter)->get_Close_Request_Status() ){
-            std::cout << "@log servercore: For_File_Connection Connection with Id " << (*_iter)->getConnectionId() << " closed! " << std::endl;
+            
+            std::cout   << "@log servercore: For_File_Connection Connection with Id "   << (*_iter)->getConnectionId() 
+                        << " closed! "                                                  << std::endl;
+            
             delete (*_iter);
             this->_listFileConnections.erase(_iter);
             if ( this->_listFileConnections.empty() || _iter == this->_listFileConnections.end()){
@@ -39,9 +42,15 @@ servercore::read_Data_File_Connections()
 {
     for (unsigned int _index = 0; _index < this->_listFileConnections.size(); ++_index) {
         if (FD_ISSET(this->_listFileConnections.at(_index)->getFD(), &(this->_fileConnSet))) {
-            std::cout << "@log servercore: read_Data_File_Connections " << this->_listFileConnections.at(_index)->getFD() << std::endl;
+            
+            std::cout   << "@log servercore: read_Data_File_Connections " << this->_listFileConnections.at(_index)->getFD() 
+                        << std::endl;
+            
             if ( this->_listFileConnections.at(_index)->get_isFileConnection() ){
-                std::cout << "@log servercore: handle data file connection" << std::endl;
+                
+                std::cout   << "@log servercore: handle data file connection" 
+                            << std::endl;
+                
                 this->handle_File_Connection(this->_listFileConnections.at(_index));
                 continue;
             }
@@ -56,14 +65,20 @@ servercore::thread_File_Connecion_Handle()
     struct timeval      _time;
         
     while (!this->_shutdown) {
-        std::cout << "@log servercore: File thread waiting connections form client....." << std::endl;
+        
+        std::cout   << "@log servercore: File thread waiting connections form client....." 
+                    << std::endl;
+        
         this->build_Select_list_For_File_Connection();
 
         _time                 = this->_serverTimeout;
         _num_Fd_Incomming     = select(this->_highestFdFileSet+1, &(this->_fileConnSet), NULL, NULL, &_time);
 
         if (_num_Fd_Incomming < 0){
-            std::cerr << "@log servercore: Error calling select()" << std::endl;
+            
+            std::cerr   << "@log servercore: Error calling select()" 
+                        << std::endl;
+            
             return;
         }
 
@@ -75,7 +90,8 @@ servercore::thread_File_Connecion_Handle()
 void 
 servercore::handle_File_Connection(Connection* & _conn)
 {
-    std::cout << "@log servercore: handle file connection!!!" << std::endl;
+    std::cout   << "@log servercore: handle file connection!!!" 
+                << std::endl;
     int _cmd;
 
     if (!_conn->get_isUploadConnection()){

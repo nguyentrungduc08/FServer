@@ -12,7 +12,8 @@
 void                         
 Connection::handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken)
 {
-    std::cout << "#log conn: handle upload request handle_CMD_UPLOAD_FILE" << std::endl;
+    std::cout   << "#log conn: handle upload request handle_CMD_UPLOAD_FILE" 
+                << std::endl;
     
     char            _buffer[BUFFER_SIZE];
     int             _bytes = -1, _rc, _cmd;
@@ -37,23 +38,40 @@ Connection::handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken)
     }
 
     if (_checkToken){
-        std::cout << "#log conn: check token ok: " << _listToken.size() << std::endl;
+        
+        std::cout   << "#log conn: check token ok: " << _listToken.size() 
+                    << std::endl;
         
         if (_pk->IsAvailableData())
             _fileName = _pk->getContent();
         if (_pk->IsAvailableData())
             _fileSize = _pk->getContent();
         this->fo->set_File_Size(_fileSize);
-        std::cout << "#log conn: token: " << _tokenString << "\nfilename: " << _fileName  << "\nfileSize: " << _fileSize << " " << this->fo->get_File_Size() << std::endl;
+        
+        std::cout   << "#log conn: -token: "        << _tokenString 
+                    << "\n-filename: "              << _fileName  
+                    << "\n-fileSize: "              << _fileSize 
+                    << "/"                          << this->fo->get_File_Size() 
+                    << std::endl;
+        
         this->_isUploadConnection    = true; // upload hit!
         this->_receivedPart          = 0;
         this->_parameter             = _fileName;
-        std::cout << "Preparing upload of file '" << this->_parameter << "'" << std::endl;
+        
+        std::cout   << "Preparing upload of file '" << this->_parameter 
+                    << "'"                          << std::endl;
+        
         _result = (this->fo->beginWriteFile(this->_parameter) ? "Preparing for upload failed" : "Preparing for upload successful");
-        std::cout <<"#log conn: " << _result << std::endl; 
+        
+        std::cout   << "#log conn: "                << _result 
+                    << std::endl; 
+        
         this->respond_CMD_UPLOAD_READY();
     }else {    
-        std::cout << "#log conn: token invalid!!!! " << _listToken.size() << std::endl;
+        
+        std::cout   << "#log conn: token invalid!" << _listToken.size() 
+                    << std::endl;
+        
         this->_closureRequested = true;
     }
     
@@ -68,7 +86,9 @@ Connection::handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken)
 void
 Connection::handle_CMD_DOWNLOAD_FILE(std::vector<TOKEN> _listToken)
 {
-    std::cout << "#log conn: handle_CMD_DOWNLOAD_FILE" << std::endl;
+    std::cout   << "#log conn: handle_CMD_DOWNLOAD_FILE" 
+                << std::endl;
+    
     Packet*         _pk;
     char            _buffer[BUFFER_SIZE];
     struct timeval  _time = this->_timeout;
@@ -95,14 +115,24 @@ Connection::handle_CMD_DOWNLOAD_FILE(std::vector<TOKEN> _listToken)
             _fileName = _pk->getContent();
         this->_isDownloadConnection     = true; // upload hit!
         this->_parameter                = _fileName;
-        std::cout << "Preparing download of file '" << this->_parameter << "'" << std::endl;
+        
+        std::cout   << "Preparing download of file '" << this->_parameter 
+                    << "'"                            << std::endl;
+        
         _result = (this->fo->readFile(this->_parameter) ? "Preparing for download failed" : "Preparing for download successful");
+        
         this->respond_CMD_HEADER(CMD_DOWNLOAD_READY_SEND);
+        
         this->send_Data(this->fo->get_File_Size());
+        
         this->respond_CMD_HEADER(CMD_DOWNLOAD_FINISH);
+        
         this->set_Close_Request_Status(true);
     } else {
-        std::cerr << "token is invalid" << std::endl;
+        
+        std::cerr   << "token is invalid" 
+                    << std::endl;
+        
         this->set_Close_Request_Status(true);
     }        
 }
@@ -127,7 +157,12 @@ Connection::send_Data(long long _dataSize)
         //int si = SSL_write(this->_ssl, buffer, BUFFSIZE);
         int si = SF_SSL_WRITE(this->_socketFd, this->_ssl, buffer, BUFFSIZE);
         _dataSend += si;
-        std::cout << " ssl send ok " << _count  << ": " << si <<  " - " << sizeof(buffer) << std::endl;
+        
+        std::cout   << " ssl send ok "  << _count  
+                    << ": "             << si 
+                    << " - "            << sizeof(buffer) 
+                    << std::endl;
+        
         ++_count;
     }
 
@@ -137,11 +172,18 @@ Connection::send_Data(long long _dataSize)
         //int si = SSL_write(this->_ssl, buffer, _sizeLastChunk);
         int si = SF_SSL_WRITE(this->_socketFd, this->_ssl, buffer, _sizeLastChunk);
         _dataSend += si;
-        std::cout << " ssl send ok " << _count  << ": " << si <<  " - " << _sizeLastChunk << std::endl;
+        
+        std::cout   << " ssl send ok "  << _count  
+                    << ": "             << si 
+                    <<  " - "           << _sizeLastChunk 
+                    << std::endl;
+        
         ++_count;
     }
 
-    std::cout << "data sended: " << _dataSend  << " of  Datasize: " << _size << std::endl;
+    std::cout   << "data sended: "      << _dataSend  
+                << " of  Datasize: "    << _size 
+                << std::endl;
 
     this->fo->close_Read_File();
 }
@@ -149,7 +191,9 @@ Connection::send_Data(long long _dataSize)
 void                        
 Connection::respond_CMD_UPLOAD_READY()
 {
-    std::cout << "#log conn: response upload request" << std::endl;
+    std::cout   << "#log conn: response upload request" 
+                << std::endl;
+    
     Packet*         _pk;
     _pk = new Packet();
     _pk->appendData(CMD_UPLOAD_READY);
@@ -187,10 +231,17 @@ Connection::wirte_Data(){
             
             if (_bytes > 0){
                 _data = std::string(buffer, _bytes);
-                std::cout << "#log conn: Part" << ++(this->_receivedPart) << ": " << _bytes << std::endl;
+                
+                std::cout   << "#log conn: Part"    << ++(this->_receivedPart) 
+                            << ": "                 << _bytes 
+                            << std::endl;
+                
                 this->fo->writeFileBlock(_data);
             } else {
-                std::cerr << "#log conn: 1 read zero data" << std::endl;
+                
+                std::cerr   << "#log conn: 1 read zero data" 
+                            << std::endl;
+            
             }
         } else {
             if ((_totalData - _recievedData < sizeof(buffer)) && (_totalData > _recievedData))  
@@ -199,10 +250,17 @@ Connection::wirte_Data(){
                 _bytes   = SF_SSL_READ(this->_socketFd, this->_ssl, buffer, (_totalData - _recievedData));
                 if (_bytes > 0){
                     _data = std::string(buffer, _bytes);
-                    std::cout << "#log conn: Part" << ++(this->_receivedPart) << ": " << _bytes << std::endl;
+                    
+                    std::cout   << "#log conn: Part"    << ++(this->_receivedPart) 
+                                << ": "                 << _bytes 
+                                << std::endl;
+                    
                     this->fo->writeFileBlock(_data);
                 } else {
-                    std::cerr << "#log conn: 2 read zero data" << std::endl;
+                    
+                    std::cerr   << "#log conn: 2 read zero data" 
+                                << std::endl;
+                
                 }
             }
         }
@@ -213,7 +271,9 @@ Connection::wirte_Data(){
 bool
 Connection::check_Respond_CMD_UPLOAD_FINISH()
 {
-    std::cout << "Log Connection: check_Respond_CMD_UPLOAD_FINISH" << std::endl;
+    std::cout   << "Log Connection: check_Respond_CMD_UPLOAD_FINISH" 
+                << std::endl;
+    
     int _cmd = this->get_CMD_HEADER();
     if (_cmd == CMD_UPLOAD_FINISH)
         return true;

@@ -9,9 +9,11 @@
 #include "../header/ssl.h"
 
 bool 
-Connection::handle_CMD_AUTHEN_LOGIN(const  std::vector<USER> & listUser) {
+Connection::handle_CMD_AUTHEN_LOGIN(const  std::vector<USER> & listUser) 
+{   
+    std::cout   << "#log conn: authen connection!!!!" 
+                << std::endl;
     
-    std::cout << "#log conn: authen connection!!!!" << std::endl;
     char            _buffer[BUFFER_SIZE];
     int             _bytes = -1;
     int             _cmd;
@@ -28,7 +30,9 @@ Connection::handle_CMD_AUTHEN_LOGIN(const  std::vector<USER> & listUser) {
         _bytes = recv(this->_socketFd,_buffer, sizeof(_buffer), 0);
     }
     
-    std::cout << "#log conn: size of data ssl read " << _bytes << std::endl;
+    std::cout   << "#log conn: size of data ssl read " << _bytes 
+                << std::endl;
+    
     if (_bytes > 0){
         Packet *_pk = new Packet(std::string(_buffer,_bytes));
         
@@ -43,7 +47,9 @@ Connection::handle_CMD_AUTHEN_LOGIN(const  std::vector<USER> & listUser) {
             return false;
         }
         
-        std::cout << "#log conn: User request username: " << _username << " password: " << _password << std::endl;
+        std::cout   << "#log conn: User request username: " << _username 
+                    << " password: "                        << _password 
+                    << std::endl;
         
         delete _pk;
         
@@ -55,7 +61,9 @@ Connection::handle_CMD_AUTHEN_LOGIN(const  std::vector<USER> & listUser) {
             } 
         }
         
-        std::cout << "#log conn: debug status login fail" << std::endl;
+        std::cout   << "#log conn: debug status login fail" 
+                    << std::endl;
+        
         return false;
     }
     return false;
@@ -82,11 +90,13 @@ Connection::handle_Upload_CMD_MSG_FILE()
             _urlFile    = _pk->getContent();
         if (_pk->IsAvailableData())
             _filesize   = _pk->getContent();
+        
         std::cout   << "#log conn: msg\n-cmd: "  << CMD_MSG_FILE << 
                        "\n-sender: "             << _sender      << 
                        "\n-receiver: "           << _receiver    << 
                        "\n-urlfile: "            << _urlFile     <<
                        "\n-file size: "          << _filesize    << std::endl; 
+        
         _ft = new FILE_TRANSACTION;
         
         _ft->_sender    = _sender;
@@ -155,7 +165,10 @@ Connection::respond_CMD_AUTHEN(){
         Packet *pk = new Packet();
         pk->appendData(CMD_AUTHEN_SUCCESS);
         pk->appendData(ses);
-        std::cout << "#log conn: " << ses << std::endl;
+        
+        std::cout   << "#log conn: "    << ses 
+                    << std::endl;
+        
         SSL_write(this->_ssl, &pk->getData()[0], pk->getData().size() );
         delete pk;
     } else {
