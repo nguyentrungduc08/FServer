@@ -173,7 +173,7 @@ Connection::respond_CMD_AUTHEN(){
         delete pk;
     } else {
         Packet *pk = new Packet();
-        pk->appendData(CMD_AUTHEN_FAIL);
+        pk->appendData(CMD_AUTHEN_FAILURE);
         SSL_write(this->_ssl, &pk->getData()[0], pk->getData().size() );
         delete pk;
     } 

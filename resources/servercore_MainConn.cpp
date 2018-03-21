@@ -16,8 +16,9 @@ servercore::build_Select_list_For_Main_Connection()
 {
     FD_ZERO(&(this->_mainConnSet));
     this->_highestFdMainSet = 0;
-    std::vector<Connection*>::iterator _iter = this->_listMainConnections.begin();
-
+    //std::vector<Connection*>::iterator _iter = this->_listMainConnections.begin();
+    auto _iter = this->_listMainConnections.begin();
+    
     while (_iter != this->_listMainConnections.end()){
         if ( (*_iter)->get_Close_Request_Status() || (*_iter)->timeout_PING() ){
             
@@ -225,7 +226,7 @@ servercore::handle_Main_Connection(Connection* & _conn)
                 break;
             case CMD_ERROR:
                 _conn->set_Close_Request_Status(true);
-                
+                this->update_List_Users_Active_Offline(_conn->get_Username_Of_Connection());
                 std::cout   << "@log servercore: CMD_ERROR client is crash" 
                             << std::endl; 
                 

@@ -11,8 +11,9 @@ servercore::build_Select_list_For_File_Connection()
 {
     FD_ZERO(&(this->_fileConnSet));
     this->_highestFdFileSet = 0;
-    std::vector<Connection*>::iterator _iter = this->_listFileConnections.begin();
-
+    //std::vector<Connection*>::iterator _iter = this->_listFileConnections.begin();
+    auto _iter = this->_listFileConnections.begin();
+    
     while (_iter != this->_listFileConnections.end()){
         if ( (*_iter)->get_Close_Request_Status() ){
             

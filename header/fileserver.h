@@ -53,7 +53,7 @@
 
 #define CMD_AUTHEN_LOGIN            1
 #define CMD_AUTHEN_SUCCESS          2
-#define CMD_AUTHEN_FAIL             121
+#define CMD_AUTHEN_FAILURE          121
     
 #define CMD_ERROR                   500
 
@@ -81,7 +81,7 @@
 #define CMD_IS_MAIN_CONNECTION      88
 #define CMD_IS_FILE_CONNECTION      99
 #define CMD_CLASSIFY_DONE           89
-#define CMD_CLASSIFY_FAIL           98
+#define CMD_CLASSIFY_FAILURE        98
     
 #define MAXCONN                     1000
 #define	BUFFSIZE                    4096	/* buffer size for reads and writes */

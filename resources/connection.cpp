@@ -160,7 +160,7 @@ Connection::respond_Classify_Connection_Done(bool state){
         pk->appendData(CMD_CLASSIFY_DONE);
         SSL_write(this->_ssl, &pk->getData()[0], pk->getData().size());
     } else {
-        pk->appendData(CMD_CLASSIFY_FAIL);
+        pk->appendData(CMD_CLASSIFY_FAILURE);
         SSL_write(this->_ssl, &pk->getData()[0], pk->getData().size());
     }
     delete pk;
