@@ -18,7 +18,6 @@ Connection::~Connection() {
     close(this->_socketFd);
     SSL_free(this->_ssl);    
     //delete this->_ssl; 
-
 }
 
 /*
@@ -154,16 +153,16 @@ Connection::TLS_handshark() {
 
 void 
 Connection::respond_Classify_Connection_Done(bool state){
-    Packet *pk = new Packet();
+    Packet *_pk = new Packet();
     
     if (state){
-        pk->appendData(CMD_CLASSIFY_DONE);
-        SSL_write(this->_ssl, &pk->getData()[0], pk->getData().size());
+        _pk->appendData(CMD_CLASSIFY_DONE);
+        SSL_write(this->_ssl, &_pk->getData()[0], _pk->getData().size());
     } else {
-        pk->appendData(CMD_CLASSIFY_FAILURE);
-        SSL_write(this->_ssl, &pk->getData()[0], pk->getData().size());
+        _pk->appendData(CMD_CLASSIFY_FAILURE);
+        SSL_write(this->_ssl, &_pk->getData()[0], _pk->getData().size());
     }
-    delete pk;
+    delete _pk;
 }
 
 void 
@@ -171,15 +170,15 @@ Connection::classify_connection(){
     std::cout   << "#log conn: Classify connection." 
                 << std::endl;
     
-    char        buffer[BUFFER_SIZE];
+    char        _buffer[BUFFER_SIZE];
     int         _bytes = -1;
     Packet*     _pk;
-    bzero(buffer, sizeof(buffer));
+    bzero(_buffer, sizeof(_buffer));
     
-    _bytes = SSL_read(this->_ssl, buffer, sizeof(buffer));
+    _bytes = SSL_read(this->_ssl, _buffer, sizeof(_buffer));
     
     if (_bytes > 0){
-        _pk = new Packet(std::string(buffer,_bytes));
+        _pk = new Packet(std::string(_buffer,_bytes));
         
         int _cmd = _pk->getCMDHeader();
         
@@ -223,7 +222,7 @@ Connection::get_CMD_HEADER()
     int             _num_Fd_Incomming, _bytes, _cmd;
     struct timeval  _time = this->_timeout;
     fd_set          _fdset;
-    char            buffer[10];
+    char            _buffer[10];
     
     FD_ZERO(&_fdset);
     FD_SET(this->_socketFd, &_fdset);
@@ -239,12 +238,12 @@ Connection::get_CMD_HEADER()
         return CMD_ERROR;
     }
 
-    bzero(buffer, sizeof(buffer));
+    bzero(_buffer, sizeof(_buffer));
 
-    _bytes   = SSL_read(this->_ssl, buffer, 4);
+    _bytes   = SSL_read(this->_ssl, _buffer, 4);
     
     if (_bytes > 0){
-        _pk      = new Packet(std::string(buffer,_bytes));
+        _pk      = new Packet(std::string(_buffer,_bytes));
     
         if (_pk->IsAvailableData())
             _cmd = _pk->getCMDHeader();
@@ -255,8 +254,7 @@ Connection::get_CMD_HEADER()
     
         delete _pk;
         return _cmd;
-    } else {
-        
+    } else {  
         std::cout   << "Log Connection: size read header " << _bytes 
                     << std::endl;
         
@@ -343,10 +341,10 @@ Connection::get_isFileConnection(){
 
 void 
 Connection::getAllData(){
-    char buf[BUFFSIZE];
-    SSL_read(this->_ssl, buf, sizeof(buf));
+    char _buf[BUFFSIZE];
+    SSL_read(this->_ssl, _buf, sizeof(_buf));
     
-    std::cout   << "#log conn: " << buf 
+    std::cout   << "#log conn: " << _buf 
                 << std::endl;
     
     return;

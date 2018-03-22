@@ -123,7 +123,7 @@ Connection::handle_CMD_DOWNLOAD_FILE(std::vector<TOKEN> _listToken)
         
         this->respond_CMD_HEADER(CMD_DOWNLOAD_READY_SEND);
         
-        this->send_Data(this->fo->get_File_Size());
+        this->send_Data(this->fo->get_File_Size()); // hanle long-running taks
         
         this->respond_CMD_HEADER(CMD_DOWNLOAD_FINISH);
         
@@ -134,7 +134,8 @@ Connection::handle_CMD_DOWNLOAD_FILE(std::vector<TOKEN> _listToken)
                     << std::endl;
         
         this->set_Close_Request_Status(true);
-    }        
+    }     
+    delete _pk;
 }
 
 void 
@@ -143,7 +144,7 @@ Connection::send_Data(long long _dataSize)
     long long   _size;
     long long   _dataSend   = 0;
     int         _count      = 1;
-    char        buffer[BUFFSIZE];
+    char        _buffer[BUFFSIZE];
     
     _size = _dataSize;
 
@@ -152,25 +153,25 @@ Connection::send_Data(long long _dataSize)
 
 
     rep(i,_totalChunks){
-        bzero(buffer, BUFFSIZE);
-        this->fo->read_File_Block(buffer, BUFFSIZE);
+        bzero(_buffer, BUFFSIZE);
+        this->fo->read_File_Block(_buffer, BUFFSIZE);
         //int si = SSL_write(this->_ssl, buffer, BUFFSIZE);
-        int si = SF_SSL_WRITE(this->_socketFd, this->_ssl, buffer, BUFFSIZE);
+        int si = SF_SSL_WRITE(this->_socketFd, this->_ssl, _buffer, BUFFSIZE);
         _dataSend += si;
         
         std::cout   << " ssl send ok "  << _count  
                     << ": "             << si 
-                    << " - "            << sizeof(buffer) 
+                    << " - "            << sizeof(_buffer) 
                     << std::endl;
         
         ++_count;
     }
 
     if (_sizeLastChunk > 0){
-        bzero(buffer, BUFFSIZE);
-        this->fo->read_File_Block(buffer, _sizeLastChunk);
+        bzero(_buffer, BUFFSIZE);
+        this->fo->read_File_Block(_buffer, _sizeLastChunk);
         //int si = SSL_write(this->_ssl, buffer, _sizeLastChunk);
-        int si = SF_SSL_WRITE(this->_socketFd, this->_ssl, buffer, _sizeLastChunk);
+        int si = SF_SSL_WRITE(this->_socketFd, this->_ssl, _buffer, _sizeLastChunk);
         _dataSend += si;
         
         std::cout   << " ssl send ok "  << _count  
@@ -214,7 +215,7 @@ Connection::set_Data_Write_Done_State(bool _state){
 
 void                        
 Connection::wirte_Data(){
-    char            buffer[BUFFER_SIZE];
+    char            _buffer[BUFFER_SIZE];
     int             _bytes;
     std::string     _data;
     long long       _totalData      = this->fo->get_File_Size();
@@ -225,12 +226,12 @@ Connection::wirte_Data(){
         return;
     }
     else {
-        if (_recievedData + sizeof(buffer) <= _totalData) {
+        if (_recievedData + sizeof(_buffer) <= _totalData) {
             //_bytes   = SSL_read(this->_ssl, buffer, sizeof(buffer));
-            _bytes   = SF_SSL_READ(this->_socketFd, this->_ssl, buffer, sizeof(buffer));
+            _bytes   = SF_SSL_READ(this->_socketFd, this->_ssl, _buffer, sizeof(_buffer));
             
             if (_bytes > 0){
-                _data = std::string(buffer, _bytes);
+                _data = std::string(_buffer, _bytes);
                 
                 std::cout   << "#log conn: Part"    << ++(this->_receivedPart) 
                             << ": "                 << _bytes 
@@ -244,12 +245,12 @@ Connection::wirte_Data(){
             
             }
         } else {
-            if ((_totalData - _recievedData < sizeof(buffer)) && (_totalData > _recievedData))  
+            if ((_totalData - _recievedData < sizeof(_buffer)) && (_totalData > _recievedData))  
             {
                 //_bytes   = SSL_read(this->_ssl, buffer, (_totalData - _recievedData));
-                _bytes   = SF_SSL_READ(this->_socketFd, this->_ssl, buffer, (_totalData - _recievedData));
+                _bytes   = SF_SSL_READ(this->_socketFd, this->_ssl, _buffer, (_totalData - _recievedData));
                 if (_bytes > 0){
-                    _data = std::string(buffer, _bytes);
+                    _data = std::string(_buffer, _bytes);
                     
                     std::cout   << "#log conn: Part"    << ++(this->_receivedPart) 
                                 << ": "                 << _bytes 
