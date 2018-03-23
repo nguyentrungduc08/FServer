@@ -44,6 +44,7 @@
 #include <stdint.h>
 #include <unistd.h>
 
+#define SERVER_CAPACITY             10000
 
 #define TRUE                        1
 #define FALSE                       0

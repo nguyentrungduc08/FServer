@@ -227,6 +227,7 @@ servercore::handle_Main_Connection(Connection* & _conn)
             case CMD_ERROR:
                 _conn->set_Close_Request_Status(true);
                 this->update_List_Users_Active_Offline(_conn->get_Username_Of_Connection());
+                
                 std::cout   << "@log servercore: CMD_ERROR client is crash" 
                             << std::endl; 
                 
