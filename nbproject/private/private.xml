@@ -12,6 +12,7 @@
             <file>file:/media/veracrypt1/projects/fileServer/resources/connection_MainConn.cpp</file>
             <file>file:/media/veracrypt1/projects/fileServer/header/servercore.h</file>
             <file>file:/media/veracrypt1/projects/fileServer/resources/servercore.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/header/Hasing.h</file>
             <file>file:/media/veracrypt1/projects/fileServer/resources/connection_FileConn.cpp</file>
         </group>
     </open-files>
