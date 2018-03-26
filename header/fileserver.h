@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <thread>
+#include <mutex>
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -93,7 +94,7 @@
 #define PACKET                      std::vector<char>
 #define TOKEN                       std::pair<int,Session*>                  
 
-#define rep(i,n)                    for(int i = 0; i < (int)n; ++i)
+#define rep(i,n)                    for(int i =      0; i  < (int)n; ++i)
 #define Ford(i,a,b)                 for(int i = (int)a; i >= (int)b; --i)
 #define For(i,a,b)                  for(int i = (int)a; i <= (int)b; ++i)
 #define pb                          push_back
@@ -121,6 +122,13 @@ struct FILE_TRANSACTION {
     bool            _status = false;
 };
 
+
+//#ifndef _GLOBAL_VARIABLE
+//#define _GLOBAL_VARIABLE
+//        
+//std::mutex              SERVER_MUTEX;
+//
+//#endif
 
 #endif /* FILESERVER_H */
 

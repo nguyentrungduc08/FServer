@@ -59,12 +59,20 @@ servercore::read_Data_File_Connections()
     }
 }
 
+/*
+ * @TODO: Thead Running independently to handle file + data connections. 
+ * + build list fd to manage comming connection. <select>
+ * + read + handle data from file decriptor 
+ * @note: handle case multi thread share memory.
+ */
 void            
 servercore::thread_File_Connecion_Handle()
 {
     int                 _num_Fd_Incomming;
     struct timeval      _time;
-        
+    
+    //std::lock_guard<std::mutex> guard(this->_serverMutex);
+    
     while (!this->_shutdown) {
         
         std::cout   << "@log servercore: File thread waiting connections form client....." 
@@ -88,6 +96,9 @@ servercore::thread_File_Connecion_Handle()
     return;
 }
 
+/*
+ * @TODO: 
+ */
 void 
 servercore::handle_File_Connection(Connection* & _conn)
 {

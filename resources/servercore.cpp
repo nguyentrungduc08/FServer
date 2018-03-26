@@ -337,6 +337,8 @@ servercore::start_Server()
     std::thread         _threadMain(&servercore::thread_Main_Connecion_Handle, this);
     std::thread         _threadFile(&servercore::thread_File_Connecion_Handle, this);
 
+    //std::lock_guard<std::mutex> guard(this->_serverMutex);
+    
     while (!this->_shutdown) {
         
         std::cout   << "@log servercore: waiting connections form client....." 

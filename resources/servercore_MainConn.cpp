@@ -77,7 +77,9 @@ servercore::thread_Main_Connecion_Handle()
 {
     int                 _num_Fd_Incomming;
     struct timeval      _time;
-        
+    
+    //std::lock_guard<std::mutex> guard(this->_serverMutex);
+    
     while (!this->_shutdown) {
         
         std::cout   << "@log servercore: Main thread waiting connections form client....." 
