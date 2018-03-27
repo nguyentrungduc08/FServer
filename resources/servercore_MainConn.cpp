@@ -24,6 +24,7 @@ servercore::build_Select_list_For_Main_Connection()
             
             std::cout   << "@log servercore: For_Main_Connection Connection with Id "   << (*_iter)->getConnectionId() 
                         << " closed! "                                                  << std::endl;
+            this->update_Remove_List_Session((*_iter)->getConnectionId());
             
             delete (*_iter);
             this->_listMainConnections.erase(_iter);
@@ -41,6 +42,25 @@ servercore::build_Select_list_For_Main_Connection()
         }
     }
     return;
+}
+
+
+
+void
+servercore::update_Remove_List_Session(int _idConnection){
+    rep(_index,this->_listSession.size()){
+        if (this->_listSession[_index].X == _idConnection){
+            this->remove_Session_Mutex(_index);
+        }    
+    }
+}
+
+
+void 
+servercore::remove_Session_Mutex(int _index)
+{
+    std::lock_guard<std::mutex> _myguard(this->_MUTEX_THREAD);
+    this->_listSession.erase(this->_listSession.begin() + _index);
 }
 
 /*
@@ -82,8 +102,14 @@ servercore::thread_Main_Connecion_Handle()
     
     while (!this->_shutdown) {
         
-        std::cout   << "@log servercore: Main thread waiting connections form client....." 
-                    << std::endl;
+//        MUTEX_THREAD.lock();
+//        std::cout   << "@log servercore: Main thread waiting connections form client....." 
+//                    << std::endl;
+//        MUTEX_THREAD.unlock();
+        
+        Logger_Message_Mutex(this->_MUTEX_THREAD, "@log servercore: +Main thread waiting connections form client.....");
+        
+        this->log_list_Sessions();
         
         this->build_Select_list_For_Main_Connection();
 
@@ -165,7 +191,9 @@ servercore::handle_Main_Connection(Connection* & _conn)
             _usernameOfConnection   = _conn->get_Username_Of_Connection();
             _token                  = std::make_pair(_idOfConnection, _sessionOfConnection);
             
-            this->_listSession.pb(_token);
+            //this->_listSession.pb(_token);
+            this->add_To_List_Sessions_Mutex(_token);
+            
             this->update_List_Users_Active_Online(_usernameOfConnection);
             
             std::cout   << "@log servercore: add token "    << this->_listSession.size() 
@@ -238,6 +266,14 @@ servercore::handle_Main_Connection(Connection* & _conn)
         
     }
 }
+
+void            
+servercore::add_To_List_Sessions_Mutex(TOKEN _token)
+{
+    std::lock_guard<std::mutex> _guard(this->_MUTEX_THREAD);
+    this->_listSession.emplace_back(_token);
+}
+
 
 /*
  * @TODO: 

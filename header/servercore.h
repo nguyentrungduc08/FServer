@@ -18,6 +18,7 @@
 #include "connection.h"
 #include "ssl.h"
 #include "database.h"
+#include "logger.h"
 
 class servercore {
 public:
@@ -39,6 +40,9 @@ private:
     int             handle_New_Connection();
     void            set_NonBlocking(int &sock);
     int             get_Num_User_Active();
+    void            add_To_List_Main_Connections_Mutex(Connection*);
+    void            add_To_List_File_Connections_Mutex(Connection*);
+    void            add_To_List_Sessions_Mutex(TOKEN);
     
     //APIs handle file connection.
     void            handle_File_Connection(Connection* & conn);
@@ -55,6 +59,8 @@ private:
     void            update_List_Users_Active_Online(std::string );
     void            update_List_Users_Active_Offline(std::string );
     int             check_File_Transaction_History(std:: string);
+    void            update_Remove_List_Session(int _idConnection);
+    void            remove_Session_Mutex(int _idConnection);
     
     //APIs using in main thread.
     void            build_Select_List_For_Connections();    
@@ -68,6 +74,10 @@ private:
     int             start();
     void            build_Select_List();
     void            read_Sockets();
+    
+    
+    //lof data
+    void            log_list_Sessions();
 
     fd_set                  _connectionsSet;
     fd_set                  _mainConnSet;
@@ -80,6 +90,7 @@ private:
     bool                    _shutdown; //to set server on/off
     unsigned int            _maxConnectionsInQuery; // number of connections in query
     unsigned int            _connId;
+    std::mutex              _MUTEX_THREAD;
     
     int                     highSock;
     unsigned int            connId; 

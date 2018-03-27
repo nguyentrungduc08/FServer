@@ -314,7 +314,8 @@ servercore::read_Data_Main_Socket()
                 std::cout   << "@log servercore: push this connecion to MAIN connections list" 
                             << std::endl;
                 
-                this->_listMainConnections.emplace_back(this->_connections.at(_index));
+                //this->_listMainConnections.emplace_back(this->_connections.at(_index));
+                this->add_To_List_Main_Connections_Mutex(this->_connections.at(_index));
             }
             
             if ( this->_connections.at(_index)->get_isFileConnection() && this->_connections.at(_index)->get_Is_Classified() ){
@@ -322,10 +323,25 @@ servercore::read_Data_Main_Socket()
                 std::cout   << "@log servercore: push this connecion to FILE connections list" 
                             << std::endl;
                 
-                this->_listFileConnections.emplace_back(this->_connections.at(_index));
+                //this->_listFileConnections.emplace_back(this->_connections.at(_index));
+                this->add_To_List_File_Connections_Mutex(this->_connections.at(_index));
             }
         }
     }
+}
+
+void 
+servercore::add_To_List_Main_Connections_Mutex(Connection* _conn)
+{
+    std::lock_guard<std::mutex> _guard(this->_MUTEX_THREAD);
+    this->_listMainConnections.emplace_back(_conn);
+}
+
+void        
+servercore::add_To_List_File_Connections_Mutex(Connection* _conn)
+{
+    std::lock_guard<std::mutex> _guard(this->_MUTEX_THREAD);
+    this->_listFileConnections.emplace_back(_conn);
 }
 
 int             
@@ -341,8 +357,12 @@ servercore::start_Server()
     
     while (!this->_shutdown) {
         
-        std::cout   << "@log servercore: waiting connections form client....." 
-                    << std::endl;
+//        MUTEX_THREAD.lock();
+//        std::cout   << "@log servercore: waiting connections form client....." 
+//                    << std::endl;
+//        MUTEX_THREAD.unlock();
+
+        Logger_Message_Mutex(this->_MUTEX_THREAD, "@log servercore: -waiting connections form client.....");
         
         //build list set connection for new connection 
         this->build_Select_List_For_Connections();
@@ -369,7 +389,21 @@ servercore::start_Server()
     if (_threadFile.joinable()){
         _threadFile.join();
     }
+    
     return (EXIT_SUCCESS);
+}
+
+void
+servercore::log_list_Sessions()
+{
+    std::cout   << "@log servercore: num of session valid : "   << this->_listSession.size() 
+                << std:: endl;
+    
+    rep(_index, this->_listSession.size()){
+        std::cout   << "+ token: "          << this->_listSession[_index].X 
+                    << " - "                << this->_listSession[_index].Y->getSession() 
+                    << std::endl; 
+    } 
 }
 
 /* 

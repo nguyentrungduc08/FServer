@@ -75,8 +75,12 @@ servercore::thread_File_Connecion_Handle()
     
     while (!this->_shutdown) {
         
-        std::cout   << "@log servercore: File thread waiting connections form client....." 
-                    << std::endl;
+//        MUTEX_THREAD.lock();
+//        std::cout   << "@log servercore: File thread waiting connections form client....." 
+//                    << std::endl;
+//        MUTEX_THREAD.unlock();
+  
+        Logger_Message_Mutex(this->_MUTEX_THREAD,"@log servercore: *File thread waiting connections form client.....");
         
         this->build_Select_list_For_File_Connection();
 

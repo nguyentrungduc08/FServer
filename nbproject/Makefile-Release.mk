@@ -48,6 +48,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/resources/connection_Test.o \
 	${OBJECTDIR}/resources/database.o \
 	${OBJECTDIR}/resources/fileHandle.o \
+	${OBJECTDIR}/resources/logger.o \
 	${OBJECTDIR}/resources/md5.o \
 	${OBJECTDIR}/resources/servercore.o \
 	${OBJECTDIR}/resources/servercore_FileConn.o \
@@ -144,6 +145,11 @@ ${OBJECTDIR}/resources/fileHandle.o: resources/fileHandle.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/fileHandle.o resources/fileHandle.cpp
+
+${OBJECTDIR}/resources/logger.o: resources/logger.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/logger.o resources/logger.cpp
 
 ${OBJECTDIR}/resources/md5.o: resources/md5.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
