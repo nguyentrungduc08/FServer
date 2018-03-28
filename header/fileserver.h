@@ -78,7 +78,9 @@
 #define CMD_RECEIVE_FILE            12
 #define CMD_GET_FILE                13
 #define CMD_SHARE_CONFIRM           14
-#define CMF_SHARE_FINISH            15
+#define CMD_SHARE_FINISH            15
+
+
 
 #define CMD_IS_MAIN_CONNECTION      88
 #define CMD_IS_FILE_CONNECTION      99

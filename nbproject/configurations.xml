@@ -33,6 +33,7 @@
       <itemPath>resources/connection_Test.cpp</itemPath>
       <itemPath>resources/database.cpp</itemPath>
       <itemPath>resources/fileHandle.cpp</itemPath>
+      <itemPath>resources/logger.cpp</itemPath>
       <itemPath>resources/md5.cpp</itemPath>
       <itemPath>resources/servercore.cpp</itemPath>
       <itemPath>resources/servercore_FileConn.cpp</itemPath>
@@ -43,7 +44,6 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>resources/logger.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
