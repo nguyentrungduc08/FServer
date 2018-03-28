@@ -21,12 +21,20 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
+      <logicalFolder name="srcComponent"
+                     displayName="srcComponent"
+                     projectFiles="true">
+        <logicalFolder name="thread-pool" displayName="thread-pool" projectFiles="true">
+          <itemPath>srcComponent/thread-pool/SafeQueue.h</itemPath>
+          <itemPath>srcComponent/thread-pool/ThreadPool.h</itemPath>
+        </logicalFolder>
+        <itemPath>srcComponent/Werror.cpp</itemPath>
+        <itemPath>srcComponent/WopenSSL.cpp</itemPath>
+        <itemPath>srcComponent/Wsock.cpp</itemPath>
+      </logicalFolder>
       <itemPath>resources/File.cpp</itemPath>
       <itemPath>resources/Packet.cpp</itemPath>
       <itemPath>resources/Session.cpp</itemPath>
-      <itemPath>lib/Werror.cpp</itemPath>
-      <itemPath>lib/WopenSSL.cpp</itemPath>
-      <itemPath>lib/Wsock.cpp</itemPath>
       <itemPath>resources/connection.cpp</itemPath>
       <itemPath>resources/connection_FileConn.cpp</itemPath>
       <itemPath>resources/connection_MainConn.cpp</itemPath>
@@ -58,6 +66,9 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>srcComponent</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
@@ -104,12 +115,6 @@
       </item>
       <item path="header/wrap.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="lib/Werror.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="lib/WopenSSL.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="lib/Wsock.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/File.cpp" ex="false" tool="1" flavor2="0">
@@ -143,6 +148,22 @@
       <item path="resources/servercore_Test.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/ssl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="srcComponent/Werror.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="srcComponent/WopenSSL.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="srcComponent/Wsock.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="srcComponent/thread-pool/SafeQueue.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="srcComponent/thread-pool/ThreadPool.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -191,12 +212,6 @@
       </item>
       <item path="header/wrap.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="lib/Werror.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="lib/WopenSSL.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="lib/Wsock.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/File.cpp" ex="false" tool="1" flavor2="0">
@@ -230,6 +245,22 @@
       <item path="resources/servercore_Test.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="resources/ssl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="srcComponent/Werror.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="srcComponent/WopenSSL.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="srcComponent/Wsock.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="srcComponent/thread-pool/SafeQueue.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="srcComponent/thread-pool/ThreadPool.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
     </conf>
   </confs>

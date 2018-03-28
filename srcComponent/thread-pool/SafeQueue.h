@@ -22,7 +22,6 @@ public:
 
     }
 
-
     bool empty() {
         std::unique_lock<std::mutex> lock(m_mutex);
         return m_queue.empty();

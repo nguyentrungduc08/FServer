@@ -81,7 +81,7 @@ Connection::handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken)
 
 /*
  *@TODO  
- * + get + check tocken from client is valid
+ * + get + check token from client is valid
  */
 void
 Connection::handle_CMD_DOWNLOAD_FILE(std::vector<TOKEN> _listToken)

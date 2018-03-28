@@ -19,6 +19,7 @@
 #include "ssl.h"
 #include "database.h"
 #include "logger.h"
+#include "../srcComponent/thread-pool/ThreadPool.h"
 
 class servercore {
 public:
@@ -104,6 +105,8 @@ private:
     std::string             dir; //path of directory working 
     fssl*                   sslConn;
     Database*               _database;
+    
+    ThreadPool              *_pool; 
     
     std::vector<Connection*>                _connections; // Manage the connected sockets / connections in a list with an iterator
     std::vector<Connection*>                _listMainConnections;

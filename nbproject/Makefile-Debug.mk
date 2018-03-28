@@ -35,9 +35,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/lib/Werror.o \
-	${OBJECTDIR}/lib/WopenSSL.o \
-	${OBJECTDIR}/lib/Wsock.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/resources/File.o \
 	${OBJECTDIR}/resources/Packet.o \
@@ -54,7 +51,10 @@ OBJECTFILES= \
 	${OBJECTDIR}/resources/servercore_FileConn.o \
 	${OBJECTDIR}/resources/servercore_MainConn.o \
 	${OBJECTDIR}/resources/servercore_Test.o \
-	${OBJECTDIR}/resources/ssl.o
+	${OBJECTDIR}/resources/ssl.o \
+	${OBJECTDIR}/srcComponent/Werror.o \
+	${OBJECTDIR}/srcComponent/WopenSSL.o \
+	${OBJECTDIR}/srcComponent/Wsock.o
 
 
 # C Compiler Flags
@@ -80,21 +80,6 @@ LDLIBSOPTIONS=-L/usr/lib -lssl -lcrypto -lmysqlclient -pthread
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/fileserver: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/fileserver ${OBJECTFILES} ${LDLIBSOPTIONS}
-
-${OBJECTDIR}/lib/Werror.o: lib/Werror.cpp
-	${MKDIR} -p ${OBJECTDIR}/lib
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/lib/Werror.o lib/Werror.cpp
-
-${OBJECTDIR}/lib/WopenSSL.o: lib/WopenSSL.cpp
-	${MKDIR} -p ${OBJECTDIR}/lib
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/lib/WopenSSL.o lib/WopenSSL.cpp
-
-${OBJECTDIR}/lib/Wsock.o: lib/Wsock.cpp
-	${MKDIR} -p ${OBJECTDIR}/lib
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/lib/Wsock.o lib/Wsock.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
@@ -180,6 +165,21 @@ ${OBJECTDIR}/resources/ssl.o: resources/ssl.cpp
 	${MKDIR} -p ${OBJECTDIR}/resources
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/ssl.o resources/ssl.cpp
+
+${OBJECTDIR}/srcComponent/Werror.o: srcComponent/Werror.cpp
+	${MKDIR} -p ${OBJECTDIR}/srcComponent
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/srcComponent/Werror.o srcComponent/Werror.cpp
+
+${OBJECTDIR}/srcComponent/WopenSSL.o: srcComponent/WopenSSL.cpp
+	${MKDIR} -p ${OBJECTDIR}/srcComponent
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/srcComponent/WopenSSL.o srcComponent/WopenSSL.cpp
+
+${OBJECTDIR}/srcComponent/Wsock.o: srcComponent/Wsock.cpp
+	${MKDIR} -p ${OBJECTDIR}/srcComponent
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/srcComponent/Wsock.o srcComponent/Wsock.cpp
 
 # Subprojects
 .build-subprojects:

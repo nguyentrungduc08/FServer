@@ -17,7 +17,12 @@ servercore::servercore(uint port, std::string dir, unsigned short commandOffset)
     this->_connections.clear();
     this->_listMainConnections.clear();
     this->_listFileConnections.clear();
+    
+    this->_pool = new ThreadPool(30);
+    this->_pool->init();
+    
     this->_database = new Database();
+    
     
     if ( !this->_database->doConnection("testuser","testuser","FILE") ){
         
