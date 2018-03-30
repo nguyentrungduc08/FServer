@@ -1,6 +1,6 @@
-# FileServer
+# FServer
 
-I am trying to make a server file transfer system in C++ 
+I am trying to make a server file transfer system in C++.  
 
 # Implementations
 
@@ -9,4 +9,6 @@ I am trying to make a server file transfer system in C++
 * TLS 1.2
 * Session authen connection
 
+# Technical
 
+* CMake 

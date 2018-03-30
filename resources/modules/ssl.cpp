@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-#include "../header/ssl.h"
+#include "../../header/ssl.h"
 
 fssl::fssl(){
     OpenSSL_add_all_algorithms();

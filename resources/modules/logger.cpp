@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-#include "../header/logger.h"
+#include "../../header/logger.h"
 
 void Logger_Message(std::string msg)
 {

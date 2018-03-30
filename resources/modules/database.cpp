@@ -11,7 +11,7 @@
  * Created on February 5, 2018, 11:26 AM
  */
 
-#include "../header/database.h"
+#include "../../header/database.h"
 
 
 Database::Database() {

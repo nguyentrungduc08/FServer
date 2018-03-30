@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 
-#include "../header/connection.h"
-#include "../header/fileserver.h"
-#include "../header/ssl.h"
-#include "../header/wrap.h"
+#include "../../header/connection.h"
+#include "../../header/fileserver.h"
+#include "../../header/ssl.h"
+#include "../../header/wrap.h"
 
 void                         
 Connection::handle_CMD_UPLOAD_FILE(std::vector<TOKEN> _listToken)

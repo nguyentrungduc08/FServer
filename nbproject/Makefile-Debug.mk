@@ -36,22 +36,22 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/resources/File.o \
-	${OBJECTDIR}/resources/Packet.o \
-	${OBJECTDIR}/resources/Session.o \
-	${OBJECTDIR}/resources/connection.o \
-	${OBJECTDIR}/resources/connection_FileConn.o \
-	${OBJECTDIR}/resources/connection_MainConn.o \
-	${OBJECTDIR}/resources/connection_Test.o \
-	${OBJECTDIR}/resources/database.o \
-	${OBJECTDIR}/resources/fileHandle.o \
-	${OBJECTDIR}/resources/logger.o \
-	${OBJECTDIR}/resources/md5.o \
-	${OBJECTDIR}/resources/servercore.o \
-	${OBJECTDIR}/resources/servercore_FileConn.o \
-	${OBJECTDIR}/resources/servercore_MainConn.o \
-	${OBJECTDIR}/resources/servercore_Test.o \
-	${OBJECTDIR}/resources/ssl.o \
+	${OBJECTDIR}/resources/core/connection.o \
+	${OBJECTDIR}/resources/core/connection_FileConn.o \
+	${OBJECTDIR}/resources/core/connection_MainConn.o \
+	${OBJECTDIR}/resources/core/connection_Test.o \
+	${OBJECTDIR}/resources/core/servercore.o \
+	${OBJECTDIR}/resources/core/servercore_FileConn.o \
+	${OBJECTDIR}/resources/core/servercore_MainConn.o \
+	${OBJECTDIR}/resources/core/servercore_Test.o \
+	${OBJECTDIR}/resources/modules/File.o \
+	${OBJECTDIR}/resources/modules/Packet.o \
+	${OBJECTDIR}/resources/modules/Session.o \
+	${OBJECTDIR}/resources/modules/database.o \
+	${OBJECTDIR}/resources/modules/fileHandle.o \
+	${OBJECTDIR}/resources/modules/logger.o \
+	${OBJECTDIR}/resources/modules/md5.o \
+	${OBJECTDIR}/resources/modules/ssl.o \
 	${OBJECTDIR}/srcComponent/Werror.o \
 	${OBJECTDIR}/srcComponent/WopenSSL.o \
 	${OBJECTDIR}/srcComponent/Wsock.o
@@ -86,85 +86,85 @@ ${OBJECTDIR}/main.o: main.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
-${OBJECTDIR}/resources/File.o: resources/File.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/core/connection.o: resources/core/connection.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/File.o resources/File.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/connection.o resources/core/connection.cpp
 
-${OBJECTDIR}/resources/Packet.o: resources/Packet.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/core/connection_FileConn.o: resources/core/connection_FileConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/Packet.o resources/Packet.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/connection_FileConn.o resources/core/connection_FileConn.cpp
 
-${OBJECTDIR}/resources/Session.o: resources/Session.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/core/connection_MainConn.o: resources/core/connection_MainConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/Session.o resources/Session.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/connection_MainConn.o resources/core/connection_MainConn.cpp
 
-${OBJECTDIR}/resources/connection.o: resources/connection.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/core/connection_Test.o: resources/core/connection_Test.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection.o resources/connection.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/connection_Test.o resources/core/connection_Test.cpp
 
-${OBJECTDIR}/resources/connection_FileConn.o: resources/connection_FileConn.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/core/servercore.o: resources/core/servercore.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection_FileConn.o resources/connection_FileConn.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/servercore.o resources/core/servercore.cpp
 
-${OBJECTDIR}/resources/connection_MainConn.o: resources/connection_MainConn.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/core/servercore_FileConn.o: resources/core/servercore_FileConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection_MainConn.o resources/connection_MainConn.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/servercore_FileConn.o resources/core/servercore_FileConn.cpp
 
-${OBJECTDIR}/resources/connection_Test.o: resources/connection_Test.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/core/servercore_MainConn.o: resources/core/servercore_MainConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/connection_Test.o resources/connection_Test.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/servercore_MainConn.o resources/core/servercore_MainConn.cpp
 
-${OBJECTDIR}/resources/database.o: resources/database.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/core/servercore_Test.o: resources/core/servercore_Test.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/database.o resources/database.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/servercore_Test.o resources/core/servercore_Test.cpp
 
-${OBJECTDIR}/resources/fileHandle.o: resources/fileHandle.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/modules/File.o: resources/modules/File.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/fileHandle.o resources/fileHandle.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/File.o resources/modules/File.cpp
 
-${OBJECTDIR}/resources/logger.o: resources/logger.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/modules/Packet.o: resources/modules/Packet.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/logger.o resources/logger.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/Packet.o resources/modules/Packet.cpp
 
-${OBJECTDIR}/resources/md5.o: resources/md5.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/modules/Session.o: resources/modules/Session.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/md5.o resources/md5.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/Session.o resources/modules/Session.cpp
 
-${OBJECTDIR}/resources/servercore.o: resources/servercore.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/modules/database.o: resources/modules/database.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/servercore.o resources/servercore.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/database.o resources/modules/database.cpp
 
-${OBJECTDIR}/resources/servercore_FileConn.o: resources/servercore_FileConn.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/modules/fileHandle.o: resources/modules/fileHandle.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/servercore_FileConn.o resources/servercore_FileConn.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/fileHandle.o resources/modules/fileHandle.cpp
 
-${OBJECTDIR}/resources/servercore_MainConn.o: resources/servercore_MainConn.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/modules/logger.o: resources/modules/logger.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/servercore_MainConn.o resources/servercore_MainConn.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/logger.o resources/modules/logger.cpp
 
-${OBJECTDIR}/resources/servercore_Test.o: resources/servercore_Test.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/modules/md5.o: resources/modules/md5.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/servercore_Test.o resources/servercore_Test.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/md5.o resources/modules/md5.cpp
 
-${OBJECTDIR}/resources/ssl.o: resources/ssl.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources
+${OBJECTDIR}/resources/modules/ssl.o: resources/modules/ssl.cpp
+	${MKDIR} -p ${OBJECTDIR}/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/ssl.o resources/ssl.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/ssl.o resources/modules/ssl.cpp
 
 ${OBJECTDIR}/srcComponent/Werror.o: srcComponent/Werror.cpp
 	${MKDIR} -p ${OBJECTDIR}/srcComponent

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-#include "../header/fileHandle.h"
+#include "../../header/fileHandle.h"
 
 // Constructor, gets the current server root dir as a parameter
 FileHandle::FileHandle(std::string dir) {

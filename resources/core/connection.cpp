@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-#include "../header/connection.h"
-#include "../header/fileserver.h"
-#include "../header/ssl.h"
+#include "../../header/connection.h"
+#include "../../header/fileserver.h"
+#include "../../header/ssl.h"
 
 // Destructor, clean up all the mess
 Connection::~Connection() {

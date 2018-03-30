@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-#include "../header/servercore.h"
+#include "../../header/servercore.h"
 
 servercore::servercore(uint port, std::string dir, unsigned short commandOffset) 
                         : dir(dir), commandOffset(commandOffset), _shutdown(false), _connId(0) 
