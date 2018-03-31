@@ -23,18 +23,18 @@ public:
     Session(const Session& orig);
     virtual ~Session();
 
-    void        buildSession(int conid, std::string ipAddr);
-    std::string getSession();
-    std::string getCurrentTime();
-    bool        is_Session_Valid();
-    bool        compare(Session*);
-    bool        compare(std::string);
+    void            buildSession(int conid, std::string ipAddr);
+    std::string     getSession();
+    std::string     getCurrentTime();
+    bool            is_Session_Valid();
+    bool            compare(Session*);
+    bool            compare(std::string);
     
 private:
-    std::string sessionCode;
-    std::string currentTime;
-    int         _sessionID;
-    void        setCurrentTime();
+    std::string     sessionCode;
+    std::string     currentTime;
+    int             _sessionID;
+    void            setCurrentTime();
 };
 
 #endif /* SESSION_H */

@@ -7,15 +7,25 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/core/connection.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/modules/logger.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/modules/md5.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/modules/Session.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/core/connection_FileConn.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/core/connection_MainConn.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/core/servercore_FileConn.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/core/connection_Test.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/modules/Packet.cpp</file>
             <file>file:/media/veracrypt1/projects/fileServer/srcComponent/thread-pool/ThreadPool.h</file>
-            <file>file:/media/veracrypt1/projects/fileServer/resources/logger.cpp</file>
-            <file>file:/media/veracrypt1/projects/fileServer/resources/servercore_MainConn.cpp</file>
-            <file>file:/media/veracrypt1/projects/fileServer/resources/servercore_FileConn.cpp</file>
-            <file>file:/media/veracrypt1/projects/fileServer/resources/connection_MainConn.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/core/servercore_MainConn.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/modules/database.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/core/servercore_Test.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/modules/fileHandle.cpp</file>
             <file>file:/media/veracrypt1/projects/fileServer/header/servercore.h</file>
             <file>file:/media/veracrypt1/projects/fileServer/srcComponent/thread-pool/SafeQueue.h</file>
-            <file>file:/media/veracrypt1/projects/fileServer/resources/servercore.cpp</file>
-            <file>file:/media/veracrypt1/projects/fileServer/resources/connection_FileConn.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/modules/File.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/main.cpp</file>
+            <file>file:/media/veracrypt1/projects/fileServer/resources/core/servercore.cpp</file>
         </group>
     </open-files>
 </project-private>
