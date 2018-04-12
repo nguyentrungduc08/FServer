@@ -1,6 +1,7 @@
 # FServer
 
-I am trying to make a server file transfer system in C++.  
+I am trying to make a server file transfer system in C++. 
+
 
 # Implementations
 
@@ -8,7 +9,24 @@ I am trying to make a server file transfer system in C++.
 * send/receive file
 * TLS 1.2
 * Session authen connection
+* add fild checksum file size in cmd.
 
-# Technical
+## Getting Started
 
-* CMake 
+## Prerequisites
+
+## Installing
+
+## Running the tests
+
+## Technical
+
+* CMake
+
+
+
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/nguyentrungduc08/Dinjector/blob/master/LICENSE.md) file for details
+
+
+ 

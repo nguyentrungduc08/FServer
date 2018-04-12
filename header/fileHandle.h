@@ -24,7 +24,7 @@
 #define SERVERROOTPATHSTRING "<root>/"
 
 /* The strict parameter distincts the access rights:
- * strict = true:
+ * strict = true:   
  *  Only file and directory names in the current working dir are permitted as parameter,
  *  especially references over several directories like ../../filename are prohibited
  *  to ensure we do not drop under the server root directory by user command,
