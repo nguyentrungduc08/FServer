@@ -75,8 +75,7 @@ private:
     int             start();
     void            build_Select_List();
     void            read_Sockets();
-    
-    
+       
     //lof data
     void            log_list_Sessions();
 
