@@ -17,11 +17,11 @@ I am trying to make a server file transfer system in C++.
 ## Prerequisites
 
 ## Installing
-'''
+```
 mkdir build
 cd build 
 cmake ..
-'''
+```
 
 ## Running the tests
 

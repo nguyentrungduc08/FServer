@@ -11,12 +11,11 @@ set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
-#set(SOURCES_DIR ${PROJECT_SOURCES_DIR}/src)
+
 # The following folder will be included
 include_directories("${PROJECT_SOURCE_DIR}")
 
 set(SOURCES_DIR ${PROJECT_SOURCE_DIR}/src)
-
 
 message("infor path: \n\
 - PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR} \n\
@@ -31,4 +30,4 @@ add_compile_options(
 #        -g
 )
 
-add_executable(Dinjector ${SOURCES_DIR}/main.cpp)
+add_executable(Fserver ${SOURCES_DIR}/main.cpp)
