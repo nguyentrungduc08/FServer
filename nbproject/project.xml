@@ -13,6 +13,9 @@
                 <sourceRootElem>srcComponent</sourceRootElem>
                 <sourceRootElem>resources/core</sourceRootElem>
                 <sourceRootElem>resources/modules</sourceRootElem>
+                <sourceRootElem>src/resources</sourceRootElem>
+                <sourceRootElem>src/srcComponent</sourceRootElem>
+                <sourceRootElem>src/header</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

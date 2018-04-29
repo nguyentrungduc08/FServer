@@ -17,12 +17,11 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 set(SOURCES_DIR ${PROJECT_SOURCE_DIR}/src)
 
-message("infor path: \n\
-- PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR} \n\
-- CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR} \n\
-- EXECUTABLE_OUTPUT_PATH: ${EXECUTABLE_OUTPUT_PATH} \n\
-- LIBRARY_OUTPUT_PATH: ${LIBRARY_OUTPUT_PATH} \n\
-")
+message("infor path: \n\")
+message("- PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR} \n\")
+message("- CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR} \n\")
+message("- EXECUTABLE_OUTPUT_PATH: ${EXECUTABLE_OUTPUT_PATH} \n\")
+message("- LIBRARY_OUTPUT_PATH: ${LIBRARY_OUTPUT_PATH} \n\")
 
 add_compile_options(
     -std=c++11

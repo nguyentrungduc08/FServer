@@ -103,6 +103,7 @@
 #define X                           first
 #define Y                           second
 
+#define LOG(x)                      std::cout << "value : " << x << std::endl;
 
 struct USER{
     int             id;

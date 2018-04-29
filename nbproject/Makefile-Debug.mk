@@ -35,26 +35,26 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/resources/core/connection.o \
-	${OBJECTDIR}/resources/core/connection_FileConn.o \
-	${OBJECTDIR}/resources/core/connection_MainConn.o \
-	${OBJECTDIR}/resources/core/connection_Test.o \
-	${OBJECTDIR}/resources/core/servercore.o \
-	${OBJECTDIR}/resources/core/servercore_FileConn.o \
-	${OBJECTDIR}/resources/core/servercore_MainConn.o \
-	${OBJECTDIR}/resources/core/servercore_Test.o \
-	${OBJECTDIR}/resources/modules/File.o \
-	${OBJECTDIR}/resources/modules/Packet.o \
-	${OBJECTDIR}/resources/modules/Session.o \
-	${OBJECTDIR}/resources/modules/database.o \
-	${OBJECTDIR}/resources/modules/fileHandle.o \
-	${OBJECTDIR}/resources/modules/logger.o \
-	${OBJECTDIR}/resources/modules/md5.o \
-	${OBJECTDIR}/resources/modules/ssl.o \
-	${OBJECTDIR}/srcComponent/Werror.o \
-	${OBJECTDIR}/srcComponent/WopenSSL.o \
-	${OBJECTDIR}/srcComponent/Wsock.o
+	${OBJECTDIR}/src/main.o \
+	${OBJECTDIR}/src/resources/core/connection.o \
+	${OBJECTDIR}/src/resources/core/connection_FileConn.o \
+	${OBJECTDIR}/src/resources/core/connection_MainConn.o \
+	${OBJECTDIR}/src/resources/core/connection_Test.o \
+	${OBJECTDIR}/src/resources/core/servercore.o \
+	${OBJECTDIR}/src/resources/core/servercore_FileConn.o \
+	${OBJECTDIR}/src/resources/core/servercore_MainConn.o \
+	${OBJECTDIR}/src/resources/core/servercore_Test.o \
+	${OBJECTDIR}/src/resources/modules/File.o \
+	${OBJECTDIR}/src/resources/modules/Packet.o \
+	${OBJECTDIR}/src/resources/modules/Session.o \
+	${OBJECTDIR}/src/resources/modules/database.o \
+	${OBJECTDIR}/src/resources/modules/fileHandle.o \
+	${OBJECTDIR}/src/resources/modules/logger.o \
+	${OBJECTDIR}/src/resources/modules/md5.o \
+	${OBJECTDIR}/src/resources/modules/ssl.o \
+	${OBJECTDIR}/src/srcComponent/Werror.o \
+	${OBJECTDIR}/src/srcComponent/WopenSSL.o \
+	${OBJECTDIR}/src/srcComponent/Wsock.o
 
 
 # C Compiler Flags
@@ -75,111 +75,111 @@ LDLIBSOPTIONS=-L/usr/lib -lssl -lcrypto -lmysqlclient -pthread
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/fileserver
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/fserver
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/fileserver: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/fserver: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/fileserver ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/fserver ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/main.o: main.cpp
-	${MKDIR} -p ${OBJECTDIR}
+${OBJECTDIR}/src/main.o: src/main.cpp
+	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/main.o src/main.cpp
 
-${OBJECTDIR}/resources/core/connection.o: resources/core/connection.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/core
+${OBJECTDIR}/src/resources/core/connection.o: src/resources/core/connection.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/connection.o resources/core/connection.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/core/connection.o src/resources/core/connection.cpp
 
-${OBJECTDIR}/resources/core/connection_FileConn.o: resources/core/connection_FileConn.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/core
+${OBJECTDIR}/src/resources/core/connection_FileConn.o: src/resources/core/connection_FileConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/connection_FileConn.o resources/core/connection_FileConn.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/core/connection_FileConn.o src/resources/core/connection_FileConn.cpp
 
-${OBJECTDIR}/resources/core/connection_MainConn.o: resources/core/connection_MainConn.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/core
+${OBJECTDIR}/src/resources/core/connection_MainConn.o: src/resources/core/connection_MainConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/connection_MainConn.o resources/core/connection_MainConn.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/core/connection_MainConn.o src/resources/core/connection_MainConn.cpp
 
-${OBJECTDIR}/resources/core/connection_Test.o: resources/core/connection_Test.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/core
+${OBJECTDIR}/src/resources/core/connection_Test.o: src/resources/core/connection_Test.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/connection_Test.o resources/core/connection_Test.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/core/connection_Test.o src/resources/core/connection_Test.cpp
 
-${OBJECTDIR}/resources/core/servercore.o: resources/core/servercore.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/core
+${OBJECTDIR}/src/resources/core/servercore.o: src/resources/core/servercore.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/servercore.o resources/core/servercore.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/core/servercore.o src/resources/core/servercore.cpp
 
-${OBJECTDIR}/resources/core/servercore_FileConn.o: resources/core/servercore_FileConn.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/core
+${OBJECTDIR}/src/resources/core/servercore_FileConn.o: src/resources/core/servercore_FileConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/servercore_FileConn.o resources/core/servercore_FileConn.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/core/servercore_FileConn.o src/resources/core/servercore_FileConn.cpp
 
-${OBJECTDIR}/resources/core/servercore_MainConn.o: resources/core/servercore_MainConn.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/core
+${OBJECTDIR}/src/resources/core/servercore_MainConn.o: src/resources/core/servercore_MainConn.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/servercore_MainConn.o resources/core/servercore_MainConn.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/core/servercore_MainConn.o src/resources/core/servercore_MainConn.cpp
 
-${OBJECTDIR}/resources/core/servercore_Test.o: resources/core/servercore_Test.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/core
+${OBJECTDIR}/src/resources/core/servercore_Test.o: src/resources/core/servercore_Test.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/core
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/core/servercore_Test.o resources/core/servercore_Test.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/core/servercore_Test.o src/resources/core/servercore_Test.cpp
 
-${OBJECTDIR}/resources/modules/File.o: resources/modules/File.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/modules
+${OBJECTDIR}/src/resources/modules/File.o: src/resources/modules/File.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/File.o resources/modules/File.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/modules/File.o src/resources/modules/File.cpp
 
-${OBJECTDIR}/resources/modules/Packet.o: resources/modules/Packet.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/modules
+${OBJECTDIR}/src/resources/modules/Packet.o: src/resources/modules/Packet.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/Packet.o resources/modules/Packet.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/modules/Packet.o src/resources/modules/Packet.cpp
 
-${OBJECTDIR}/resources/modules/Session.o: resources/modules/Session.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/modules
+${OBJECTDIR}/src/resources/modules/Session.o: src/resources/modules/Session.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/Session.o resources/modules/Session.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/modules/Session.o src/resources/modules/Session.cpp
 
-${OBJECTDIR}/resources/modules/database.o: resources/modules/database.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/modules
+${OBJECTDIR}/src/resources/modules/database.o: src/resources/modules/database.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/database.o resources/modules/database.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/modules/database.o src/resources/modules/database.cpp
 
-${OBJECTDIR}/resources/modules/fileHandle.o: resources/modules/fileHandle.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/modules
+${OBJECTDIR}/src/resources/modules/fileHandle.o: src/resources/modules/fileHandle.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/fileHandle.o resources/modules/fileHandle.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/modules/fileHandle.o src/resources/modules/fileHandle.cpp
 
-${OBJECTDIR}/resources/modules/logger.o: resources/modules/logger.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/modules
+${OBJECTDIR}/src/resources/modules/logger.o: src/resources/modules/logger.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/logger.o resources/modules/logger.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/modules/logger.o src/resources/modules/logger.cpp
 
-${OBJECTDIR}/resources/modules/md5.o: resources/modules/md5.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/modules
+${OBJECTDIR}/src/resources/modules/md5.o: src/resources/modules/md5.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/md5.o resources/modules/md5.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/modules/md5.o src/resources/modules/md5.cpp
 
-${OBJECTDIR}/resources/modules/ssl.o: resources/modules/ssl.cpp
-	${MKDIR} -p ${OBJECTDIR}/resources/modules
+${OBJECTDIR}/src/resources/modules/ssl.o: src/resources/modules/ssl.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/resources/modules
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/resources/modules/ssl.o resources/modules/ssl.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/resources/modules/ssl.o src/resources/modules/ssl.cpp
 
-${OBJECTDIR}/srcComponent/Werror.o: srcComponent/Werror.cpp
-	${MKDIR} -p ${OBJECTDIR}/srcComponent
+${OBJECTDIR}/src/srcComponent/Werror.o: src/srcComponent/Werror.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/srcComponent
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/srcComponent/Werror.o srcComponent/Werror.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/srcComponent/Werror.o src/srcComponent/Werror.cpp
 
-${OBJECTDIR}/srcComponent/WopenSSL.o: srcComponent/WopenSSL.cpp
-	${MKDIR} -p ${OBJECTDIR}/srcComponent
+${OBJECTDIR}/src/srcComponent/WopenSSL.o: src/srcComponent/WopenSSL.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/srcComponent
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/srcComponent/WopenSSL.o srcComponent/WopenSSL.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/srcComponent/WopenSSL.o src/srcComponent/WopenSSL.cpp
 
-${OBJECTDIR}/srcComponent/Wsock.o: srcComponent/Wsock.cpp
-	${MKDIR} -p ${OBJECTDIR}/srcComponent
+${OBJECTDIR}/src/srcComponent/Wsock.o: src/srcComponent/Wsock.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/srcComponent
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/srcComponent/Wsock.o srcComponent/Wsock.cpp
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/srcComponent/Wsock.o src/srcComponent/Wsock.cpp
 
 # Subprojects
 .build-subprojects:

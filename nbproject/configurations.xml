@@ -4,59 +4,59 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>header/File.h</itemPath>
-      <itemPath>header/Hasing.h</itemPath>
-      <itemPath>header/Packet.h</itemPath>
-      <itemPath>header/Session.h</itemPath>
-      <itemPath>header/connection.h</itemPath>
-      <itemPath>header/database.h</itemPath>
-      <itemPath>header/fileHandle.h</itemPath>
-      <itemPath>header/fileserver.h</itemPath>
-      <itemPath>header/logger.h</itemPath>
-      <itemPath>header/md5.h</itemPath>
-      <itemPath>header/servercore.h</itemPath>
-      <itemPath>header/ssl.h</itemPath>
-      <itemPath>header/wrap.h</itemPath>
-    </logicalFolder>
-    <logicalFolder name="ResourceFiles"
-                   displayName="Resource Files"
-                   projectFiles="true">
-      <logicalFolder name="core" displayName="core" projectFiles="true">
-        <itemPath>resources/core/connection.cpp</itemPath>
-        <itemPath>resources/core/connection_FileConn.cpp</itemPath>
-        <itemPath>resources/core/connection_MainConn.cpp</itemPath>
-        <itemPath>resources/core/connection_Test.cpp</itemPath>
-        <itemPath>resources/core/servercore.cpp</itemPath>
-        <itemPath>resources/core/servercore_FileConn.cpp</itemPath>
-        <itemPath>resources/core/servercore_MainConn.cpp</itemPath>
-        <itemPath>resources/core/servercore_Test.cpp</itemPath>
-      </logicalFolder>
-      <logicalFolder name="modules" displayName="modules" projectFiles="true">
-        <itemPath>resources/modules/File.cpp</itemPath>
-        <itemPath>resources/modules/Packet.cpp</itemPath>
-        <itemPath>resources/modules/Session.cpp</itemPath>
-        <itemPath>resources/modules/database.cpp</itemPath>
-        <itemPath>resources/modules/fileHandle.cpp</itemPath>
-        <itemPath>resources/modules/logger.cpp</itemPath>
-        <itemPath>resources/modules/md5.cpp</itemPath>
-        <itemPath>resources/modules/ssl.cpp</itemPath>
-      </logicalFolder>
-      <logicalFolder name="srcComponent"
-                     displayName="srcComponent"
-                     projectFiles="true">
-        <logicalFolder name="thread-pool" displayName="thread-pool" projectFiles="true">
-          <itemPath>srcComponent/thread-pool/SafeQueue.h</itemPath>
-          <itemPath>srcComponent/thread-pool/ThreadPool.h</itemPath>
-        </logicalFolder>
-        <itemPath>srcComponent/Werror.cpp</itemPath>
-        <itemPath>srcComponent/WopenSSL.cpp</itemPath>
-        <itemPath>srcComponent/Wsock.cpp</itemPath>
+      <logicalFolder name="header" displayName="header" projectFiles="true">
+        <itemPath>src/header/File.h</itemPath>
+        <itemPath>src/header/Hasing.h</itemPath>
+        <itemPath>src/header/Packet.h</itemPath>
+        <itemPath>src/header/Session.h</itemPath>
+        <itemPath>src/header/connection.h</itemPath>
+        <itemPath>src/header/database.h</itemPath>
+        <itemPath>src/header/fileHandle.h</itemPath>
+        <itemPath>src/header/fileserver.h</itemPath>
+        <itemPath>src/header/logger.h</itemPath>
+        <itemPath>src/header/md5.h</itemPath>
+        <itemPath>src/header/servercore.h</itemPath>
+        <itemPath>src/header/ssl.h</itemPath>
+        <itemPath>src/header/wrap.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>main.cpp</itemPath>
+      <logicalFolder name="resources" displayName="resources" projectFiles="true">
+        <logicalFolder name="core" displayName="core" projectFiles="true">
+          <itemPath>src/resources/core/connection.cpp</itemPath>
+          <itemPath>src/resources/core/connection_FileConn.cpp</itemPath>
+          <itemPath>src/resources/core/connection_MainConn.cpp</itemPath>
+          <itemPath>src/resources/core/connection_Test.cpp</itemPath>
+          <itemPath>src/resources/core/servercore.cpp</itemPath>
+          <itemPath>src/resources/core/servercore_FileConn.cpp</itemPath>
+          <itemPath>src/resources/core/servercore_MainConn.cpp</itemPath>
+          <itemPath>src/resources/core/servercore_Test.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="modules" displayName="modules" projectFiles="true">
+          <itemPath>src/resources/modules/File.cpp</itemPath>
+          <itemPath>src/resources/modules/Packet.cpp</itemPath>
+          <itemPath>src/resources/modules/Session.cpp</itemPath>
+          <itemPath>src/resources/modules/database.cpp</itemPath>
+          <itemPath>src/resources/modules/fileHandle.cpp</itemPath>
+          <itemPath>src/resources/modules/logger.cpp</itemPath>
+          <itemPath>src/resources/modules/md5.cpp</itemPath>
+          <itemPath>src/resources/modules/ssl.cpp</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="srcComponent"
+                     displayName="srcComponent"
+                     projectFiles="true">
+        <logicalFolder name="thread-pool" displayName="thread-pool" projectFiles="true">
+          <itemPath>src/srcComponent/thread-pool/SafeQueue.h</itemPath>
+          <itemPath>src/srcComponent/thread-pool/ThreadPool.h</itemPath>
+        </logicalFolder>
+        <itemPath>src/srcComponent/Werror.cpp</itemPath>
+        <itemPath>src/srcComponent/WopenSSL.cpp</itemPath>
+        <itemPath>src/srcComponent/Wsock.cpp</itemPath>
+      </logicalFolder>
+      <itemPath>src/main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -74,6 +74,9 @@
     <Elem>srcComponent</Elem>
     <Elem>resources/core</Elem>
     <Elem>resources/modules</Elem>
+    <Elem>src/resources</Elem>
+    <Elem>src/srcComponent</Elem>
+    <Elem>src/header</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -95,90 +98,99 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="header/File.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/File.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/Hasing.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/Hasing.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/Packet.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/Packet.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/Session.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/Session.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/connection.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/connection.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/database.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/database.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/fileHandle.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/fileHandle.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/fileserver.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/fileserver.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/logger.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/logger.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/md5.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/md5.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/servercore.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/servercore.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/ssl.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/ssl.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/wrap.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/wrap.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/main.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/core/connection.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/core/connection.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/core/connection_FileConn.cpp"
+      <item path="src/resources/core/connection_FileConn.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="resources/core/connection_MainConn.cpp"
+      <item path="src/resources/core/connection_MainConn.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="resources/core/connection_Test.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="resources/core/servercore.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="resources/core/servercore_FileConn.cpp"
+      <item path="src/resources/core/connection_Test.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="resources/core/servercore_MainConn.cpp"
+      <item path="src/resources/core/servercore.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/resources/core/servercore_FileConn.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="resources/core/servercore_Test.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/core/servercore_MainConn.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
-      <item path="resources/modules/File.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/core/servercore_Test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
-      <item path="resources/modules/Packet.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/File.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/modules/Session.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/Packet.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/modules/database.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/Session.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/modules/fileHandle.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/database.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/modules/logger.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/fileHandle.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
-      <item path="resources/modules/md5.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/logger.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/modules/ssl.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/md5.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="srcComponent/Werror.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/ssl.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="srcComponent/WopenSSL.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/srcComponent/Werror.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="srcComponent/Wsock.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/srcComponent/WopenSSL.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="srcComponent/thread-pool/SafeQueue.h"
+      <item path="src/srcComponent/Wsock.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/srcComponent/thread-pool/SafeQueue.h"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="srcComponent/thread-pool/ThreadPool.h"
+      <item path="src/srcComponent/thread-pool/ThreadPool.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -204,90 +216,99 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <item path="header/File.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/File.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/Hasing.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/Hasing.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/Packet.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/Packet.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/Session.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/Session.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/connection.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/connection.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/database.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/database.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/fileHandle.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/fileHandle.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/fileserver.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/fileserver.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/logger.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/logger.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/md5.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/md5.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/servercore.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/servercore.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/ssl.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/ssl.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="header/wrap.h" ex="false" tool="3" flavor2="0">
+      <item path="src/header/wrap.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/main.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/core/connection.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/core/connection.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/core/connection_FileConn.cpp"
+      <item path="src/resources/core/connection_FileConn.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="resources/core/connection_MainConn.cpp"
+      <item path="src/resources/core/connection_MainConn.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="resources/core/connection_Test.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="resources/core/servercore.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="resources/core/servercore_FileConn.cpp"
+      <item path="src/resources/core/connection_Test.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="resources/core/servercore_MainConn.cpp"
+      <item path="src/resources/core/servercore.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/resources/core/servercore_FileConn.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="resources/core/servercore_Test.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/core/servercore_MainConn.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
-      <item path="resources/modules/File.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/core/servercore_Test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
-      <item path="resources/modules/Packet.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/File.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/modules/Session.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/Packet.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/modules/database.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/Session.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/modules/fileHandle.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/database.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/modules/logger.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/fileHandle.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
-      <item path="resources/modules/md5.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/logger.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="resources/modules/ssl.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/md5.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="srcComponent/Werror.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/resources/modules/ssl.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="srcComponent/WopenSSL.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/srcComponent/Werror.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="srcComponent/Wsock.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/srcComponent/WopenSSL.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="srcComponent/thread-pool/SafeQueue.h"
+      <item path="src/srcComponent/Wsock.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/srcComponent/thread-pool/SafeQueue.h"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="srcComponent/thread-pool/ThreadPool.h"
+      <item path="src/srcComponent/thread-pool/ThreadPool.h"
             ex="false"
             tool="3"
             flavor2="0">
