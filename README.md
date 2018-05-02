@@ -1,4 +1,5 @@
-# FServer
+#
+FServer
 
 I am trying to make a server file transfer system in C++. 
 
@@ -19,7 +20,7 @@ I am trying to make a server file transfer system in C++.
 ## Installing and Run
 ```
 make
-
+./...
 ```
 
 ## Running the tests
